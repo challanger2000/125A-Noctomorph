@@ -529,6 +529,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
 
     const float baseHz = midiToHz(midiNote_);
     static constexpr std::array<float, 4> ratios {0.50f, 1.00f, 1.4983f, 2.1189f};
+    static constexpr std::array<float, 4> foundationWeights {0.34f, 1.00f, 0.55f, 0.30f};
 
     for (std::size_t n = 0; n < frames; ++n) {
         if (--controlCountdown_ <= 0) {
@@ -570,7 +571,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 if (oscillatorPhase_[i] >= kTwoPi)
                     oscillatorPhase_[i] = std::fmod(oscillatorPhase_[i], kTwoPi);
 
-                const float amp = 1.0f / (1.0f + 0.80f * static_cast<float>(i));
+                const float amp = foundationWeights[i];
                 sum += amp * static_cast<float>(std::sin(oscillatorPhase_[i]));
             }
             const float tonal = 0.11f * foundation * envelope_ * sum;
