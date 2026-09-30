@@ -324,6 +324,11 @@ void Engine::noteOn(int midiNote, float velocity) noexcept {
     if (gate_) {
         ensureLongStreams();
         bodyExcitation_ += 0.08f + 0.22f * velocity_;
+
+        if (bodyExciterClip_) {
+            const double sourceRatio = bodyExciterClip_->sampleRate / sampleRate_;
+            bodyExciterVoice_.start(bodyExciterClip_, sourceRatio, 0.0);
+        }
     }
 }
 
@@ -440,16 +445,6 @@ void Engine::ensureLongStreams() noexcept {
         textureVoice_.start(textureClip_, rate, start);
     }
 
-    if (bodyExciterClip_ && !bodyExciterVoice_.active) {
-        const double sourceRatio = bodyExciterClip_->sampleRate / sampleRate_;
-        const double rate =
-            sourceRatio * (0.72 + 0.30 * rng_.uniform01());
-        const double start =
-            bodyExciterClip_->frames > 8
-                ? rng_.uniform01() * static_cast<double>(bodyExciterClip_->frames - 2)
-                : 0.0;
-        bodyExciterVoice_.start(bodyExciterClip_, rate, start);
-    }
 }
 
 void Engine::updateControlState() noexcept {

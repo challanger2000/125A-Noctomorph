@@ -146,3 +146,12 @@ Key result:
 - source-specific BODY excitation is accepted;
 - global BODY output trim is rejected;
 - NOCTURNE's next identity step is an abstract presence/formant layer.
+
+
+## 2026-09-30 Nocturne presence / BODY lifecycle checkpoint
+
+- NOCTURNE abstract formant Presence: **accepted**, documented in `docs/NOCTURNE-PRESENCE.md`.
+- Presence-only measurement: -44.09 dBFS RMS, 584.7 Hz centroid, 0.72 % energy below 120 Hz.
+- Complete core with Presence passes the realtime performance gate with >11x realtime at 192 kHz in the current CI environment.
+- BODY-exciter lifecycle corrected: a source now excites BODY at Note-On and defined events only; it is no longer silently auto-restarted as a continuous long stream.
+- A dedicated regression test prevents BODY auto-retrigger from returning.

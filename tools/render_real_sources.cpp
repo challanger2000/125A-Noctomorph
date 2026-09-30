@@ -145,7 +145,7 @@ int main(int argc,char** argv){
     engine->noteOn(36,.9f);
     std::vector<float> l(frames),r(frames); constexpr std::size_t block=257; std::size_t off=0; float peak=0.0f; long double energy=0.0;
     while(off<frames){auto n=std::min(block,frames-off);engine->process(l.data()+off,r.data()+off,n);for(std::size_t i=off;i<off+n;++i){peak=std::max(peak,std::max(std::fabs(l[i]),std::fabs(r[i])));energy+=(long double)l[i]*l[i]+(long double)r[i]*r[i];}off+=n;}
-    wav(argv[6],l,r,48000); const double rms=std::sqrt(double(energy/(2.0L*frames)));
+    wav(outputPath,l,r,48000); const double rms=std::sqrt(double(energy/(2.0L*frames)));
     std::cout<<"real-source render profile="<<profile<<" seconds="<<seconds<<" peak="<<peak<<" rms="<<rms<<" events="<<engine->eventCount()<<"\n";
     return (!std::isfinite(peak)||!std::isfinite(rms)||peak>.892f||rms<1e-6)?4:0;
 }

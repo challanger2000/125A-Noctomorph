@@ -412,6 +412,57 @@ void testBodyExciterDrivesModalBank() {
     assert(realEnergy > 1.0e-5L);
 }
 
+
+void testBodyExciterDoesNotAutoRetrigger() {
+    constexpr std::size_t exciterFrames = 2400; // 50 ms at 48 kHz
+    std::vector<float> exciter(exciterFrames, 0.0f);
+    for (std::size_t i = 0; i < exciterFrames; ++i) {
+        const float env = std::exp(-0.004f * static_cast<float>(i));
+        exciter[i] = 0.7f * env *
+            std::sin(6.28318530718f * 911.0f * static_cast<float>(i) / 48000.0f);
+    }
+
+    noctomorph::Clip clip;
+    clip.left = exciter.data();
+    clip.right = nullptr;
+    clip.frames = exciter.size();
+    clip.sampleRate = 48000.0;
+    clip.loop = false;
+    clip.excitationGain = 1.0f;
+
+    auto e = std::make_unique<noctomorph::Engine>();
+    e->prepare(48000.0);
+    e->reset(0x4E4F524554524947ULL);
+
+    noctomorph::Parameters p;
+    p.foundation = 0.0f;
+    p.world = 0.0f;
+    p.texture = 0.0f;
+    p.body = 0.65f;
+    p.tension = 0.35f;
+    p.evolve = 0.0f;
+    p.events = 0.0f;
+    p.space = 0.0f;
+    p.output = 0.5f;
+
+    e->setParameters(p);
+    e->setBodyExciterClip(&clip);
+    e->noteOn(36, 1.0f);
+
+    constexpr std::size_t total = 48000 * 8;
+    std::vector<float> l(total), r(total);
+    e->process(l.data(), r.data(), total);
+
+    const std::vector<float> early(l.begin(), l.begin() + 48000);
+    const std::vector<float> tail(l.end() - 48000, l.end());
+
+    const double earlyRms = rms(early);
+    const double tailRms = rms(tail);
+
+    assert(earlyRms > 1.0e-5);
+    assert(tailRms < earlyRms * 0.05);
+}
+
 void testReleaseDecays() {
     noctomorph::Parameters p;
     p.space = 0.0f;
@@ -437,6 +488,7 @@ int main() {
     testWorldClipStereoAndRateConversion();
     testEventClipActuallyRenders();
     testRealBodyExciterChangesModalResponse();
+    testBodyExciterDoesNotAutoRetrigger();
     testReleaseDecays();
 
     std::cout << "Noctomorph core tests: PASS\n";
