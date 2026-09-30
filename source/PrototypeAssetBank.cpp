@@ -236,7 +236,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureBrush);
             addTexture(TextureMillBelt);
             addTexture(TextureSteelCoiler);
-            addTexture(TextureFiber);
+            addTexture(TexturePlaner);
             addBody(BodyGlass);
             addBody(BodyGong);
             addEvent(EventMetalDoor);
@@ -254,7 +254,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureSaw);
             addTexture(TextureBrush);
             addTexture(TextureSteelCoiler);
-            addTexture(TextureFiber);
+            addTexture(TexturePlaner);
             addBody(BodyGlass);
             addEvent(EventCabinet);
             addEvent(EventMetalThump);

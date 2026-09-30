@@ -168,10 +168,10 @@ PUBLIC DOMAIN / CC0
     Changes: excerpt selection, resampling, slowing, band-pass filtering,
     fades, normalization, PCM16 conversion.
 
-22. Machine installed fiber optic.ogg
-    Source: https://commons.wikimedia.org/wiki/File:Machine_installed_fiber_optic.ogg
-    Creator: Ranch9613
-    License: CC0 1.0
+22. WWS Planingmachine.ogg
+    Source: https://commons.wikimedia.org/wiki/File:WWS_Planingmachine.ogg
+    Creator: Work With Sounds / Konrad Gutkowski / Julian Blaschke
+    License: CC BY 4.0
     Use: INDUSTRIAL / WASTELAND TEXTURE material
     Changes: excerpt selection, resampling, slowing, band-pass filtering,
     fades, normalization, PCM16 conversion.

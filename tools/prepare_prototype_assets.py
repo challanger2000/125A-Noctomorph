@@ -156,8 +156,8 @@ def main() -> int:
           start=12, duration=28, peak=.22, speed=.68, hp=90, lp=8500)
     write(args.out, "texture_chisel.wav", d/"texture_chisel.ogg",
           start=2, duration=24, peak=.18, speed=.52, hp=140, lp=6000)
-    write(args.out, "texture_fiber.wav", d/"texture_fiber.ogg",
-          start=2, duration=26, peak=.20, speed=.82, hp=120, lp=8000)
+    write(args.out, "texture_planer.wav", d/"texture_planer.ogg",
+          start=18, duration=34, peak=.20, speed=.72, hp=90, lp=7600)
 
     # BODY exciters are never mixed directly; they only excite the modal body.
     write(args.out, "body_glass.wav", d/"body_glass.ogg",

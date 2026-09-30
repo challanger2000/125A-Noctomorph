@@ -26,7 +26,7 @@ ASSETS = [
     ("texture_millbelt.wav", 18, False, 1.0),
     ("texture_steelcoiler.wav", 19, False, 1.0),
     ("texture_chisel.wav", 20, False, 1.0),
-    ("texture_fiber.wav", 21, False, 1.0),
+    ("texture_planer.wav", 21, False, 1.0),
     ("event_handlecreak.wav", 22, False, 1.0),
     ("event_hinge.wav", 23, False, 1.0),
     ("event_metalthump.wav", 24, False, 1.0),

@@ -49,7 +49,7 @@ private:
         TextureMillBelt,
         TextureSteelCoiler,
         TextureChisel,
-        TextureFiber,
+        TexturePlaner,
         EventHandleCreak,
         EventHinge,
         EventMetalThump,
