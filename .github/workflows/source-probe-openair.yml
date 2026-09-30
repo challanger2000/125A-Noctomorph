@@ -1,0 +1,45 @@
+name: Noctomorph OpenAIR Source Probe
+
+on:
+  push:
+    branches:
+      - dev/prototype-v0.1
+    paths:
+      - ".github/workflows/source-probe-openair.yml"
+      - "tools/analyze_audio.py"
+      - "tools/requirements-audio.txt"
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install analysis dependencies
+        run: python -m pip install -r tools/requirements-audio.txt
+
+      - name: Download selected OpenAIR originals
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force external, measurements | Out-Null
+          curl.exe -L --fail --retry 3 "https://webfiles.york.ac.uk/OPENAIR/IRs/r1-nuclear-reactor-hall/examples/r1_omni_48k.wav" -o "external/r1_omni_48k.wav"
+          curl.exe -L --fail --retry 3 "https://webfiles.york.ac.uk/OPENAIR/IRs/terrys-factory-warehouse/mono/terrys_warehouse_omni.wav" -o "external/terrys_warehouse_omni.wav"
+
+      - name: Measure R1 reactor hall
+        run: python tools/analyze_audio.py external/r1_omni_48k.wav --ir --json measurements/DATA-IR-004.json
+
+      - name: Measure Terry factory warehouse
+        run: python tools/analyze_audio.py external/terrys_warehouse_omni.wav --ir --json measurements/DATA-IR-005.json
+
+      - name: Upload measurements only
+        uses: actions/upload-artifact@v4
+        with:
+          name: noctomorph-openair-measurements
+          path: measurements/*.json
+          if-no-files-found: error
