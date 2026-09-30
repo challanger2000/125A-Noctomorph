@@ -877,3 +877,375 @@ It is **physical systems that naturally evolve**:
 - distant industrial/harbor systems.
 
 These sources already contain complex non-periodic modulation and causal physical behavior. Noctomorph should preserve that complexity instead of flattening it into static loops.
+
+
+## Dark-cinematic / Gothic expansion — 2026-09-30
+
+### Cathedral / church spaces
+
+#### FS-GOTH-001 — Lichfield Cathedral Interior
+Source: https://freesound.org/people/JW_Audio/sounds/841923/
+Creator: JW_Audio
+Licence: CC0
+Type: real cathedral field recording
+Specs: WAV, stereo, 96 kHz / 24-bit, 4:06.282
+Description: binaural interior recording of Lichfield Cathedral; highly varied natural acoustic.
+Potential use:
+- GOTHIC / RUINS spatial-world reference
+- large sacred interior texture
+- long-tail spectral extraction
+Priority: VERY HIGH
+
+#### FS-GOTH-002 — Large church ambience
+Source: https://freesound.org/people/Zetheyo/sounds/475954/
+Creator: Zetheyo
+Licence: CC0
+Type: real church field recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 4:53.062
+Description: calm ambience inside a large church.
+Potential use:
+- large stone-room WORLD layer
+- reverb/reference analysis
+Priority: VERY HIGH
+
+#### FS-GOTH-003 — 1800s Church Room Tone
+Source: https://freesound.org/people/composingatnight/sounds/697579/
+Creator: composingatnight
+Licence: CC0
+Type: real church room tone
+Specs: M4A, mono, 48 kHz, 1:01.354
+Description: old church natural room tone with building noises.
+Potential use:
+- micro-detail / building texture
+Caution:
+- lossy source; use for texture/event mining rather than pristine bed.
+Priority: MEDIUM
+
+#### FS-GOTH-004 — Quiet Church Ambience
+Source: https://freesound.org/people/hz37/sounds/792472/
+Creator: hz37
+Licence: CC0
+Type: real large-church field recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 1:05.308
+Description: large church ambience with some muffled human presence.
+Potential use:
+- sacred-room depth
+Caution:
+- segment around human sounds.
+Priority: HIGH
+
+### Bells / bourdon / distant ritual events
+
+#### FS-BELL-001 — Isolated Bavarian Church Bell at Distance
+Source: https://freesound.org/people/TSP-Talk/sounds/846302/
+Creator: TSP-Talk
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 48 kHz / 32-bit float, 0:25.507
+Description: isolated bronze church bell about 300 m away with natural diffusion.
+Potential use:
+- rare GOTHIC event
+- harmonic / modal extraction
+- pitch-stretched metallic foundation
+Priority: VERY HIGH
+
+#### FS-BELL-002 — Distant Church Bells with Nature/Urban Ambience
+Source: https://freesound.org/people/Julian_Eftei/sounds/830060/
+Creator: Julian_Eftei
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 44.1 kHz / 24-bit, 4:11
+Description: soft distant bells across a natural/urban field.
+Potential use:
+- far-world event
+- sparse evolving scene cue
+Priority: HIGH
+
+#### FS-BELL-003 — Largest Notre-Dame Bourdon
+Source: https://freesound.org/people/Mxsmanic/sounds/139110/
+Creator: Mxsmanic
+Licence: CC0
+Type: real cathedral bell
+Specs: WAV, stereo, 96 kHz / 24-bit, 0:32.414
+Description: Emmanuel bourdon bell of Notre-Dame ringing alone.
+Potential use:
+- very-low bell resonance
+- spectral/modal decomposition
+- transformed monumental event
+Caution:
+- background people present.
+Priority: VERY HIGH
+
+#### FS-BELL-004 — Notre-Dame Full Bell Set
+Source: https://freesound.org/people/Mxsmanic/sounds/139109/
+Creator: Mxsmanic
+Licence: CC0
+Type: real cathedral bells
+Specs: WAV, stereo, 96 kHz / 24-bit, 1:04.228
+Description: multiple Notre-Dame bells ringing together.
+Potential use:
+- modal cloud extraction
+- grand but sparse scene mutation
+Priority: HIGH
+
+#### FS-BELL-005 — Gothic Church Bells
+Source: https://freesound.org/people/Aeonemi/sounds/180330/
+Creator: Aeonemi
+Licence: CC0
+Type: real church bell field recording
+Specs: MP3, stereo, 44.1 kHz / 128 kbps, 0:48.348
+Description: German Gothic church bell.
+Potential use:
+- aesthetic reference
+- event-source fallback
+Caution:
+- lossy source; not preferred over high-resolution bell recordings.
+Priority: REFERENCE
+
+#### FS-BELL-006 — Bell Tower friction / wood support
+Source: https://freesound.org/people/Dishings/sounds/795222/
+Creator: Dishings
+Licence: CC0
+Type: real bell-tower recording
+Specs: MP3, stereo, 48 kHz / 320 kbps, 0:08.036
+Description: old bell tower, including audible wood-friction between strikes.
+Potential use:
+- bell-mechanism texture
+- old-structure micro-event
+Priority: MEDIUM
+
+### Organ / sacred tonal material
+
+#### FS-ORG-001 — Cathedral Organ, Stephansdom Vienna
+Source: https://freesound.org/people/Breviceps/sounds/462340/
+Creator: Breviceps
+Licence: CC0
+Type: real cathedral organ field recording
+Specs: WAV, stereo, 48 kHz / 16-bit, 1:27.599
+Description: pipe organ captured in the cathedral acoustic.
+Potential use:
+- harmonic/timbral reference
+- resynthesis source
+- long spectral-grain extraction
+Rule:
+- do not reproduce recognizable musical phrase literally; use only transformed/material-derived content.
+Priority: HIGH, CONDITIONAL
+
+#### FS-ORG-002 — Organ in Church / Madonna del Sasso
+Source: https://freesound.org/people/BonnyOrbit/sounds/442541/
+Creator: BonnyOrbit
+Licence: CC0
+Type: real church organ field recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 0:59.171
+Potential use:
+- tonal architecture reference
+- transformed resonant cloud
+Rule:
+- deconstruct rather than replay musical content.
+Priority: MEDIUM-HIGH
+
+### Vocal / sacred-space reference
+
+#### FS-VOX-001 — Singing in a Church
+Source: https://freesound.org/people/MIKEJONESBONES/sounds/400930/
+Creator: MIKEJONESBONES
+Licence: CC0
+Type: real vocal-in-church field recording
+Specs: WAV, stereo, 96 kHz / 24-bit, 6:16.206
+Potential use:
+- reference for real voice-to-stone coupling
+- spectral/vocal-resonance analysis
+- possibly heavily deconstructed texture
+Rule:
+- do not expose recognizable sung material; treat as transformation/research source only unless a clean abstracted derivative is verified.
+Priority: RESEARCH
+
+### Ravens / crows — sparse event layer
+
+#### FS-BIRD-001 — CrowOrRaven2 distant
+Source: https://freesound.org/people/iwanPlays/sounds/512780/
+Creator: iwanPlays
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 96 kHz / 16-bit, 1.328 s
+Description: distant crow/raven-type call, cleaned.
+Potential use:
+- very rare dark exterior event
+Priority: HIGH
+
+#### FS-BIRD-002 — CrowOrRaven1
+Source: https://freesound.org/people/iwanPlays/sounds/512781/
+Creator: iwanPlays
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 96 kHz / 16-bit, 1.287 s
+Potential use:
+- alternate sparse event variation
+Priority: HIGH
+
+#### FS-BIRD-003 — Crow call field recording
+Source: https://freesound.org/people/Garuda1982/sounds/418181/
+Creator: Garuda1982
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 96 kHz / 24-bit, 12.239 s
+Potential use:
+- high-resolution crow event pool
+- distance / pitch / space transformations
+Priority: VERY HIGH
+
+#### FS-BIRD-004 — Ravens calling in rural Estonia
+Source: https://freesound.org/people/inspire153/sounds/849152/
+Creator: inspire153
+Licence: CC0
+Type: real field recording
+Specs: WAV, mono, 48 kHz / 24-bit, 14.354 s
+Description: two ravens with wingbeats.
+Potential use:
+- rare exterior event with organic movement
+Priority: HIGH
+
+### Cave / stone / subterranean spaces
+
+#### FS-CAVE-001 — Ojo Guareña cave chamber
+Source: https://freesound.org/people/nomadas/sounds/609161/
+Creator: nomadas
+Licence: CC0
+Type: real cave field recording
+Specs: WAV, stereo, 48 kHz / 16-bit, 0:47.569
+Description: huge cave chamber recorded in total darkness with distributed drips.
+Potential use:
+- ABYSS / RUINS real stone-space layer
+- stochastic event timing reference
+Priority: VERY HIGH
+
+#### FS-CAVE-002 — Sierra Mazateca cave water
+Source: https://freesound.org/people/aurelien.leveque/sounds/417631/
+Creator: aurelien.leveque
+Licence: CC0
+Type: real cave field recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 1:30.056
+Description: medium cave, distant flow and water drops captured MS with Schoeps.
+Potential use:
+- high-quality stone/water spatial material
+Priority: VERY HIGH
+
+#### FS-CAVE-003 — Falun Mine underground waterfall
+Source: https://freesound.org/people/blaukreuz/sounds/398830/
+Creator: blaukreuz
+Licence: CC0
+Type: real underground mine field recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 0:27.041
+Description: 60 m underground near subterranean waterfall.
+Potential use:
+- mine/cavern low-body ambience
+Caution:
+- distant tourists/voices.
+Priority: HIGH, CONDITIONAL
+
+#### FS-CAVE-004 — Water into underground sinkhole
+Source: https://freesound.org/people/hinchinbrook/sounds/552485/
+Creator: hinchinbrook
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 48 kHz / 16-bit, 0:22.833
+Description: water entering sinkhole with deep underground chamber rumble.
+Potential use:
+- low-frequency cave body
+- abstract subterranean motion
+Priority: HIGH
+
+### Wood / old-structure micro-events
+
+#### FS-WOOD-001 — Wood Creak Single family
+Representative source: https://freesound.org/people/Rudmer_Rotteveel/sounds/502505/
+Creator: Rudmer_Rotteveel
+Licence: CC0
+Type: real foley/field source
+Specs: WAV, stereo, 44.1 kHz / 16-bit
+Description: clean isolated wooden creaks; multiple variants in pack.
+Potential use:
+- rare old-structure motion
+- stretched tonal squeal
+Rule:
+- never use as generic haunted-house footsteps.
+Priority: HIGH
+
+#### FS-WOOD-002 — Old Armoire Wood Creak
+Source: https://freesound.org/people/brunoboselli/sounds/478600/
+Creator: brunoboselli
+Licence: CC0
+Type: real recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 18.349 s
+Potential use:
+- long wood-friction source
+- old-building structural layer
+Priority: HIGH
+
+### Tonal / resonant object seeds
+
+#### FS-TONAL-001 — Hurdy-gurdy drone string pluck
+Source: https://freesound.org/people/clareboots/sounds/553961/
+Creator: clareboots
+Licence: CC0
+Type: real string/resonant instrument source
+Specs: WAV, stereo, 44.1 kHz / 24-bit, 12.532 s
+Description: deep sonorous pluck of a hurdy-gurdy drone string.
+Potential use:
+- dark tonal impulse
+- resonator excitation
+- pitch-shifted foundation seed
+Priority: HIGH
+
+#### FS-TONAL-002 — Cello Drone
+Source: https://freesound.org/people/carrieedick/sounds/465558/
+Creator: carrieedick
+Licence: CC0
+Type: edited cello source
+Specs: WAV, stereo, 44.1 kHz / 32-bit, 1:08.230
+Potential use:
+- timbral reference
+- spectral-source candidate
+Priority: RESEARCH
+
+### Procedural / synthetic reference — architecture, not identity
+
+#### REF-SYN-001 — MANTICE Resonant Cave Procedural Drone
+Source: https://freesound.org/people/bassimat/sounds/856219/
+Licence: CC0
+Type: procedural synthetic render
+Description: multi-layer procedural drone with per-layer motion/automation, FM/noise/grain concepts, spatial movement and reproducibility via seed.
+Use:
+- architecture / behavior reference for Noctomorph FOUNDATION generator.
+Do not use as primary Noctomorph identity source.
+Priority: ARCHITECTURE REFERENCE
+
+#### REF-SYN-002 — MANTICE Low-Frequency Spectral Timbre Drone
+Source: https://freesound.org/people/bassimat/sounds/856324/
+Licence: CC0
+Type: procedural synthetic render
+Specs: WAV, stereo, 48 kHz / 24-bit, 5:00
+Use:
+- reference for deep evolving foundation behavior, automation and layer interaction.
+Priority: ARCHITECTURE REFERENCE
+
+#### REF-SYN-003 — Alien Drone / SoundScaper render
+Source: https://freesound.org/people/bassimat/sounds/860238/
+Licence: CC0
+Type: generative synthetic render
+Use:
+- reference for glitch/rumble/space density balance in unreal worlds.
+Priority: REFERENCE
+
+## Source-selection principle after Gothic expansion
+
+Noctomorph should not become a literal Gothic soundboard.
+
+Use cathedral, bell, organ, raven and old-structure material as:
+- sparse identity cues;
+- resonant raw material;
+- spectral/modal sources;
+- spatial references;
+- transformed event seeds.
+
+The core still remains an original unreal-world generator, not a collage of recognizable Gothic tropes.
