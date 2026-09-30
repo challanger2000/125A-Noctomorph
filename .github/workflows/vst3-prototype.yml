@@ -26,14 +26,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Restore verified 57-source baseline
+      - name: Restore verified 60-source baseline
         uses: actions/download-artifact@v4
         with:
           name: noctomorph-prepared-scene-bank
           path: prepared-assets
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          run-id: 36790675890
+          run-id: 36791989360
 
       - uses: actions/setup-python@v5
         with:
@@ -42,7 +42,7 @@ jobs:
       - name: Install asset preparation dependencies
         run: python -m pip install -r tools/requirements-audio.txt
 
-      - name: Download 60-source expansion candidates
+      - name: Download 63-source expansion candidates
         shell: bash
         run: |
           set -euo pipefail
@@ -70,15 +70,15 @@ jobs:
             sleep 12
           }
 
-          get_asset "https://webfiles.york.ac.uk/OPENAIR/IRs/r1-nuclear-reactor-hall/examples/r1_omni_48k.wav" "external-assets/world_reactorhall.wav"
-          get_asset "https://webfiles.york.ac.uk/OPENAIR/IRs/terrys-factory-warehouse/mono/terrys_warehouse_omni.wav" "external-assets/world_warehousehall.wav"
-          get_asset "https://webfiles.york.ac.uk/OPENAIR/IRs/hamilton-mausoleum/b-format/hm2_000_bformat_48k.wav" "external-assets/world_mausoleum.wav"
+          get_asset "https://freesound.org/people/felix.blume/sounds/198736/download/198736__felixblume__post-vibrating-contact-microphone-in-illinois.wav" "external-assets/texture_postvibration.wav"
+          get_asset "https://freesound.org/people/CHallSmith/sounds/870790/download/870790__challsmith__metal-distress-barbed-wire-in-windstorm.wav" "external-assets/texture_wirestress.wav"
+          get_asset "https://freesound.org/people/nomadas/sounds/609161/download/609161__nomadas__ojo-guarena-cave-chamber.wav" "external-assets/world_cavechamber.wav"
 
       - name: Prepare deterministic v0.2 scene bank
         run: |
-          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion60
+          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion63
           find prepared-assets -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
-          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 60
+          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 63
 
       - name: Upload prepared scene bank
         uses: actions/upload-artifact@v4
