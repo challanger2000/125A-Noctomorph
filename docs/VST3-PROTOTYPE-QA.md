@@ -142,3 +142,40 @@ After the archetype behavior-family update:
 
 The attribution file is also checked for presence inside
 `Noctomorph.vst3/Contents/Resources` during CI.
+
+
+## MOTION / state-v2 checkpoint
+
+Validated workflow run: `36702105698`
+
+Public parameter count is now **11**. Steinberg Validator detects:
+
+- Archetype
+- Foundation
+- World
+- Texture
+- Body
+- Tension
+- Motion
+- Evolve
+- Events
+- Space
+- Output
+
+Validator result remains **47/47 PASS**.
+
+State format:
+- current version: 2
+- v1 compatibility: PASS
+- v1 -> v2 migration assigns MOTION = 0.35
+- State/Recall native probe: PASS
+
+Process contract:
+- MOTION automation included: PASS
+- realtime/offline matrix: PASS
+- embedded asset activation: PASS
+
+Latest isolated embedded-role RMS after MOTION integration:
+- WORLD-only: 0.027754
+- TEXTURE-only: 0.005054
+- EVENT-only: 0.000177

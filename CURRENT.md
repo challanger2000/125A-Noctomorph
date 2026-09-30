@@ -202,3 +202,23 @@ Asset-enabled VST3 and archetype behavior families: **PASS**.
 - Steinberg Validator remains **47/47 PASS**.
 
 Detailed behavior definition: `docs/ARCHETYPE-BEHAVIOR-FAMILIES.md`.
+
+
+## 2026-09-30 control-architecture freeze
+
+Public control architecture is now **frozen for static GUI prototyping**.
+
+11 parameters:
+ARCHETYPE / FOUNDATION / WORLD / TEXTURE / BODY / TENSION / MOTION /
+EVOLVE / EVENTS / SPACE / OUTPUT.
+
+MOTION was added after the product-concept audit because it is functionally
+distinct from EVOLVE.
+
+- State version bumped from v1 to v2.
+- Existing first 10 state values and ParamIDs remain unchanged.
+- Legacy v1 state migration: **PASS**, MOTION defaults to 35 %.
+- Validator: **47/47 PASS** with 11 exported parameters.
+- Core / real-source / archetype listening / VST3 host QA: all PASS.
+
+Detailed control contract: `docs/CONTROL-ARCHITECTURE.md`.
