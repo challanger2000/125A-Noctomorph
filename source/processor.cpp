@@ -102,57 +102,19 @@ tresult PLUGIN_API Processor::setBusArrangements(
 
 void Processor::applyAssetProfile() noexcept {
     if (!assetsLoaded_) {
-        engine_.setWorldClip(nullptr);
-        engine_.setTextureClip(nullptr);
-        engine_.setBodyExciterClip(nullptr);
-        engine_.setEventClip(nullptr);
+        engine_.setWorldPool(nullptr, 0);
+        engine_.setTexturePool(nullptr, 0);
+        engine_.setBodyExciterPool(nullptr, 0);
+        engine_.setEventPool(nullptr, 0);
         return;
     }
 
-    // Prototype v0.2: each archetype gets a deliberately different
-    // source topology. Do not make every world the same factory ambience.
-    switch (archetype_) {
-        case noctomorph::Archetype::Void:
-            engine_.setWorldClip(nullptr);
-            engine_.setTextureClip(nullptr);
-            engine_.setBodyExciterClip(assetBank_.bodyDeep());
-            engine_.setEventClip(nullptr);
-            break;
-        case noctomorph::Archetype::Ruins:
-            engine_.setWorldClip(assetBank_.world());
-            engine_.setTextureClip(nullptr);
-            engine_.setBodyExciterClip(assetBank_.bodyBright());
-            engine_.setEventClip(nullptr);
-            break;
-        case noctomorph::Archetype::Industrial:
-            engine_.setWorldClip(assetBank_.world());
-            engine_.setTextureClip(assetBank_.texture());
-            engine_.setBodyExciterClip(assetBank_.bodyBright());
-            engine_.setEventClip(nullptr);
-            break;
-        case noctomorph::Archetype::Wasteland:
-            engine_.setWorldClip(nullptr);
-            engine_.setTextureClip(assetBank_.texture());
-            engine_.setBodyExciterClip(nullptr);
-            engine_.setEventClip(nullptr);
-            break;
-        case noctomorph::Archetype::Abyss:
-            engine_.setWorldClip(nullptr);
-            engine_.setTextureClip(nullptr);
-            engine_.setBodyExciterClip(assetBank_.bodyDeep());
-            engine_.setEventClip(nullptr);
-            break;
-        case noctomorph::Archetype::Nocturne:
-        default:
-            engine_.setWorldClip(nullptr);
-            engine_.setTextureClip(assetBank_.texture());
-            engine_.setBodyExciterClip(nullptr);
-            // Bell becomes an optional NOCTURNE event only, never a default cue.
-            engine_.setEventClip(assetBank_.event());
-            break;
-    }
+    const auto scene = assetBank_.sceneFor(archetype_);
+    engine_.setWorldPool(scene.world.data(), scene.worldCount);
+    engine_.setTexturePool(scene.texture.data(), scene.textureCount);
+    engine_.setBodyExciterPool(scene.body.data(), scene.bodyCount);
+    engine_.setEventPool(scene.event.data(), scene.eventCount);
 }
-
 void Processor::resetEngine() noexcept {
     activeNoteId_ = -1;
     activePitch_ = -1;

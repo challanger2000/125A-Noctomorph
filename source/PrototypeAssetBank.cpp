@@ -124,7 +124,7 @@ bool PrototypeAssetBank::load() {
             return false;
 
         for (const auto& meta : kEmbeddedNoctomorphAssets) {
-            if (meta.role < 0 || meta.role >= Count)
+            if (meta.assetId < 0 || meta.assetId >= Count)
                 return false;
 
             HRSRC resource = FindResourceW(
@@ -142,7 +142,7 @@ bool PrototypeAssetBank::load() {
             if (!bytes || size == 0)
                 return false;
 
-            auto& asset = assets_[static_cast<std::size_t>(meta.role)];
+            auto& asset = assets_[static_cast<std::size_t>(meta.assetId)];
             if (!parsePcm16Wav(
                     bytes,
                     static_cast<std::size_t>(size),
@@ -168,29 +168,106 @@ bool PrototypeAssetBank::load() {
 #endif
 }
 
-const noctomorph::Clip* PrototypeAssetBank::clipFor(Role role) const noexcept {
-    const auto& asset = assets_[static_cast<std::size_t>(role)];
+const noctomorph::Clip* PrototypeAssetBank::clipFor(AssetId id) const noexcept {
+    const auto& asset = assets_[static_cast<std::size_t>(id)];
     return loaded_ && asset.present ? &asset.clip : nullptr;
 }
 
-const noctomorph::Clip* PrototypeAssetBank::world() const noexcept {
-    return clipFor(World);
-}
+PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
+    noctomorph::Archetype archetype) const noexcept {
 
-const noctomorph::Clip* PrototypeAssetBank::texture() const noexcept {
-    return clipFor(Texture);
-}
+    ScenePool scene {};
+    if (!loaded_)
+        return scene;
 
-const noctomorph::Clip* PrototypeAssetBank::bodyBright() const noexcept {
-    return clipFor(BodyBright);
-}
+    auto addWorld = [&](AssetId id) {
+        if (scene.worldCount < scene.world.size())
+            scene.world[scene.worldCount++] = clipFor(id);
+    };
+    auto addTexture = [&](AssetId id) {
+        if (scene.textureCount < scene.texture.size())
+            scene.texture[scene.textureCount++] = clipFor(id);
+    };
+    auto addBody = [&](AssetId id) {
+        if (scene.bodyCount < scene.body.size())
+            scene.body[scene.bodyCount++] = clipFor(id);
+    };
+    auto addEvent = [&](AssetId id) {
+        if (scene.eventCount < scene.event.size())
+            scene.event[scene.eventCount++] = clipFor(id);
+    };
 
-const noctomorph::Clip* PrototypeAssetBank::bodyDeep() const noexcept {
-    return clipFor(BodyDeep);
-}
+    switch (archetype) {
+        case noctomorph::Archetype::Void:
+            addWorld(WorldAmbient);
+            addWorld(WorldWind);
+            addTexture(TextureChoir);
+            addTexture(TextureBrush);
+            addBody(BodyGlass);
+            addEvent(EventThud);
+            break;
 
-const noctomorph::Clip* PrototypeAssetBank::event() const noexcept {
-    return clipFor(Event);
+        case noctomorph::Archetype::Ruins:
+            addWorld(WorldWind);
+            addWorld(WorldAmbient);
+            addTexture(TextureBrush);
+            addTexture(TextureChoir);
+            addBody(BodyGlass);
+            addBody(BodyGong);
+            addEvent(EventMetalDoor);
+            addEvent(EventCabinet);
+            addEvent(EventThud);
+            break;
+
+        case noctomorph::Archetype::Industrial:
+            addWorld(WorldPaper);
+            addWorld(WorldEccentric);
+            addWorld(WorldFence);
+            addTexture(TexturePacking);
+            addTexture(TextureSaw);
+            addTexture(TextureBrush);
+            addBody(BodyGlass);
+            addBody(BodyGong);
+            addEvent(EventMetalDoor);
+            addEvent(EventCabinet);
+            addEvent(EventThud);
+            break;
+
+        case noctomorph::Archetype::Wasteland:
+            addWorld(WorldWind);
+            addWorld(WorldFence);
+            addWorld(WorldAmbient);
+            addTexture(TextureSaw);
+            addTexture(TextureBrush);
+            addBody(BodyGlass);
+            addEvent(EventCabinet);
+            addEvent(EventThud);
+            break;
+
+        case noctomorph::Archetype::Abyss:
+            addWorld(WorldAmbient);
+            addTexture(TextureChoir);
+            addTexture(TextureBrush);
+            addBody(BodyGong);
+            addBody(BodyGlass);
+            addEvent(EventThud);
+            addEvent(EventCabinet);
+            break;
+
+        case noctomorph::Archetype::Nocturne:
+        default:
+            addWorld(WorldWind);
+            addWorld(WorldAmbient);
+            addTexture(TextureChoir);
+            addTexture(TextureBrush);
+            addBody(BodyGlass);
+            addEvent(EventMetalDoor);
+            addEvent(EventCabinet);
+            addEvent(EventPeters);
+            break;
+    }
+
+    return scene;
 }
 
 } // namespace Noctomorph
