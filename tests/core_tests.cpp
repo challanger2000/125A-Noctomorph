@@ -180,6 +180,109 @@ void testFullWetSpaceHasNoImmediateDryLeak() {
     }
 }
 
+
+void testWorldClipStereoAndRateConversion() {
+    constexpr std::size_t frames = 4096;
+    std::vector<float> srcL(frames);
+    std::vector<float> srcR(frames);
+    for (std::size_t i = 0; i < frames; ++i) {
+        const float phase = static_cast<float>(i) / static_cast<float>(frames);
+        srcL[i] = 0.4f * std::sin(6.28318530718f * 7.0f * phase);
+        srcR[i] = 0.4f * std::sin(6.28318530718f * 11.0f * phase);
+    }
+
+    noctomorph::Clip clip;
+    clip.left = srcL.data();
+    clip.right = srcR.data();
+    clip.frames = frames;
+    clip.sampleRate = 24000.0;
+    clip.loop = true;
+
+    auto e = std::make_unique<noctomorph::Engine>();
+    e->prepare(48000.0);
+    e->reset(0x574F524C44ULL);
+
+    noctomorph::Parameters p;
+    p.foundation = 0.0f;
+    p.world = 1.0f;
+    p.texture = 0.0f;
+    p.body = 0.0f;
+    p.tension = 0.0f;
+    p.evolve = 0.0f;
+    p.events = 0.0f;
+    p.space = 0.0f;
+    p.output = 0.5f;
+    e->setParameters(p);
+    e->setWorldClip(&clip);
+    e->noteOn(36, 1.0f);
+
+    std::vector<float> l(8192), r(8192);
+    e->process(l.data(), r.data(), l.size());
+
+    for (float x : l) assert(std::isfinite(x));
+    for (float x : r) assert(std::isfinite(x));
+    assert(rms(l) > 1.0e-4);
+    assert(rms(r) > 1.0e-4);
+
+    double diffEnergy = 0.0;
+    for (std::size_t i = 0; i < l.size(); ++i) {
+        const double d = static_cast<double>(l[i]) - static_cast<double>(r[i]);
+        diffEnergy += d * d;
+    }
+    assert(diffEnergy > 1.0e-6);
+}
+
+void testEventClipActuallyRenders() {
+    constexpr std::size_t frames = 2048;
+    std::vector<float> mono(frames, 0.0f);
+    for (std::size_t i = 0; i < frames; ++i)
+        mono[i] = 0.3f * std::exp(-0.004f * static_cast<float>(i));
+
+    noctomorph::Clip clip;
+    clip.left = mono.data();
+    clip.right = nullptr;
+    clip.frames = frames;
+    clip.sampleRate = 48000.0;
+    clip.loop = false;
+
+    auto e = std::make_unique<noctomorph::Engine>();
+    e->prepare(48000.0);
+    e->reset(0x4556454E54ULL);
+
+    noctomorph::Parameters p;
+    p.foundation = 0.0f;
+    p.world = 0.0f;
+    p.texture = 0.0f;
+    p.body = 0.0f;
+    p.tension = 0.0f;
+    p.evolve = 1.0f;
+    p.events = 1.0f;
+    p.space = 0.0f;
+    p.output = 0.5f;
+    e->setParameters(p);
+    e->setEventClip(&clip);
+    e->noteOn(36, 1.0f);
+
+    constexpr std::size_t total = 48000 * 20;
+    std::vector<float> l(257), r(257);
+    double energy = 0.0;
+    std::size_t done = 0;
+    while (done < total) {
+        const std::size_t n = std::min<std::size_t>(l.size(), total - done);
+        e->process(l.data(), r.data(), n);
+        for (std::size_t i = 0; i < n; ++i) {
+            assert(std::isfinite(l[i]));
+            assert(std::isfinite(r[i]));
+            energy += static_cast<double>(l[i]) * l[i] +
+                      static_cast<double>(r[i]) * r[i];
+        }
+        done += n;
+    }
+
+    assert(e->eventCount() > 0);
+    assert(energy > 1.0e-4);
+}
+
 void testReleaseDecays() {
     noctomorph::Parameters p;
     p.space = 0.0f;
@@ -202,6 +305,8 @@ int main() {
     testExtremeFiniteAcrossRates();
     testBlockSizeInvariance();
     testFullWetSpaceHasNoImmediateDryLeak();
+    testWorldClipStereoAndRateConversion();
+    testEventClipActuallyRenders();
     testReleaseDecays();
 
     std::cout << "Noctomorph core tests: PASS\n";
