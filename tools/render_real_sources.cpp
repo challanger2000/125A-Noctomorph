@@ -34,16 +34,57 @@ void wav(const char* path,const std::vector<float>& l,const std::vector<float>& 
 }
 
 int main(int argc,char** argv){
-    if(argc<6){std::cerr<<"usage: render_real_sources WORLD.raw TEXTURE.raw EVENT.raw seconds output.wav [profile]\n";return 2;}
-    RawAudio w,t,e; if(!loadRaw(argv[1],w)||!loadRaw(argv[2],t)||!loadRaw(argv[3],e)){std::cerr<<"raw load failed\n";return 3;}
-    const double sr=48000.0; const double seconds=std::clamp(std::stod(argv[4]),1.0,600.0); const std::size_t frames=static_cast<std::size_t>(sr*seconds);
+    if(argc<6){
+        std::cerr<<"usage (legacy): render_real_sources WORLD.raw TEXTURE.raw EVENT.raw seconds output.wav [profile]\n"
+                 <<"usage (body):   render_real_sources WORLD.raw TEXTURE.raw BODY.raw EVENT.raw seconds output.wav [profile]\n";
+        return 2;
+    }
+
+    auto isNumber = [](const char* text) {
+        if (!text || !*text) return false;
+        char* end = nullptr;
+        std::strtod(text, &end);
+        return end && *end == '\0';
+    };
+
+    const bool bodyLayout = argc >= 7 && !isNumber(argv[4]);
+
+    const char* worldPath = argv[1];
+    const char* texturePath = argv[2];
+    const char* bodyPath = bodyLayout ? argv[3] : argv[3];
+    const char* eventPath = bodyLayout ? argv[4] : argv[3];
+    const char* secondsText = bodyLayout ? argv[5] : argv[4];
+    const char* outputPath = bodyLayout ? argv[6] : argv[5];
+    const char* profileText =
+        bodyLayout ? (argc >= 8 ? argv[7] : "industrial")
+                   : (argc >= 7 ? argv[6] : "industrial");
+
+    RawAudio w,t,b,e;
+    if(!loadRaw(worldPath,w)||!loadRaw(texturePath,t)||!loadRaw(eventPath,e)){
+        std::cerr<<"raw load failed\n";
+        return 3;
+    }
+
+    if (bodyLayout) {
+        if (!loadRaw(bodyPath,b)) {
+            std::cerr<<"body raw load failed\n";
+            return 3;
+        }
+    } else {
+        b = e;
+    }
+
+    const double sr=48000.0;
+    const double seconds=std::clamp(std::stod(secondsText),1.0,600.0);
+    const std::size_t frames=static_cast<std::size_t>(sr*seconds);
     noctomorph::Clip wc{w.l.data(),w.r.data(),w.l.size(),double(w.sr),true};
     noctomorph::Clip tc{t.l.data(),t.r.data(),t.l.size(),double(t.sr),true};
+    noctomorph::Clip bc{b.l.data(),b.r.data(),b.l.size(),double(b.sr),false};
     noctomorph::Clip ec{e.l.data(),e.r.data(),e.l.size(),double(e.sr),false};
     auto engine=std::make_unique<noctomorph::Engine>(); engine->prepare(sr); engine->reset(0x125A5245414C5352ULL);
     noctomorph::Parameters p;
     noctomorph::Archetype archetype = noctomorph::Archetype::Industrial;
-    std::string profile = argc >= 7 ? std::string(argv[6]) : "industrial";
+    std::string profile = profileText;
 
     if (profile == "source-only") {
         p.foundation=.0f; p.world=.74f; p.texture=.58f; p.body=.0f;
@@ -79,7 +120,7 @@ int main(int argc,char** argv){
     engine->setTextureClip(&tc);
     engine->setEventClip(&ec);
     if (profile != "source-only")
-        engine->setBodyExciterClip(&ec);
+        engine->setBodyExciterClip(&bc);
     engine->noteOn(36,.9f);
     std::vector<float> l(frames),r(frames); constexpr std::size_t block=257; std::size_t off=0; float peak=0.0f; long double energy=0.0;
     while(off<frames){auto n=std::min(block,frames-off);engine->process(l.data()+off,r.data()+off,n);for(std::size_t i=off;i<off+n;++i){peak=std::max(peak,std::max(std::fabs(l[i]),std::fabs(r[i])));energy+=(long double)l[i]*l[i]+(long double)r[i]*r[i];}off+=n;}
