@@ -267,6 +267,8 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addWorld(WorldFence);
             addWorld(WorldSteamRod);
             addWorld(WorldPneumaticPump);
+            addWorld(WorldReactorHall);
+            addWorld(WorldWarehouseHall);
             addTexture(TexturePacking);
             addTexture(TextureSaw);
             addTexture(TextureBrush);
