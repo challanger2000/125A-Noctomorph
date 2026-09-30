@@ -22,7 +22,7 @@ struct ArchetypeTraits {
 ArchetypeTraits traitsFor(Archetype archetype) noexcept {
     switch (archetype) {
         case Archetype::Void:
-            return {0.72f, 0.00f, 0.22f, 1.35f, 0.45f, 0.64f, 0.58f};
+            return {0.22f, 0.00f, 1.30f, 0.28f, 0.35f, 0.64f, 0.58f};
         case Archetype::Ruins:
             return {0.28f, 1.10f, 0.45f, 0.78f, 0.70f, 0.76f, 0.70f};
         case Archetype::Industrial:
@@ -652,7 +652,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
 
     const float baseHz = midiToHz(midiNote_);
     static constexpr std::array<std::array<float, 4>, 6> kFoundationRatios {{
-        {{0.25f, 0.50f, 1.013f, 1.417f}},  // VOID
+        {{0.50f, 1.013f, 2.071f, 3.491f}},  // VOID
         {{0.50f, 1.00f, 1.337f, 2.003f}},  // RUINS
         {{0.75f, 1.00f, 1.503f, 2.517f}},  // INDUSTRIAL
         {{0.50f, 0.997f, 1.861f, 3.127f}}, // WASTELAND
@@ -660,7 +660,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         {{0.50f, 1.00f, 1.259f, 1.887f}}   // NOCTURNE
     }};
     static constexpr std::array<std::array<float, 4>, 6> kFoundationWeights {{
-        {{0.78f,0.48f,0.19f,0.10f}},
+        {{0.18f,0.26f,0.42f,0.52f}},
         {{0.18f,0.52f,0.42f,0.20f}},
         {{0.08f,0.34f,0.72f,0.42f}},
         {{0.05f,0.24f,0.48f,0.70f}},
