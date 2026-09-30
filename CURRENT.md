@@ -134,3 +134,15 @@ See `docs/REAL-SOURCE-RENDER-QA.md`.
 3. Add measured real exciters to IMPOSSIBLE BODY rather than only stream playback.
 4. Test 30 s / 2 min / 5 min identity and repetition per archetype.
 5. Only then freeze public control architecture and start the VST3 wrapper / GUI.
+
+
+## 2026-09-30 calibrated real-source baseline
+
+The first useful six-archetype baseline is now measured and documented in
+`docs/ARCHETYPE-QA-BASELINE.md`.
+
+Key result:
+- archetypes are measurably separated in spectral balance and spatial behavior;
+- source-specific BODY excitation is accepted;
+- global BODY output trim is rejected;
+- NOCTURNE's next identity step is an abstract presence/formant layer.
