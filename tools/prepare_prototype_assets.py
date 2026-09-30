@@ -118,10 +118,18 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34"), default="all")
+    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36"), default="all")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     d = args.input_dir
+
+    if args.mode == "expansion36":
+        # Verified 34-source bank is restored first; derive only the two new assets.
+        write(args.out, "texture_flowwater.wav", d/"texture_flowwater.ogg",
+              start=2, duration=18, peak=.16, speed=.62, hp=80, lp=4200)
+        write(args.out, "event_flint.wav", d/"event_flint.ogg",
+              start=0, duration=10, channels=1, peak=.18, speed=.55, hp=180, lp=5200)
+        return 0
 
     if args.mode == "expansion34":
         # The verified 31-source prepared bank is restored by CI first.

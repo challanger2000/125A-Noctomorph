@@ -62,6 +62,8 @@ private:
         TextureRustle,
         WorldWaves,
         BodyBloop,
+        TextureFlowWater,
+        EventFlint,
         Count
     };
 

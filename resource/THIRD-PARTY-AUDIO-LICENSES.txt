@@ -273,3 +273,20 @@ PUBLIC DOMAIN / CC0
     Use: VOID / ABYSS BODY excitation only; never recognizable direct playback
     Changes: mono conversion, strong slowing, low-pass filtering, attenuation,
     fades, normalization, PCM16 conversion.
+
+
+35. Flowing-water-100019.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Flowing-water-100019.ogg
+    Creator: Fg2
+    License: Public Domain
+    Use: VOID / RUINS / ABYSS / NOCTURNE organic TEXTURE material
+    Changes: excerpt selection, resampling, slowing, band limiting, fades,
+    normalization, PCM16 conversion.
+
+36. Flintstone.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Flintstone.ogg
+    Creator: hokuspokus / PDSounds
+    License: Public Domain
+    Use: RUINS / ABYSS / NOCTURNE sparse stone EVENT material
+    Changes: excerpt selection, mono conversion, slowing, band limiting,
+    fades, normalization, PCM16 conversion.
