@@ -1,0 +1,43 @@
+{
+  "channels": 4,
+  "container_format": "WAV",
+  "crest_factor": 90.73154928778277,
+  "dc_offset": 5.404030283292135e-08,
+  "dominant_peaks_hz": [43.9453125,87.890625,140.625,228.515625,246.09375,265.13671875,298.828125,363.28125,392.578125,467.28515625,701.66015625,843.75],
+  "duration_seconds": 1.0,
+  "energy_f10_hz": 244.62890625,
+  "energy_f50_hz": 1995.1171875,
+  "energy_f90_hz": 10659.66796875,
+  "event_density_per_second": 2.0,
+  "finite_samples_only": true,
+  "frames": 48000,
+  "high_energy_ratio_gt8khz": 0.1658657880542403,
+  "impulse_response": {
+    "decay_to_minus10_seconds": 0.0325,
+    "decay_to_minus20_seconds": 0.10804166666666666,
+    "decay_to_minus30_seconds": 0.19560416666666666,
+    "decay_to_minus60_seconds": 0.5282291666666666,
+    "direct_arrival_sample": 2063,
+    "direct_arrival_seconds": 0.042979166666666666,
+    "early_0_80ms_to_late_energy_db": 16.498688432488038
+  },
+  "impulse_response_channels": [
+    {"decay_to_minus10_seconds":0.062125,"decay_to_minus20_seconds":0.14447916666666666,"decay_to_minus30_seconds":0.24420833333333333,"decay_to_minus60_seconds":0.5953125,"direct_arrival_sample":2063,"direct_arrival_seconds":0.042979166666666666,"early_0_80ms_to_late_energy_db":12.427603471680378},
+    {"decay_to_minus10_seconds":0.047125,"decay_to_minus20_seconds":0.13302083333333334,"decay_to_minus30_seconds":0.22516666666666665,"decay_to_minus60_seconds":0.5609375,"direct_arrival_sample":2063,"direct_arrival_seconds":0.042979166666666666,"early_0_80ms_to_late_energy_db":14.307004828605322},
+    {"decay_to_minus10_seconds":0.059229166666666666,"decay_to_minus20_seconds":0.13254166666666667,"decay_to_minus30_seconds":0.22608333333333333,"decay_to_minus60_seconds":0.59125,"direct_arrival_sample":2063,"direct_arrival_seconds":0.042979166666666666,"early_0_80ms_to_late_energy_db":12.854588826443184},
+    {"decay_to_minus10_seconds":0.05275,"decay_to_minus20_seconds":0.13410416666666666,"decay_to_minus30_seconds":0.21977083333333333,"decay_to_minus60_seconds":0.6080625,"direct_arrival_sample":2063,"direct_arrival_seconds":0.042979166666666666,"early_0_80ms_to_late_energy_db":13.426671202134433}
+  ],
+  "loopability": {"edge_correlation":0.00529443046507339,"edge_rms_delta_db":71.69539512929465,"score":0.0023860490149280613},
+  "low_energy_ratio_lt120hz": 0.05400911469981514,
+  "path": "external/openair-gothic/maes-howe-bformat.wav",
+  "peak_dbfs": -3.0091982657099208,
+  "peak_linear": 0.7071964740753174,
+  "rms_dbfs": -42.16436480054643,
+  "rms_linear": 0.007794383316791254,
+  "sample_rate": 48000,
+  "sha256": "0b68eb5ae862a7f0e45c97a1eeb4c332e9dc98dfd10f3444d7812254a94cdbb0",
+  "silence_ratio_below_minus90dbfs": 0.5562916666666666,
+  "spectral_centroid_hz": 3967.794058328832,
+  "stereo_correlation": 0.38131457260070295,
+  "subtype": "PCM_24"
+}
