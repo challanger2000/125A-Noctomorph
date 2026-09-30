@@ -34,19 +34,19 @@ jobs:
         run: |
           New-Item -ItemType Directory -Force -Path external-assets, prepared-assets, generated-assets | Out-Null
           curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" -o external-assets/world_paper.ogg
-          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Eccentricpress.ogg" -o external-assets/world_eccentric.ogg
-          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Fencemakingmachine.ogg" -o external-assets/world_fence.ogg
+          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://upload.wikimedia.org/wikipedia/commons/1/18/WWS_Eccentricpress.ogg" -o external-assets/world_eccentric.ogg
+          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://upload.wikimedia.org/wikipedia/commons/3/31/WWS_Fencemakingmachine.ogg" -o external-assets/world_fence.ogg
           curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Automaticpackingstation.ogg" -o external-assets/texture_packing.ogg
-          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Sawbladesharpeningmachine.ogg" -o external-assets/texture_saw.ogg
-          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Scrubbing%20with%20small%20metal%20bristled%20brush.ogg" -o external-assets/texture_brush.ogg
-          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Howling%20wind.ogg" -o external-assets/world_wind.ogg
-          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ambient%20Noise.ogg" -o external-assets/world_ambient.ogg
-          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Russian%20Orthodox%20Christmas%20Church%20singing%201.ogg" -o external-assets/texture_choir.ogg
+          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://upload.wikimedia.org/wikipedia/commons/d/d5/WWS_Sawbladesharpeningmachine.ogg" -o external-assets/texture_saw.ogg
+          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://upload.wikimedia.org/wikipedia/commons/9/96/Scrubbing_with_small_metal_bristled_brush.ogg" -o external-assets/texture_brush.ogg
+          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://upload.wikimedia.org/wikipedia/commons/2/2d/Howling_wind.ogg" -o external-assets/world_wind.ogg
+          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://upload.wikimedia.org/wikipedia/commons/e/ea/Ambient_Noise.ogg" -o external-assets/world_ambient.ogg
+          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://upload.wikimedia.org/wikipedia/commons/f/f2/Russian_Orthodox_Christmas_Church_singing_1.ogg" -o external-assets/texture_choir.ogg
           curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ticking%20glass.ogg" -o external-assets/body_glass.ogg
           curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gong%20or%20bell%20vibrant%20(short).ogg" -o external-assets/body_gong.ogg
-          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Open%20metallic%20door.ogg" -o external-assets/event_metaldoor.ogg
-          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Metal%20cabinet%20door%20jarring.ogg" -o external-assets/event_cabinet.ogg
-          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Dull%20thud.ogg" -o external-assets/event_thud.ogg
+          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://upload.wikimedia.org/wikipedia/commons/0/04/Open_metallic_door.ogg" -o external-assets/event_metaldoor.ogg
+          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://upload.wikimedia.org/wikipedia/commons/2/23/Metal_cabinet_door_jarring.ogg" -o external-assets/event_cabinet.ogg
+          curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://upload.wikimedia.org/wikipedia/commons/5/5b/Dull_thud.ogg" -o external-assets/event_thud.ogg
           curl.exe -L --fail --retry 3 --connect-timeout 15 --max-time 90 "https://commons.wikimedia.org/wiki/Special:Redirect/file/200437%20bigben12345%20petersglocke.oga" -o external-assets/event_peters.oga
 
       - name: Prepare deterministic embedded asset subset
