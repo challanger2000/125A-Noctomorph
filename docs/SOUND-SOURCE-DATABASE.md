@@ -1392,3 +1392,224 @@ Example:
 crow call transient -> large metal-pipe modal body -> cathedral IR -> slow detuned synthetic sub-field.
 
 The result should no longer read as “crow + pipe + church”; it should read as one coherent unknown world-object.
+
+
+## Internet-wide source landscape — discovery pools and research datasets
+
+This section records broader discovery sources. Inclusion here does not mean an asset is cleared for embedding. Every individual file still requires license/provenance verification.
+
+### BigSoundBank / La Sonothèque
+
+Source: https://bigsoundbank.com/
+Strengths:
+- large CC0/public-domain-equivalent catalog;
+- industrial machinery;
+- old technology;
+- rooms and ambiences;
+- switches, presses, projectors, transport, environmental recordings.
+
+Noctomorph policy:
+- mine for real physical sources and unusual spaces;
+- prefer original lossless downloads when available;
+- avoid premade cinematic designs unless used only as reference.
+
+### Wikimedia Commons
+
+Source: https://commons.wikimedia.org/
+Strengths:
+- historic machinery;
+- bells;
+- organs;
+- public spaces;
+- transport;
+- old recordings;
+- scientific/acoustic media.
+
+Noctomorph policy:
+- verify each file individually;
+- prefer Public Domain / CC0;
+- CC-BY may be usable only if attribution and redistribution requirements are deliberately supported.
+
+### Internet Archive
+
+Source: https://archive.org/
+Strengths:
+- historical sound-effect collections;
+- industrial/machinery archives;
+- old field recordings;
+- unusual obsolete technology.
+
+Noctomorph policy:
+- exact item/file rights must be verified;
+- do not infer public-domain status from age or archive presence;
+- potentially valuable for rare period machinery and spaces.
+
+### OpenGameArt
+
+Source: https://opengameart.org/
+Strengths:
+- CC0 sound packs;
+- metal / wood / mechanical primitives;
+- environmental and game-audio source material.
+
+Noctomorph policy:
+- use only assets with explicit compatible licensing;
+- individual pack provenance should be archived.
+
+### Freesound
+
+Source: https://freesound.org/
+Strengths:
+- extremely broad field-recording coverage;
+- contact-mic material;
+- high-resolution CC0 uploads;
+- industrial / natural / architectural / animal / object sources.
+
+Noctomorph policy:
+- CC0 preferred for embedded assets;
+- retain uploader, source page, license, retrieval date and checksum;
+- do not assume pack-level uniform licensing.
+
+### Academic / research datasets
+
+#### MIMII Dataset
+Research reference:
+https://arxiv.org/abs/1909.09347
+Dataset:
+https://zenodo.org/record/3384388
+Content:
+- real industrial valves;
+- pumps;
+- fans;
+- slide rails;
+- normal and anomalous machine states;
+- real factory environments.
+
+Noctomorph use:
+- analysis/reference for real machine-state evolution;
+- anomaly-driven spectral behavior research;
+- not cleared as production sample source until exact dataset license and redistribution terms are reviewed.
+
+#### STARSS22
+Research reference:
+https://arxiv.org/abs/2206.01948
+Dataset:
+https://zenodo.org/record/6387880
+Content:
+- spatial recordings of real scenes;
+- first-order Ambisonics;
+- tetrahedral microphone-array format;
+- annotated moving/static sound events.
+
+Noctomorph use:
+- reference for spatial event behavior;
+- testing scene localization / event-density ideas;
+- not a production source until dataset licensing is reviewed.
+
+## Broadened search axes
+
+Continue systematic discovery across these semantic families:
+
+### Dark architecture
+- cathedrals
+- churches
+- crypt-like stone rooms
+- bunkers
+- forts
+- defense structures
+- underground stations
+- abandoned factories
+- mines
+- tunnels
+- silos
+- tanks
+- parking structures
+- industrial stairwells
+- bridges
+
+### Structural excitation
+- wind-loaded cable
+- fences
+- bridge members
+- steel beams
+- towers
+- masts
+- rails
+- pipelines
+- large sheets
+- resonant doors
+- structural groans
+- contact-mic recordings
+
+### Energy / infrastructure
+- substations
+- transformers
+- hydro plants
+- pump rooms
+- server rooms
+- HVAC
+- ventilation shafts
+- generators
+- electric motors
+- inverters
+- electromagnetic-field recordings
+
+### Geological / cold / subterranean
+- frozen lakes
+- ice plates
+- glaciers
+- cave drips
+- underground rivers
+- rocks / gravel / stone falls
+- quarry resonance
+- mine ventilation
+- sinkholes
+- deep shafts
+
+### Gothic identity cues
+- deep bells / bourdon
+- bell mechanisms
+- organ wind / pipe resonance
+- old timber creaks
+- ravens / crows
+- owls
+- distant dogs / wolves
+- distant trains / horns
+- storm rumbles
+- sparse footsteps only where heavily de-literalized
+
+### Impossible-body raw material
+- giant pipes
+- tanks
+- hollow metal
+- resonant glass
+- ceramics
+- bowed/scraped metal
+- wire / cable
+- springs
+- plates
+- string resonance
+- contact transducers
+- electromagnetic fields
+
+### Transitional / event material
+- pressure releases
+- metal stress
+- ice cracks
+- distant impacts
+- rail movement
+- doors/gates at great distance
+- structural settling
+- low thunder without obvious crack
+- air-column whooshes
+
+## Search quality rule
+
+The internet sweep is not complete when a large number of files is found.
+
+It is complete only when:
+- each required sonic role has several strong alternatives;
+- high-priority roles have enough variation to avoid obvious repetition;
+- production candidates have compatible licensing/provenance;
+- the palette supports both subtle song-layer behavior and full cinematic scenes;
+- the material can support real and unreal worlds without relying on generic premade dark drones.
