@@ -1,0 +1,93 @@
+name: Noctomorph BigSoundBank Source Probe
+
+on:
+  push:
+    branches:
+      - dev/prototype-v0.1
+    paths:
+      - ".github/workflows/source-probe-bigsoundbank.yml"
+      - "tools/analyze_audio.py"
+      - "tools/requirements-audio.txt"
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install analysis dependencies
+        run: python -m pip install -r tools/requirements-audio.txt
+
+      - name: Probe and acquire selected CC0 originals
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external/bigsoundbank measurements/bigsoundbank
+
+          acquire() {
+            id="$1"
+            out="$2"
+            found=""
+            for url in \
+              "https://bigsoundbank.com/UPLOAD/wav/\${id}.wav" \
+              "https://bigsoundbank.com/UPLOAD/WAV/\${id}.wav" \
+              "https://bigsoundbank.com/UPLOAD/flac/\${id}.flac" \
+              "https://bigsoundbank.com/UPLOAD/ogg/\${id}.ogg" \
+              "https://bigsoundbank.com/UPLOAD/mp3/\${id}.mp3"
+            do
+              echo "Trying $url"
+              if curl -L --fail --retry 2 --connect-timeout 10 "$url" -o "$out.tmp"; then
+                mv "$out.tmp" "$out"
+                found="$url"
+                break
+              fi
+            done
+            if [ -z "$found" ]; then
+              echo "No downloadable media found for $id" >&2
+              return 1
+            fi
+            echo "$found" > "$out.url.txt"
+            file "$out"
+          }
+
+          acquire 0504 external/bigsoundbank/BSB-0504
+          acquire 1537 external/bigsoundbank/BSB-1537
+          acquire 3409 external/bigsoundbank/BSB-3409
+
+      - name: Normalize acquired filenames by detected container
+        shell: python
+        run: |
+          import os, soundfile as sf, shutil
+          root="external/bigsoundbank"
+          for base in ["BSB-0504","BSB-1537","BSB-3409"]:
+              path=os.path.join(root,base)
+              info=sf.info(path)
+              ext={ "WAV":".wav", "FLAC":".flac", "OGG":".ogg", "MPEG":".mp3" }.get(info.format, ".audio")
+              dst=path+ext
+              shutil.move(path,dst)
+              print(base, info.format, info.samplerate, info.channels, info.frames)
+
+      - name: Measure acquired sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in external/bigsoundbank/BSB-0504.* external/bigsoundbank/BSB-1537.* external/bigsoundbank/BSB-3409.*; do
+            case "$f" in
+              *.url.txt) continue ;;
+            esac
+            base="$(basename "$f")"
+            python tools/analyze_audio.py "$f" --json "measurements/bigsoundbank/\${base}.json"
+          done
+
+      - name: Upload measurements only
+        uses: actions/upload-artifact@v4
+        with:
+          name: noctomorph-bigsoundbank-measurements
+          path: measurements/bigsoundbank/*.json
+          if-no-files-found: error
