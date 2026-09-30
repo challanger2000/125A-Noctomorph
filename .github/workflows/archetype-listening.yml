@@ -34,7 +34,7 @@ jobs:
           mkdir -p external/archetypes raw renders measurements/archetypes
           curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" -o external/archetypes/world.ogg
           curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Automaticpackingstation.ogg" -o external/archetypes/texture.ogg
-          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Paperpulprecyclingmill.ogg" -o external/archetypes/body.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gong%20or%20bell%20vibrant%20(short).ogg" -o external/archetypes/body.ogg
           curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/200437%20bigben12345%20petersglocke.oga" -o external/archetypes/event.oga
           curl -L --fail --retry 3 "https://webfiles.york.ac.uk/OPENAIR/IRs/maes-howe/b-format/mh3_000_bformat_48k.wav" -o external/archetypes/maes-howe.wav
           curl -L --fail --retry 3 "https://webfiles.york.ac.uk/OPENAIR/IRs/hamilton-mausoleum/b-format/hm2_000_bformat_48k.wav" -o external/archetypes/hamilton.wav
@@ -45,7 +45,7 @@ jobs:
         run: |
           python tools/prepare_audio_raw.py external/archetypes/world.ogg raw/world.raw --peak 0.40
           python tools/prepare_audio_raw.py external/archetypes/texture.ogg raw/texture.raw --peak 0.30
-          python tools/prepare_audio_raw.py external/archetypes/body.ogg raw/body.raw --peak 0.30
+          python tools/prepare_audio_raw.py external/archetypes/body.ogg raw/body.raw --peak 0.26
           python tools/prepare_audio_raw.py external/archetypes/event.oga raw/event.raw --peak 0.32
 
       - name: Configure and build
