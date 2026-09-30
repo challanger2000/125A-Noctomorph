@@ -118,10 +118,20 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42", "expansion45", "expansion48", "expansion51", "expansion54", "expansion57", "expansion60"), default="all")
+    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42", "expansion45", "expansion48", "expansion51", "expansion54", "expansion57", "expansion60", "expansion63"), default="all")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     d = args.input_dir
+
+    if args.mode == "expansion63":
+        # Verified 60-source bank is restored first; add long-form structural/underground motion.
+        write(args.out, "texture_postvibration.wav", d/"texture_postvibration.wav",
+              start=4, duration=40, channels=1, peak=.13, speed=.48, hp=45, lp=3800)
+        write(args.out, "texture_wirestress.wav", d/"texture_wirestress.wav",
+              start=18, duration=42, peak=.13, speed=.56, hp=70, lp=4600)
+        write(args.out, "world_cavechamber.wav", d/"world_cavechamber.wav",
+              start=2, duration=40, peak=.16, speed=.62, hp=28, lp=3600)
+        return 0
 
     if args.mode == "expansion60":
         # Verified 57-source bank is restored first; add three large architectural WORLD identities.
