@@ -67,3 +67,15 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+
+# Third-party/source audio is acquired locally or in CI and is never committed.
+external/
+downloads/
+source-audio/
+*.wav
+*.flac
+*.aif
+*.aiff
+*.m4a
+*.mp3
