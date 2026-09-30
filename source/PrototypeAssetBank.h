@@ -59,6 +59,9 @@ private:
         TextureWaterPressure,
         TextureRain,
         BodyWhirly,
+        TextureRustle,
+        WorldWaves,
+        BodyBloop,
         Count
     };
 

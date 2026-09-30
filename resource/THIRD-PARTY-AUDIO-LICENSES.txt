@@ -248,3 +248,28 @@ PUBLIC DOMAIN / CC0
     Use: BODY excitation only; never direct scene playback
     Changes: mono conversion, slowing, filtering, attenuation, fades,
     normalization, PCM16 conversion.
+
+
+32. Uneasy rustling ambience.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Uneasy_rustling_ambience.ogg
+    Creator: stephan / PDSounds
+    License: Public Domain
+    Use: VOID / RUINS / ABYSS / NOCTURNE TEXTURE material
+    Changes: excerpt selection, resampling, slowing, band-pass filtering,
+    fades, normalization, PCM16 conversion.
+
+33. Waves.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Waves.ogg
+    Creator: Dsw4
+    License: Public Domain
+    Use: VOID / WASTELAND / ABYSS WORLD low-frequency mass
+    Changes: excerpt selection, resampling, strong slowing, band limiting,
+    fades, normalization, PCM16 conversion.
+
+34. Bloop.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Bloop.ogg
+    Creator: National Oceanic and Atmospheric Administration (NOAA)
+    License: Public Domain (U.S. federal government work)
+    Use: VOID / ABYSS BODY excitation only; never recognizable direct playback
+    Changes: mono conversion, strong slowing, low-pass filtering, attenuation,
+    fades, normalization, PCM16 conversion.

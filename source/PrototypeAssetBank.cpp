@@ -207,8 +207,11 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureBrush);
             addTexture(TextureChisel);
             addTexture(TextureRain);
+            addTexture(TextureRustle);
+            addWorld(WorldWaves);
             addBody(BodyGlass);
             addBody(BodyWhirly);
+            addBody(BodyBloop);
             addEvent(EventThud);
             break;
 
@@ -223,6 +226,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureChisel);
             addTexture(TextureWaterPressure);
             addTexture(TextureRain);
+            addTexture(TextureRustle);
             addBody(BodyGlass);
             addBody(BodyGong);
             addBody(BodyWhirly);
@@ -260,6 +264,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addWorld(WorldAmbient);
             addWorld(WorldPneumaticPump);
             addWorld(WorldTrainPlatform);
+            addWorld(WorldWaves);
             addTexture(TextureSaw);
             addTexture(TextureBrush);
             addTexture(TextureSteelCoiler);
@@ -282,9 +287,12 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureChisel);
             addTexture(TextureWaterPressure);
             addTexture(TextureRain);
+            addTexture(TextureRustle);
+            addWorld(WorldWaves);
             addBody(BodyGong);
             addBody(BodyGlass);
             addBody(BodyWhirly);
+            addBody(BodyBloop);
             addEvent(EventThud);
             addEvent(EventMetalThump);
             addEvent(EventCabinet);
@@ -299,6 +307,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureChoir);
             addTexture(TextureBrush);
             addTexture(TextureWaterPressure);
+            addTexture(TextureRustle);
             addBody(BodyGlass);
             addBody(BodyWhirly);
             addEvent(EventMetalDoor);

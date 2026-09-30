@@ -118,10 +118,21 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--mode", choices=("all", "expansion31"), default="all")
+    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34"), default="all")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     d = args.input_dir
+
+    if args.mode == "expansion34":
+        # The verified 31-source prepared bank is restored by CI first.
+        # Only derive the three new non-industrial expansion assets here.
+        write(args.out, "texture_rustle.wav", d/"texture_rustle.ogg",
+              start=6, duration=32, peak=.16, speed=.58, hp=180, lp=5200)
+        write(args.out, "world_waves.wav", d/"world_waves.ogg",
+              start=40, duration=44, peak=.22, speed=.52, hp=35, lp=2600)
+        write(args.out, "body_bloop.wav", d/"body_bloop.ogg",
+              start=0, duration=9, channels=1, peak=.14, speed=.35, hp=25, lp=1800)
+        return 0
 
     if args.mode == "expansion31":
         # The verified 25-source prepared bank is restored by CI first.

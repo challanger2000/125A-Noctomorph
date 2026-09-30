@@ -26,14 +26,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Restore verified 25-source baseline
+      - name: Restore verified 31-source baseline
         uses: actions/download-artifact@v4
         with:
           name: noctomorph-prepared-scene-bank
           path: prepared-assets
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          run-id: 36727309129
+          run-id: 36752025197
 
       - uses: actions/setup-python@v5
         with:
@@ -42,7 +42,7 @@ jobs:
       - name: Install asset preparation dependencies
         run: python -m pip install -r tools/requirements-audio.txt
 
-      - name: Download 31-source expansion candidates
+      - name: Download 34-source expansion candidates
         shell: bash
         run: |
           set -euo pipefail
@@ -70,18 +70,15 @@ jobs:
             sleep 12
           }
 
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20TheStationTunnelOfTheTampereStation.ogg" "external-assets/world_stationtunnel.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Metro.ogg" "external-assets/world_metro.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20TrainStoppingAtTheTrainStation.ogg" "external-assets/world_trainplatform.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Shower%20Sound%20Ambience.ogg" "external-assets/texture_waterpressure.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Rain%20(1).ogg" "external-assets/texture_rain.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Whirlytube-sample.ogg" "external-assets/body_whirly.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Uneasy%20rustling%20ambience.ogg" "external-assets/texture_rustle.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Waves.ogg" "external-assets/world_waves.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Bloop.ogg" "external-assets/body_bloop.ogg"
 
       - name: Prepare deterministic v0.2 scene bank
         run: |
-          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion31
+          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion34
           find prepared-assets -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
-          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 31
+          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 34
 
       - name: Upload prepared scene bank
         uses: actions/upload-artifact@v4

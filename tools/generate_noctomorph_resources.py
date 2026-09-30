@@ -36,6 +36,9 @@ ASSETS = [
     ("texture_waterpressure.wav", 28, False, 1.0),
     ("texture_rain.wav", 29, False, 1.0),
     ("body_whirly.wav", 30, False, 0.35),
+    ("texture_rustle.wav", 31, False, 1.0),
+    ("world_waves.wav", 32, False, 1.0),
+    ("body_bloop.wav", 33, False, 0.22),
 ]
 
 
