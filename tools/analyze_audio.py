@@ -252,6 +252,10 @@ def analyze(path: Path, treat_as_ir: bool) -> dict:
     result.update(spectral_metrics(mono, sr))
     if treat_as_ir:
         result["impulse_response"] = ir_metrics(mono, sr)
+        result["impulse_response_channels"] = [
+            ir_metrics(data[:, channel], sr)
+            for channel in range(channels)
+        ]
     return result
 
 
