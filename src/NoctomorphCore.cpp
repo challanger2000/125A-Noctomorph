@@ -22,6 +22,13 @@ float softClip(float x) noexcept {
     return x / (1.0f + 0.35f * ax);
 }
 
+float safeOutput(float x) noexcept {
+    if (!std::isfinite(x))
+        return 0.0f;
+    constexpr float kCeiling = 0.89125094f; // -1.0 dBFS
+    return kCeiling * std::tanh(x / kCeiling);
+}
+
 } // namespace
 
 void Engine::Rng::seed(std::uint64_t value) noexcept {
@@ -626,8 +633,8 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         // 100 % = nominal unity. The default leaves headroom for real-source
         // layers and modal/event summation.
         const float gain = parameters_.output;
-        left[n] = softClip(spacedL * gain);
-        right[n] = softClip(spacedR * gain);
+        left[n] = safeOutput(spacedL * gain);
+        right[n] = safeOutput(spacedR * gain);
 
         if (!std::isfinite(left[n])) left[n] = 0.0f;
         if (!std::isfinite(right[n])) right[n] = 0.0f;

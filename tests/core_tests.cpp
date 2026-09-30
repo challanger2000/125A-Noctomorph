@@ -131,10 +131,10 @@ void testExtremeFiniteAcrossRates() {
     p.output = 1.0f;
 
     for (double sr : {44100.0, 48000.0, 96000.0, 192000.0}) {
-        auto r = render(0xABCDEFULL, p, sr, 3.0);
+        auto r = render(0xABCDEFULL, p, sr, 12.0);
         assert(allFinite(r));
-        for (float x : r.left) assert(std::fabs(x) <= 1.0f);
-        for (float x : r.right) assert(std::fabs(x) <= 1.0f);
+        for (float x : r.left) assert(std::fabs(x) <= 0.892f);
+        for (float x : r.right) assert(std::fabs(x) <= 0.892f);
     }
 }
 
