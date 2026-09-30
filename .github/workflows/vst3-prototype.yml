@@ -70,9 +70,9 @@ jobs:
             sleep 12
           }
 
-          get_asset "https://freesound.org/people/felix.blume/sounds/198736/download/198736__felixblume__post-vibrating-contact-microphone-in-illinois.wav" "external-assets/texture_postvibration.wav"
-          get_asset "https://freesound.org/people/CHallSmith/sounds/870790/download/870790__challsmith__metal-distress-barbed-wire-in-windstorm.wav" "external-assets/texture_wirestress.wav"
-          get_asset "https://freesound.org/people/nomadas/sounds/609161/download/609161__nomadas__ojo-guarena-cave-chamber.wav" "external-assets/world_cavechamber.wav"
+          get_asset "https://bigsoundbank.com/UPLOAD/wav/0504.wav" "external-assets/texture_postvibration.wav"
+          get_asset "https://bigsoundbank.com/UPLOAD/wav/1537.wav" "external-assets/texture_wirestress.wav"
+          get_asset "https://bigsoundbank.com/UPLOAD/wav/3409.wav" "external-assets/world_cavechamber.wav"
 
       - name: Prepare deterministic v0.2 scene bank
         run: |
