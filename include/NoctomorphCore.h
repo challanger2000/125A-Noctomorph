@@ -93,7 +93,7 @@ private:
     };
 
     struct DelayLine {
-        static constexpr std::size_t kCapacity = 65536;
+        static constexpr std::size_t kCapacity = 32768;
         std::array<float, kCapacity> data {};
         std::size_t index = 0;
         std::size_t length = 1;
