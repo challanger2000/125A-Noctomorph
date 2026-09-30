@@ -118,10 +118,20 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39"), default="all")
+    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42"), default="all")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     d = args.input_dir
+
+    if args.mode == "expansion42":
+        # Verified 39-source bank is restored first; derive only three mineral/resonant assets.
+        write(args.out, "texture_stonegrind.wav", d/"texture_stonegrind.ogg",
+              start=5, duration=30, peak=.16, speed=.50, hp=100, lp=4600)
+        write(args.out, "event_gravel.wav", d/"event_gravel.ogg",
+              start=0, duration=8.0, channels=1, peak=.17, speed=.58, hp=120, lp=4200)
+        write(args.out, "body_glassring.wav", d/"body_glassring.ogg",
+              start=2, duration=8.0, channels=1, peak=.14, speed=.42, hp=90, lp=4200)
+        return 0
 
     if args.mode == "expansion39":
         # Verified 36-source bank is restored first; derive only three new body/material assets.

@@ -44,6 +44,9 @@ ASSETS = [
     ("texture_woodcreak.wav", 36, False, 1.0),
     ("texture_rubber.wav", 37, False, 1.0),
     ("event_woodknock.wav", 38, False, 1.0),
+    ("texture_stonegrind.wav", 39, False, 1.0),
+    ("event_gravel.wav", 40, False, 1.0),
+    ("body_glassring.wav", 41, False, 0.20),
 ]
 
 

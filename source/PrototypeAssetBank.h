@@ -67,6 +67,9 @@ private:
         TextureWoodCreak,
         TextureRubber,
         EventWoodKnock,
+        TextureStoneGrind,
+        EventGravel,
+        BodyGlassRing,
         Count
     };
 

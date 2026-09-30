@@ -230,7 +230,9 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureRustle);
             addTexture(TextureFlowWater);
             addTexture(TextureWoodCreak);
+            addTexture(TextureStoneGrind);
             addBody(BodyGlass);
+            addBody(BodyGlassRing);
             addBody(BodyGong);
             addBody(BodyWhirly);
             addEvent(EventMetalDoor);
@@ -239,6 +241,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addEvent(EventHinge);
             addEvent(EventFlint);
             addEvent(EventWoodKnock);
+            addEvent(EventGravel);
             addEvent(EventThud);
             break;
 
@@ -295,14 +298,17 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureRustle);
             addTexture(TextureFlowWater);
             addTexture(TextureRubber);
+            addTexture(TextureStoneGrind);
             addWorld(WorldWaves);
             addBody(BodyGong);
             addBody(BodyGlass);
             addBody(BodyWhirly);
             addBody(BodyBloop);
+            addBody(BodyGlassRing);
             addEvent(EventThud);
             addEvent(EventMetalThump);
             addEvent(EventFlint);
+            addEvent(EventGravel);
             addEvent(EventCabinet);
             break;
 
@@ -319,7 +325,9 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureFlowWater);
             addTexture(TextureWoodCreak);
             addTexture(TextureRubber);
+            addTexture(TextureStoneGrind);
             addBody(BodyGlass);
+            addBody(BodyGlassRing);
             addBody(BodyWhirly);
             addEvent(EventMetalDoor);
             addEvent(EventCabinet);
