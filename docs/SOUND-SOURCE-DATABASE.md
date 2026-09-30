@@ -1249,3 +1249,146 @@ Use cathedral, bell, organ, raven and old-structure material as:
 - transformed event seeds.
 
 The core still remains an original unreal-world generator, not a collage of recognizable Gothic tropes.
+
+
+## Unreal-world raw material expansion — 2026-09-30
+
+### Resonant metal bodies / pipes / tanks
+
+#### FS-OBJ-001 — Resonant iron dome / tank hits
+Source: https://freesound.org/people/kyles/sounds/637679/
+Creator: kyles
+Licence: CC0
+Type: real resonant metal-object recording
+Specs: FLAC, mono, 48 kHz / 24-bit, 14.222 s
+Description: iron dome / sink / tank resonance.
+Potential use:
+- modal-resonator analysis
+- impossible-body construction
+- impact-to-drone transformation
+Priority: VERY HIGH
+
+#### FS-OBJ-002 — Metal Pipe resonant hits
+Source: https://freesound.org/people/derjuli/sounds/824117/
+Creator: derjuli
+Licence: CC0
+Type: real resonant metal-object recording
+Specs: WAV, stereo, 48 kHz / 16-bit, 56.320 s
+Potential use:
+- pipe modal bank source
+- tonal metallic body
+- pitch/time transformation
+Priority: HIGH
+
+#### FS-OBJ-003 — Large hollow metal pipe
+Source: https://freesound.org/people/hanasmusic/sounds/841476/
+Creator: hanasmusic
+Licence: CC0
+Type: real resonant object recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 11 s
+Description: large hollow pipe struck, recorded with AKG C414 XLII.
+Potential use:
+- clean resonant tone extraction
+- modal analysis / convolution seed
+Priority: VERY HIGH
+
+#### FS-OBJ-004 — Metal-pipe whoosh
+Source: https://freesound.org/people/Sadiquecat/sounds/855833/
+Creator: Sadiquecat
+Licence: CC0
+Type: real air-through-pipe source
+Specs: WAV, stereo, 48 kHz / 24-bit, 0.610 s
+Potential use:
+- spatial transition
+- air-column / portal-like movement
+Priority: MEDIUM-HIGH
+
+### Abandoned / defense / empty structures
+
+#### FS-ABAND-001 — Abandoned defense base cannon room
+Source: https://freesound.org/people/vhio/sounds/791287/
+Creator: vhio
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 96 kHz / 24-bit, 8:29.487
+Description: closed room in abandoned early-1900s defense base, distant traffic and wind coupling into room.
+Potential use:
+- RUINS / GOTHIC-INDUSTRIAL room body
+- long evolving architectural noise
+- large-scale granular/spectral mining
+Priority: VERY HIGH
+
+#### FS-ABAND-002 — Abandoned railway embankment
+Source: https://freesound.org/people/Garuda1982/sounds/852236/
+Creator: Garuda1982
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 48 kHz / 16-bit, 2:35.997
+Description: abandoned railway environment with subtle creaks/wind/urban distance.
+Potential use:
+- sparse exterior RUINS layer
+- distant creak/event extraction
+Priority: MEDIUM-HIGH
+
+### Nocturnal animal events
+
+#### FS-BIRD-005 — Distant Owl
+Source: https://freesound.org/people/Sadiquecat/sounds/825822/
+Creator: Sadiquecat
+Licence: CC0
+Type: real field recording
+Specs: FLAC, mono, 48 kHz / 24-bit, 1:17.276
+Description: distant owl in rural night setting.
+Potential use:
+- rare nocturnal event
+Priority: HIGH
+
+#### FS-BIRD-006 — Scops Owl in night silence
+Source: https://freesound.org/people/darthbaul/sounds/266898/
+Creator: darthbaul
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 44.1 kHz / 16-bit, 1:21.662
+Potential use:
+- sparse night-event variant
+Priority: MEDIUM-HIGH
+
+#### FS-ANIM-001 — Distant wolves
+Source: https://freesound.org/people/Sacha.Julien/sounds/753896/
+Creator: Sacha.Julien
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 96 kHz / 24-bit, 4.261 s
+Description: adults/young wolves howling far away.
+Potential use:
+- extremely rare unreal/gothic exterior event
+Rule:
+- very low probability, distant placement, no “wolf pack preset”.
+Priority: HIGH
+
+### Neutral room bodies for transformation
+
+#### FS-ROOM-001 — Empty library heavy building ambience
+Source: https://freesound.org/people/kyles/sounds/635727/
+Creator: kyles
+Licence: CC0
+Type: real room tone
+Specs: FLAC, stereo, 48 kHz / 24-bit, 2:01.370
+Potential use:
+- neutral body/noise extraction
+- hidden building-motion layer
+Priority: MEDIUM
+
+## Unreal-world design consequence
+
+Noctomorph should be able to construct bodies that do not exist by cross-coupling:
+- one source's excitation;
+- another source's modal/resonant body;
+- a third source's environment;
+- synthetic sub/partial foundation;
+- an independent evolution trajectory.
+
+Example:
+crow call transient -> large metal-pipe modal body -> cathedral IR -> slow detuned synthetic sub-field.
+
+The result should no longer read as “crow + pipe + church”; it should read as one coherent unknown world-object.
