@@ -1,0 +1,58 @@
+name: Noctomorph Real Source Render QA
+
+on:
+  push:
+    branches: [dev/prototype-v0.1]
+    paths:
+      - ".github/workflows/real-source-render.yml"
+      - "CMakeLists.txt"
+      - "include/**"
+      - "src/**"
+      - "tools/render_real_sources.cpp"
+      - "tools/prepare_audio_raw.py"
+      - "tools/analyze_audio.py"
+      - "tools/requirements-audio.txt"
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install analysis dependencies
+        run: python -m pip install -r tools/requirements-audio.txt
+      - name: Download cleared real sources
+        run: |
+          mkdir -p external/real raw renders measurements/real-render
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" -o external/real/world.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Automaticpackingstation.ogg" -o external/real/texture.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/200437%20bigben12345%20petersglocke.oga" -o external/real/event.oga
+      - name: Prepare normalized source buffers
+        run: |
+          python tools/prepare_audio_raw.py external/real/world.ogg raw/world.raw --peak 0.40
+          python tools/prepare_audio_raw.py external/real/texture.ogg raw/texture.raw --peak 0.32
+          python tools/prepare_audio_raw.py external/real/event.oga raw/event.raw --peak 0.35
+      - name: Configure and build
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --parallel 2
+      - name: Render and measure
+        run: |
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/event.raw 30 renders/noctomorph-real-30s.wav
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/event.raw 120 renders/noctomorph-real-120s.wav
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/event.raw 300 renders/noctomorph-real-300s.wav
+          python tools/analyze_audio.py renders/noctomorph-real-30s.wav --json measurements/real-render/30s.json
+          python tools/analyze_audio.py renders/noctomorph-real-120s.wav --json measurements/real-render/120s.json
+          python tools/analyze_audio.py renders/noctomorph-real-300s.wav --json measurements/real-render/300s.json
+      - name: Upload listening renders and measurements
+        uses: actions/upload-artifact@v4
+        with:
+          name: noctomorph-real-source-listening-pack
+          path: |
+            renders/*.wav
+            measurements/real-render/*.json
+          if-no-files-found: error
