@@ -2025,3 +2025,270 @@ The indie-tool sweep suggests several high-value Noctomorph experiments:
    - frozen micro-fragment pressure.
 
 These are research hypotheses, not committed product features. Each must be prototyped, measured and auditioned before entering the final architecture.
+
+
+## Advanced synthesis / physical-model / generative references — 2026-09-30
+
+These references are for DSP architecture and behavior study. Do not copy implementation where licensing is incompatible with the 125A codebase.
+
+### REF-ADV-001 — Oi, Grandad! V2
+Source: https://github.com/publicsamples/Oi-Grandad
+Licence: GPL-3.0
+Type: open-source granular synthesizer
+Relevant architecture:
+- four independent granular voices;
+- up to four playheads per voice;
+- complex/multistage modulation;
+- per-voice waveguide resonator;
+- crossfade / round-robin behaviors.
+
+Noctomorph takeaway:
+- waveguide resonance after granular decomposition can turn recorded matter into coherent “impossible bodies”;
+- multiple playheads are useful only if constrained by scene logic rather than exposed as random chaos.
+Priority: VERY HIGH ARCHITECTURE REFERENCE
+
+### REF-ADV-002 — Modal Synthesiser
+Source: https://github.com/crispinha/modal-synth
+Licence: GPL-3.0-or-later / JUCE-related copyleft caveats
+Type: modal-synthesis instrument
+Relevant architecture:
+- banks of resonators;
+- parametrically controlled spectra;
+- material-like timbres: wood / metal / glass.
+
+Noctomorph takeaway:
+- modal banks are a strong candidate for constructing non-existent resonant objects;
+- material identity can be parameterized by mode ratios, decay, damping and excitation spectrum.
+Priority: VERY HIGH DSP REFERENCE
+
+### REF-ADV-003 — JoepVanlier Partials
+Source: https://github.com/JoepVanlier/JSFX
+Type: modal resonator effect
+Relevant architecture:
+- audio excites banks of resonators;
+- multiple fundamentals can coexist;
+- reverb-like or instrument-like behavior.
+
+Noctomorph takeaway:
+- WORLD/TEXTURE sources could excite tonal bodies without becoming conventional pitched samples;
+- multiple fundamentals may create controlled dark clusters.
+Priority: HIGH DSP REFERENCE
+
+### REF-ADV-004 — MechanOdd
+Source: https://github.com/odoare/MechanOdd
+Type: physical-modeling synthesizer
+Relevant architecture:
+- simulated strings;
+- plates;
+- membranes;
+- beams;
+- feedback matrix between resonators;
+- modulation and effects.
+
+Noctomorph takeaway:
+- cross-coupling multiple physical bodies is highly aligned with “unreal worlds”;
+- a bounded feedback matrix can create structures that behave physically but cannot exist in reality.
+Priority: VERY HIGH CONCEPT / DSP REFERENCE
+
+### REF-ADV-005 — DaisySP physical-model toolbox
+Source: https://github.com/electro-smith/DaisySP
+Type: DSP library
+Relevant facilities:
+- Karplus-Strong;
+- resonators;
+- modal synthesis;
+- granular player;
+- fractal / particle / clocked noise;
+- FM / subtractive synthesis.
+
+Noctomorph takeaway:
+- useful algorithmic reference map for original implementations;
+- particle/fractal noise could provide non-looping exciters for physical bodies.
+Priority: HIGH RESEARCH REFERENCE
+
+### REF-ADV-006 — HISSTools Freeze
+Source: https://github.com/AlexHarker/HISSTools_Freeze
+Type: spectral freeze/morph plugin
+Relevant architecture:
+- multiple freeze/morph modes;
+- output evolution control;
+- randomized multiband movement.
+
+Noctomorph takeaway:
+- spectral freeze should not be a binary “hold FFT frame” gimmick;
+- morph state and band-selective motion can preserve identity while extending time indefinitely.
+Priority: VERY HIGH SPECTRAL REFERENCE
+
+### REF-ADV-007 — Pareidolia
+Source: https://github.com/thorinside/pareidolia
+Licence: MIT
+Type: spectral/granular “phantom choir” experiment
+Relevant architecture:
+- grain source can be noise/input/resonator;
+- formant center and drift;
+- input tracking;
+- coherence control;
+- spectral/voice-like illusion without literal choir playback.
+
+Noctomorph takeaway:
+- formant-resonant motion can add “presence” or quasi-vocal dark character without using recognizable vocal samples;
+- valuable for Gothic atmosphere if kept abstract and non-human enough.
+Priority: VERY HIGH CONCEPT REFERENCE
+
+### REF-ADV-008 — math-sonify
+Source: https://github.com/Mattbusel/math-sonify
+Type: generative synthesizer driven by dynamical systems
+Relevant architecture:
+- Lorenz;
+- Rössler;
+- double pendulum;
+- Kuramoto;
+- three-body;
+- hyperchaotic systems;
+- mappings into granular / spectral / FM / AM / waveguide / resonator synthesis.
+
+Noctomorph takeaway:
+- chaotic/dynamical systems may be better long-form modulators than stacked LFOs;
+- deterministic chaos can produce repeatable but non-obvious evolution;
+- especially promising for EVOLVE trajectories and sparse-event scheduling.
+Priority: EXTREMELY HIGH EVOLUTION REFERENCE
+
+### REF-ADV-009 — RipplerX
+Source: https://github.com/tiagolr/ripplerx
+Type: open-source physically modeled/modal synth
+Relevant architecture:
+- modal bodies;
+- inharmonicity;
+- model ratios;
+- mallet/exciter concepts;
+- serial physical coupling references.
+
+Noctomorph takeaway:
+- explicit inharmonicity control is essential for dark/unreal bodies;
+- controlled departure from harmonic mode ratios can move from “instrument” to “architecture”.
+Priority: VERY HIGH DSP REFERENCE
+
+### REF-ADV-010 — ShadowScape Generator
+Source: https://tekengine-audio.itch.io/shadowscape-generator
+Type: standalone drone / texture generator
+Relevant architecture:
+- three classic oscillators;
+- detune beating;
+- noise beds;
+- granular user-sample engine;
+- procedural rumble / metallic / mechanical layers.
+
+Noctomorph takeaway:
+- useful baseline for the feature set we must exceed;
+- Noctomorph should avoid becoming merely oscillators + noise + granular + reverb.
+Priority: COMPETITIVE BASELINE
+
+### REF-ADV-011 — GLACIER
+Source: https://tekengine-audio.itch.io/glacier
+Type: three-layer granular synthesizer
+Relevant architecture:
+- three independent source/layer chains;
+- harmonic-series grain scheduling;
+- multiple grain windows.
+
+Noctomorph takeaway:
+- harmonic-ratio grain scheduling is worth testing as a way to preserve coherence while clouds evolve;
+- compare against random and state-driven scheduling.
+Priority: HIGH GRANULAR REFERENCE
+
+### REF-ADV-012 — Revelation Drone
+Source: https://morkshmork.itch.io/revelation-drone
+Type: sustained drone instrument
+Relevant architecture:
+- supersaw/sub/noise foundation;
+- slow swelling;
+- granular unison drift;
+- random-walk pitch behavior;
+- tape echo / wow / flutter.
+
+Noctomorph takeaway:
+- useful baseline for conventional “living drone” behavior;
+- random-walk pitch can work but must be bounded by archetype and tonal role.
+Priority: COMPETITIVE REFERENCE
+
+### REF-ADV-013 — RITUAL Audio Engine
+Source: https://tekengine-audio.itch.io/ritual-audio-engine
+Type: dark-ambient granular instrument
+Relevant architecture:
+- three sample layers;
+- vocal/instrument/noise source library;
+- continuously evolving textures.
+
+Noctomorph takeaway:
+- confirms market appetite for dark evolving engines;
+- Noctomorph should differentiate through real-world cross-coupling, physical bodies, state evolution and non-literal Gothic cues rather than “ritual sample library” identity.
+Priority: MARKET / AESTHETIC REFERENCE
+
+## New engine hypotheses from advanced sweep
+
+### A. Impossible Body Engine
+Exciter -> modal/waveguide body -> optional coupled second body -> space.
+
+Candidate parameters:
+- BODY SIZE
+- MATERIAL
+- INHARMONICITY
+- DAMPING
+- COUPLING
+- EXCITER TYPE / SOURCE
+- BODY MOTION
+
+Goal:
+Create coherent resonant structures that sound physically plausible but could not exist.
+
+### B. Deterministic-chaos EVOLVE engine
+Use bounded dynamical systems instead of ordinary periodic LFOs for macro evolution.
+
+Properties:
+- deterministic/repeatable with seed/state recall;
+- non-periodic over musically useful durations;
+- map separate state dimensions to density, spectral centroid, body damping, event probability, spatial motion and regeneration;
+- clamp and smooth all mappings;
+- preserve scene identity.
+
+Candidate systems to prototype:
+- Lorenz;
+- Rössler;
+- coupled oscillators / Kuramoto-inspired phase relationships;
+- slow double-pendulum-like trajectories.
+
+### C. Abstract Presence / Phantom Voice layer
+Not a choir sampler.
+
+Possible ingredients:
+- noise / real texture / resonator grains;
+- broad formant banks;
+- very slow formant drift;
+- coherence parameter;
+- pitch tracking optional;
+- spectral freeze/morph.
+
+Goal:
+A dark “presence” that can suggest voices/ritual/sacred space without exposing literal words, melodies or recognisable choir recordings.
+
+### D. Spectral-memory layer
+Instead of freezing one FFT frame:
+- capture weighted spectral history;
+- decay bins independently;
+- cross-morph between history states;
+- retain selected partial families;
+- slowly mutate magnitude and phase coherence.
+
+Goal:
+Allow a world to remember earlier events and let them haunt later states without obvious repetition.
+
+### E. Physical-source + synthetic-body decoupling
+A real recording need not remain recognizable.
+
+Examples:
+- ice crack excites 40 m virtual plate;
+- transformer buzz excites impossible glass/steel hybrid;
+- raven transient excites subterranean pipe body;
+- distant bell modes seed synthetic coupled resonators.
+
+This should be a central Noctomorph design principle.
