@@ -11,10 +11,12 @@ namespace Noctomorph {
 class PrototypeAssetBank {
 public:
     struct ScenePool {
-        std::array<const noctomorph::Clip*, 12> world {};
-        std::array<const noctomorph::Clip*, 12> texture {};
-        std::array<const noctomorph::Clip*, 8> body {};
-        std::array<const noctomorph::Clip*, 16> event {};
+        // Keep scene reservoir limits aligned with Engine pool capacities.
+        // This avoids silently truncating later archetype assignments.
+        std::array<const noctomorph::Clip*, 16> world {};
+        std::array<const noctomorph::Clip*, 16> texture {};
+        std::array<const noctomorph::Clip*, 12> body {};
+        std::array<const noctomorph::Clip*, 24> event {};
         std::size_t worldCount = 0;
         std::size_t textureCount = 0;
         std::size_t bodyCount = 0;
