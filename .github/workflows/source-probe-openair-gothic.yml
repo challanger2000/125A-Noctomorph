@@ -11,6 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
+  # Gothic/stone-space B-format production candidates.
   probe:
     runs-on: ubuntu-latest
     timeout-minutes: 15
