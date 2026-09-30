@@ -152,7 +152,7 @@ private:
     int eventCountdown_ = 0;
 
     std::array<DelayLine, 4> delays_ {};
-    float reverbDamping_ = 0.0f;
+    std::array<float, 4> reverbDamping_ {};
 };
 
 } // namespace noctomorph
