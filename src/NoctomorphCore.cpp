@@ -700,8 +700,12 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         if (body > 0.0f) {
             for (auto& resonator : resonators_)
                 resonator.process(excitationNoise, bodyL, bodyR);
-            dryL += body * envelope_ * bodyL;
-            dryR += body * envelope_ * bodyR;
+            // Modal-bank output is an acoustic body layer, not a second
+            // full-scale instrument. Calibrated against real WORLD/TEXTURE
+            // source RMS so BODY adds material identity without dominating it.
+            constexpr float kBodyOutputTrim = 0.075f; // about -22.5 dB
+            dryL += kBodyOutputTrim * body * envelope_ * bodyL;
+            dryR += kBodyOutputTrim * body * envelope_ * bodyR;
         }
 
         float spacedL = 0.0f;
