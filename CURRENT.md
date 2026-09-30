@@ -181,3 +181,24 @@ First Noctomorph VST3 instrument wrapper: **PASS**.
 - No GUI or embedded third-party audio yet by design.
 
 Detailed evidence: `docs/VST3-PROTOTYPE-QA.md`.
+
+
+## 2026-09-30 asset-enabled archetype checkpoint
+
+Asset-enabled VST3 and archetype behavior families: **PASS**.
+
+- Embedded WORLD/TEXTURE/EVENT roles are proven active from the loaded VST3.
+- WORLD-only RMS: 0.024314
+- TEXTURE-only RMS: 0.004179
+- EVENT-only RMS: 0.000168
+- All six archetypes now have explicit internal behavior traits rather than only
+  modal-ratio differences.
+- Dedicated regression prevents the six archetypes from collapsing to identical
+  output under identical user settings.
+- Latest Core QA: PASS.
+- Latest Real-Source QA: PASS.
+- Latest Archetype Listening QA: PASS.
+- Latest asset-enabled VST3 Host QA: PASS.
+- Steinberg Validator remains **47/47 PASS**.
+
+Detailed behavior definition: `docs/ARCHETYPE-BEHAVIOR-FAMILIES.md`.

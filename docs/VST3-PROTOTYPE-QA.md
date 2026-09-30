@@ -111,3 +111,34 @@ Next host-facing work should be:
 3. GUI/editor implementation;
 4. editor lifecycle / DPI / 100–150% zoom QA;
 5. final realtime/offline/audio torture with the asset-enabled build.
+
+
+## Asset-enabled host verification
+
+Validated workflow run: `36701035412`
+
+The VST3 bundle now contains the controlled prototype asset bank and the
+third-party attribution file.
+
+The native process probe explicitly isolates the three direct sample roles.
+With FOUNDATION, BODY, SPACE and the other sample roles disabled:
+
+- WORLD-only RMS: **0.024314**
+- TEXTURE-only RMS: **0.004179**
+- EVENT-only RMS: **0.000168**
+
+All three are non-zero.
+
+This is a hard host-side proof that the loaded VST3 is using the embedded asset
+bank rather than silently falling back to the synthetic-only engine.
+
+After the archetype behavior-family update:
+- Core QA: PASS
+- Real Source Render QA: PASS
+- Archetype Listening QA: PASS
+- State/Recall: PASS
+- Process Contract: PASS
+- Steinberg Validator: **47/47 PASS**
+
+The attribution file is also checked for presence inside
+`Noctomorph.vst3/Contents/Resources` during CI.
