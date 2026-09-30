@@ -566,3 +566,314 @@ Reject or deprioritize:
 - foreground ratchets;
 - clearly identifiable switches/camera clicks;
 - anything that turns the scene into “a machine performance” rather than a dark world.
+
+
+## Broad-search expansion — 2026-09-30
+
+### Contact-mic / structural resonance
+
+#### FS-STRUCT-001 — Post vibrating (contact microphone) in Illinois
+Source: https://freesound.org/people/felix.blume/sounds/198736/
+Creator: Felix Blume
+Licence: CC0
+Type: real contact-mic field recording
+Specs: WAV, mono, 96 kHz / 24-bit, 1:30.420
+Description: metal post / cable system vibrating and knocking under wind excitation.
+Potential use:
+- STRUCTURE layer
+- TENSION resonance
+- long-form material for pitch/time transformation
+Priority: VERY HIGH
+
+#### FS-STRUCT-002 — Wooden Bridge Contact Mic
+Source: https://freesound.org/people/DanJGW/sounds/473953/
+Creator: DanJGW
+Licence: CC0
+Type: real contact-mic field recording
+Specs: WAV, mono, 44.1 kHz / 16-bit, 0:40.449
+Description: bridge structure excited by wind and water, recorded through a metal bolt.
+Potential use:
+- structural resonator
+- hybrid water / body texture
+Priority: HIGH
+
+#### FS-STRUCT-003 — Metal Distress, Barbed Wire in Windstorm
+Source: https://freesound.org/people/CHallSmith/sounds/870790/
+Creator: CHallSmith
+Licence: CC0
+Type: real contact-mic field recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 5:43.240
+Description: large steel wire fence under wind load, with stress, hits, sway and vibration.
+Potential use:
+- WASTELAND / RUINS structural layer
+- long evolving tension bed
+- sparse metal events
+Rule:
+- avoid literal “spooky fence” presentation; mine the physical stress/resonance.
+Priority: VERY HIGH
+
+#### FS-STRUCT-004 — Metal wire - contact mic
+Source: https://freesound.org/people/Salom%C3%A9_Lubczanski/sounds/733841/
+Creator: Salomé Lubczanski
+Licence: CC0
+Type: real contact-mic field recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 0:35.762
+Description: real metal-wire rustle, wobble and resonance through two contact microphones.
+Potential use:
+- microtexture
+- spectral-grain source
+- sparse tension details
+Priority: HIGH
+
+### Ice / cold physical worlds
+
+#### FS-ICE-001 — frozen lake
+Source: https://freesound.org/people/mentos987/sounds/818918/
+Creator: mentos987
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 48 kHz / 16-bit, 0:57.256
+Description: naturally cracking frozen lake with cracks propagating and reverberating through water/ice.
+Potential use:
+- VOID / WASTELAND / NIGHT events
+- resonant long-tail crack transformations
+- scene evolution cues
+Priority: VERY HIGH
+
+#### FS-ICE-002 — Mixpre frozen puddle
+Source: https://freesound.org/people/ventrapatte/sounds/843827/
+Creator: ventrapatte
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 5:50.430
+Description: prolonged creaking, bubbling, gurgling and cracking of frozen water.
+Potential use:
+- long evolving ice texture
+- event mining
+- granular / spectral source
+Caution:
+- distant road present; segment selectively.
+Priority: HIGH
+
+#### FS-ICE-003 — icefield contact-mic family
+Representative sources:
+- https://freesound.org/people/blaukreuz/sounds/52151/
+- https://freesound.org/s/52144/
+Creator: blaukreuz
+Licence: CC0
+Type: frozen-lake contact-mic recordings
+Specs: WAV, stereo, 48 kHz / 24-bit
+Description: stones/pebbles exciting a frozen lake recorded with contact microphones.
+Potential use:
+- resonant ice impulse/event bank
+- extreme timestretch seeds
+Priority: VERY HIGH
+
+### Technical rooms / ventilation / infrastructure
+
+#### FS-TECH-001 — Utility room front
+Source: https://freesound.org/people/blaukreuz/sounds/212781/
+Creator: blaukreuz
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 1:06.965
+Description: computers, machinery and very loud air-conditioning hub.
+Potential use:
+- technical WORLD bed
+- ventilation texture
+- neutral dark sci-fi foundation
+Priority: VERY HIGH
+
+#### FS-TECH-002 — Utility room rear
+Source: https://freesound.org/people/blaukreuz/sounds/212780/
+Creator: blaukreuz
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 1:06.965
+Description: complementary rear-channel capture of the same utility room.
+Potential use:
+- alternate spatial perspective
+- source for layered / decorrelated technical worlds
+Priority: HIGH
+
+#### FS-TECH-003 — Dam / Hydro Plant 06
+Source: https://freesound.org/people/gurek/sounds/234412/
+Creator: gurek
+Licence: CC0
+Type: real hydro-plant interior field recording
+Specs: WAV, stereo, 44.1 kHz / 16-bit, 0:58.746
+Description: real inner hydro-plant ambience with hum/hiss/drone.
+Potential use:
+- FOUNDATION / WORLD
+- massive infrastructure tone
+Priority: VERY HIGH
+
+#### FS-TECH-004 — Dam / Hydro Plant 05
+Source: https://freesound.org/people/gurek/sounds/234413/
+Creator: gurek
+Licence: CC0
+Type: real hydro-plant interior field recording
+Specs: WAV, stereo, 44.1 kHz / 16-bit, 0:23.871
+Description: alternate real hydro-plant interior ambience.
+Potential use:
+- infrastructure texture variation
+Priority: HIGH
+
+### Concrete spaces / impulse responses
+
+#### FS-SPACE-001 — Parking Garage 0001 IR
+Source: https://freesound.org/people/djericmark/sounds/724679/
+Creator: djericmark
+Licence: CC0
+Type: real measured impulse response
+Specs: WAV, 192 kHz / 24-bit, 6.0 s
+Description: sine-sweep-derived IR from a large concrete parking garage.
+Potential use:
+- SPACE convolution/reference
+- concrete-room benchmark
+Priority: VERY HIGH
+
+#### FS-SPACE-002 — LA Metro Garage 02 IR
+Source: https://freesound.org/people/djericmark/sounds/724684/
+Creator: djericmark
+Licence: CC0
+Type: real measured impulse response
+Specs: WAV, stereo, 48 kHz / 24-bit, 1.927 s
+Description: real large concrete garage IR.
+Potential use:
+- tighter concrete-space character
+- reference against synthetic FDN designs
+Priority: HIGH
+
+### Harbor / shipyard / dock worlds
+
+#### FS-HARB-001 — Shipyard Construction Ambience, Saint-Nazaire
+Source: https://freesound.org/people/WattnotSounds/sounds/831634/
+Creator: WattnotSounds
+Licence: CC0
+Type: real field recording
+Specs: AIFF, stereo, 48 kHz / 24-bit, 2:08
+Description: cruise-ship construction yard; engines, metallic clangs, steel cutting, dock acoustics.
+Potential use:
+- INDUSTRIAL / WASTELAND world
+- long evolving industrial depth
+Caution:
+- faint shouts/footsteps; segment carefully.
+Priority: VERY HIGH
+
+#### FS-HARB-002 — St Nazaire Industrial Bulk Port without crane
+Source: https://freesound.org/people/bruno.auzet/sounds/838021/
+Creator: bruno.auzet
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 1:48.001
+Description: comparatively quiet industrial unloading-dock ambience without active crane movement.
+Potential use:
+- clean industrial harbor bed
+- subtle NDH underlay
+Priority: VERY HIGH
+
+#### FS-HARB-003 — Harbor Ambience 1
+Source: https://freesound.org/people/clif_creates/sounds/254125/
+Creator: clif_creates
+Licence: CC0
+Type: real field recording
+Specs: WAV, mono, 48 kHz / 24-bit, 1:00.146
+Description: docked boats, water, sail/flag movement.
+Potential use:
+- non-literal dock movement / water-body texture
+- transformed distant maritime layer
+Priority: MEDIUM-HIGH
+
+#### FS-HARB-004 — AMB Harbor Waves
+Source: https://freesound.org/people/cribbler/sounds/443018/
+Creator: cribbler
+Licence: CC0
+Type: real night field recording
+Specs: WAV, stereo, 96 kHz / 32-bit, 2:16.192
+Description: night harbor / shore / dock water, high-resolution.
+Potential use:
+- very high-quality water-space transformation source
+- dark exterior world
+Priority: VERY HIGH
+
+### Tunnel / city resonance
+
+#### FS-TUN-001 — Tunnel ambience distant
+Source: https://freesound.org/people/guidofm/sounds/839653/
+Creator: guidofm
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 96 kHz / 24-bit, 2:03.995
+Description: traffic and distant tunnel resonance.
+Potential use:
+- large urban tunnel world
+- high-resolution resonance extraction
+Caution:
+- people/bikes/cars may be identifiable; segmentation needed.
+Priority: HIGH
+
+#### FS-TUN-002 — Big Dig Tour 13
+Source: https://freesound.org/people/alienistcog/sounds/123745/
+Creator: alienistcog
+Licence: CC0
+Type: real field recording
+Specs: AIFF, stereo, 44.1 kHz / 16-bit, 1:56.060
+Description: huge echoing machine pings in an unfinished harbor tunnel.
+Potential use:
+- distant resonant EVENTS
+- underground scene space
+Caution:
+- footsteps in a middle section.
+Priority: HIGH
+
+### Mining / heavy infrastructure
+
+#### FS-MINE-001 — coal pit mine machinery / grabber
+Source: https://freesound.org/people/be_a_hero_not_a_patriot/sounds/332535/
+Creator: be_a_hero_not_a_patriot
+Licence: CC0
+Type: real MS field recording
+Specs: WAV, stereo, 44.1 kHz / 24-bit, 1:28.127
+Description: close open-pit coal-mine machinery.
+Potential use:
+- large-scale industrial motion
+- low body / mechanism extraction
+Priority: HIGH
+
+#### FS-MINE-002 — demolition excavator
+Source: https://freesound.org/people/Garuda1982/sounds/422081/
+Creator: Garuda1982
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 96 kHz / 24-bit, 2:41.501
+Description: real demolition excavator with hydraulics.
+Potential use:
+- high-resolution hydraulic / load / body source
+- de-literalized colossal motion
+Priority: HIGH
+
+#### FS-IND-004 — industrial_machine_tone
+Source: https://freesound.org/people/Kostrava/sounds/434507/
+Creator: Kostrava
+Licence: CC0
+Type: real factory field recording
+Specs: WAV, stereo, 44.1 kHz / 32-bit, 1:50.054
+Description: industrial machine tone / hydraulic ambience.
+Potential use:
+- dark industrial foundation
+- tension bed
+Priority: HIGH
+
+## Search-direction conclusion
+
+The strongest new direction is not “more dark ambience”.
+It is **physical systems that naturally evolve**:
+- wind-excited structures;
+- frozen surfaces under stress;
+- large technical infrastructure;
+- resonant tunnels/concrete spaces;
+- moving water coupled to structures;
+- distant industrial/harbor systems.
+
+These sources already contain complex non-periodic modulation and causal physical behavior. Noctomorph should preserve that complexity instead of flattening it into static loops.
