@@ -1,0 +1,46 @@
+name: Noctomorph Aachen Cathedral IR Probe
+
+on:
+  push:
+    branches:
+      - dev/prototype-v0.1
+    paths:
+      - ".github/workflows/source-probe-aachen.yml"
+      - "tools/analyze_audio.py"
+      - "tools/analyze_ir_folder.py"
+      - "tools/requirements-audio.txt"
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install analysis dependencies
+        run: python -m pip install -r tools/requirements-audio.txt
+
+      - name: Download Aachen Cathedral B-format impulse responses
+        run: |
+          mkdir -p external/aachen measurements/aachen
+          curl -L --fail --retry 3 "https://zenodo.org/records/22207913/files/impulse_responses.zip?download=1" -o external/aachen/impulse_responses.zip
+          unzip -q external/aachen/impulse_responses.zip -d external/aachen/irs
+          find external/aachen/irs -type f | head -20
+
+      - name: Measure all Aachen IRs
+        run: |
+          python tools/analyze_ir_folder.py external/aachen/irs \
+            --json measurements/aachen/DATA-IR-001-all.json \
+            --csv measurements/aachen/DATA-IR-001-summary.csv
+
+      - name: Upload measurements only
+        uses: actions/upload-artifact@v4
+        with:
+          name: noctomorph-aachen-ir-measurements
+          path: measurements/aachen/*
+          if-no-files-found: error
