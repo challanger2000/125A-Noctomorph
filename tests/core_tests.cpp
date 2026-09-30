@@ -49,15 +49,15 @@ RenderResult render(
     constexpr std::size_t block = 257;
     std::size_t offset = 0;
     while (offset < frames) {
-        if (releaseHalfway && offset >= frames / 2 && e.active())
-            e.noteOff();
+        if (releaseHalfway && offset >= frames / 2 && e->active())
+            e->noteOff();
 
         const std::size_t n = std::min(block, frames - offset);
-        e.process(result.left.data() + offset, result.right.data() + offset, n);
+        e->process(result.left.data() + offset, result.right.data() + offset, n);
         offset += n;
     }
 
-    result.events = e.eventCount();
+    result.events = e->eventCount();
     return result;
 }
 
