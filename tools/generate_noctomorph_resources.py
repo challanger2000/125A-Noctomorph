@@ -20,6 +20,16 @@ ASSETS = [
     ("event_cabinet.wav", 12, False, 1.0),
     ("event_thud.wav", 13, False, 1.0),
     ("event_peters.wav", 14, False, 1.0),
+    ("world_steamrod.wav", 15, False, 1.0),
+    ("world_pneumatic.wav", 16, False, 1.0),
+    ("world_waterpump.wav", 17, False, 1.0),
+    ("texture_millbelt.wav", 18, False, 1.0),
+    ("texture_steelcoiler.wav", 19, False, 1.0),
+    ("texture_chisel.wav", 20, False, 1.0),
+    ("texture_fiber.wav", 21, False, 1.0),
+    ("event_handlecreak.wav", 22, False, 1.0),
+    ("event_hinge.wav", 23, False, 1.0),
+    ("event_metalthump.wav", 24, False, 1.0),
 ]
 
 

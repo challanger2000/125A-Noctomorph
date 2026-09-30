@@ -133,6 +133,12 @@ def main() -> int:
           start=10, duration=40, peak=.28, speed=.68, hp=40, lp=5200)
     write(args.out, "world_ambient.wav", d/"world_ambient.ogg",
           start=1, duration=32, peak=.26, speed=.58, lp=3200)
+    write(args.out, "world_steamrod.wav", d/"world_steamrod.ogg",
+          start=12, duration=34, peak=.28, speed=.72, hp=40, lp=6500)
+    write(args.out, "world_pneumatic.wav", d/"world_pneumatic.ogg",
+          start=10, duration=32, peak=.27, speed=.64, hp=40, lp=7200)
+    write(args.out, "world_waterpump.wav", d/"world_waterpump.ogg",
+          start=5, duration=30, peak=.26, speed=.70, hp=35, lp=5400)
 
     # TEXTURE beds: more detail, lower level, often strongly transformed.
     write(args.out, "texture_packing.wav", d/"texture_packing.ogg",
@@ -144,6 +150,14 @@ def main() -> int:
     write(args.out, "texture_choir.wav", d/"texture_choir.ogg",
           start=32, duration=22, peak=.15, speed=.36, reverse=True,
           hp=120, lp=1800)
+    write(args.out, "texture_millbelt.wav", d/"texture_millbelt.ogg",
+          start=8, duration=28, peak=.20, speed=.76, hp=110, lp=8500)
+    write(args.out, "texture_steelcoiler.wav", d/"texture_steelcoiler.ogg",
+          start=12, duration=28, peak=.22, speed=.68, hp=90, lp=8500)
+    write(args.out, "texture_chisel.wav", d/"texture_chisel.ogg",
+          start=2, duration=24, peak=.18, speed=.52, hp=140, lp=6000)
+    write(args.out, "texture_fiber.wav", d/"texture_fiber.ogg",
+          start=2, duration=26, peak=.20, speed=.82, hp=120, lp=8000)
 
     # BODY exciters are never mixed directly; they only excite the modal body.
     write(args.out, "body_glass.wav", d/"body_glass.ogg",
@@ -160,6 +174,12 @@ def main() -> int:
           start=0, duration=.45, channels=1, peak=.24, speed=.50, lp=2500)
     write(args.out, "event_peters.wav", d/"event_peters.oga",
           start=4, duration=13, peak=.18, speed=.55, hp=35, lp=4200)
+    write(args.out, "event_handlecreak.wav", d/"event_handlecreak.ogg",
+          start=0, duration=5.0, peak=.18, speed=.55, hp=120, lp=5500)
+    write(args.out, "event_hinge.wav", d/"event_hinge.ogg",
+          start=0, duration=7.3, peak=.18, speed=.48, hp=120, lp=5200)
+    write(args.out, "event_metalthump.wav", d/"event_metalthump.ogg",
+          start=0, duration=1.7, peak=.22, speed=.55, lp=3200)
     return 0
 
 

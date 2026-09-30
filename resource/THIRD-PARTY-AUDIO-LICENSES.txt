@@ -6,7 +6,7 @@ No endorsement by any source creator or licensor is implied.
 
 WORK WITH SOUNDS / CC BY 4.0
 License: https://creativecommons.org/licenses/by/4.0/
-All five recordings below were supplied to Wikimedia Commons through the
+All recordings in this section were supplied to Wikimedia Commons through the
 Work With Sounds / Wikimedia Sverige cooperation project with VRT-confirmed
 permission. Required attribution and modification disclosure are preserved.
 
@@ -44,6 +44,41 @@ permission. Required attribution and modification disclosure are preserved.
    Use: INDUSTRIAL / WASTELAND TEXTURE
    Changes: excerpt selection, resampling, band-pass filtering, time/pitch
    transformation, fades, normalization, PCM16 conversion.
+
+16. WWS Steamwindingengineconnectingrod.ogg
+   Source: https://commons.wikimedia.org/wiki/File:WWS_Steamwindingengineconnectingrod.ogg
+   Creator: Work With Sounds / Museum of Municipal Engineering
+   Use: INDUSTRIAL / ABYSS WORLD material
+   Changes: excerpt selection, resampling, slowing, band limiting, fades,
+   normalization, PCM16 conversion.
+
+17. WWS Pneumaticpump.ogg
+   Source: https://commons.wikimedia.org/wiki/File:WWS_Pneumaticpump.ogg
+   Creator: Work With Sounds / Technical Museum of Slovenia
+   Use: INDUSTRIAL / WASTELAND WORLD material
+   Changes: excerpt selection, resampling, slowing, band limiting, fades,
+   normalization, PCM16 conversion.
+
+18. WWS Waterintakepumpingstation.ogg
+   Source: https://commons.wikimedia.org/wiki/File:WWS_Waterintakepumpingstation.ogg
+   Creator: Work With Sounds / Technical Museum of Slovenia
+   Use: VOID / RUINS / ABYSS WORLD material
+   Changes: excerpt selection, resampling, slowing, band limiting, fades,
+   normalization, PCM16 conversion.
+
+19. WWS Horizontalmillingmachinebeltdrive.ogg
+   Source: https://commons.wikimedia.org/wiki/File:WWS_Horizontalmillingmachinebeltdrive.ogg
+   Creator: Work With Sounds / Torsten Nilsson
+   Use: INDUSTRIAL TEXTURE
+   Changes: excerpt selection, resampling, slowing, band-pass filtering, fades,
+   normalization, PCM16 conversion.
+
+20. WWS SteelworkCoiler.ogg
+   Source: https://commons.wikimedia.org/wiki/File:WWS_SteelworkCoiler.ogg
+   Creator: Work With Sounds / Konrad Gutkowski
+   Use: INDUSTRIAL / WASTELAND TEXTURE
+   Changes: excerpt selection, resampling, slowing, band-pass filtering, fades,
+   normalization, PCM16 conversion.
 
 PUBLIC DOMAIN / CC0
 
@@ -123,3 +158,44 @@ PUBLIC DOMAIN / CC0
     License: CC0 1.0
     Use: rare optional NOCTURNE EVENT only; EVENTS=0 disables it
     Changes: excerpt selection, slowing, filtering, fades, normalization.
+
+
+21. Chisel.1st.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Chisel.1st.ogg
+    Creator: Membeth
+    License: Public Domain
+    Use: VOID / RUINS / ABYSS resonant TEXTURE material
+    Changes: excerpt selection, resampling, slowing, band-pass filtering,
+    fades, normalization, PCM16 conversion.
+
+22. Machine installed fiber optic.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Machine_installed_fiber_optic.ogg
+    Creator: Ranch9613
+    License: CC0 1.0
+    Use: INDUSTRIAL / WASTELAND TEXTURE material
+    Changes: excerpt selection, resampling, slowing, band-pass filtering,
+    fades, normalization, PCM16 conversion.
+
+23. Door handle creaking.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Door_handle_creaking.ogg
+    Creator: stephan / PDSounds
+    License: Public Domain
+    Use: RUINS / INDUSTRIAL / NOCTURNE sparse EVENT
+    Changes: resampling, slowing, band-pass filtering, fades, normalization,
+    PCM16 conversion.
+
+24. Squeaky door hinge.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Squeaky_door_hinge.ogg
+    Creator: MKFI
+    License: Public Domain
+    Use: RUINS / NOCTURNE sparse EVENT
+    Changes: resampling, slowing, band-pass filtering, fades, normalization,
+    PCM16 conversion.
+
+25. Metal drop thump.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Metal_drop_thump.ogg
+    Creator: stephan / PDSounds
+    License: Public Domain
+    Use: INDUSTRIAL / WASTELAND / ABYSS sparse EVENT
+    Changes: resampling, slowing, low-pass filtering, fades, normalization,
+    PCM16 conversion.

@@ -201,8 +201,10 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
         case noctomorph::Archetype::Void:
             addWorld(WorldAmbient);
             addWorld(WorldWind);
+            addWorld(WorldWaterPump);
             addTexture(TextureChoir);
             addTexture(TextureBrush);
+            addTexture(TextureChisel);
             addBody(BodyGlass);
             addEvent(EventThud);
             break;
@@ -210,12 +212,16 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
         case noctomorph::Archetype::Ruins:
             addWorld(WorldWind);
             addWorld(WorldAmbient);
+            addWorld(WorldWaterPump);
             addTexture(TextureBrush);
             addTexture(TextureChoir);
+            addTexture(TextureChisel);
             addBody(BodyGlass);
             addBody(BodyGong);
             addEvent(EventMetalDoor);
             addEvent(EventCabinet);
+            addEvent(EventHandleCreak);
+            addEvent(EventHinge);
             addEvent(EventThud);
             break;
 
@@ -223,13 +229,20 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addWorld(WorldPaper);
             addWorld(WorldEccentric);
             addWorld(WorldFence);
+            addWorld(WorldSteamRod);
+            addWorld(WorldPneumaticPump);
             addTexture(TexturePacking);
             addTexture(TextureSaw);
             addTexture(TextureBrush);
+            addTexture(TextureMillBelt);
+            addTexture(TextureSteelCoiler);
+            addTexture(TextureFiber);
             addBody(BodyGlass);
             addBody(BodyGong);
             addEvent(EventMetalDoor);
             addEvent(EventCabinet);
+            addEvent(EventHandleCreak);
+            addEvent(EventMetalThump);
             addEvent(EventThud);
             break;
 
@@ -237,20 +250,28 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addWorld(WorldWind);
             addWorld(WorldFence);
             addWorld(WorldAmbient);
+            addWorld(WorldPneumaticPump);
             addTexture(TextureSaw);
             addTexture(TextureBrush);
+            addTexture(TextureSteelCoiler);
+            addTexture(TextureFiber);
             addBody(BodyGlass);
             addEvent(EventCabinet);
+            addEvent(EventMetalThump);
             addEvent(EventThud);
             break;
 
         case noctomorph::Archetype::Abyss:
             addWorld(WorldAmbient);
+            addWorld(WorldSteamRod);
+            addWorld(WorldWaterPump);
             addTexture(TextureChoir);
             addTexture(TextureBrush);
+            addTexture(TextureChisel);
             addBody(BodyGong);
             addBody(BodyGlass);
             addEvent(EventThud);
+            addEvent(EventMetalThump);
             addEvent(EventCabinet);
             break;
 
@@ -263,6 +284,8 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addBody(BodyGlass);
             addEvent(EventMetalDoor);
             addEvent(EventCabinet);
+            addEvent(EventHandleCreak);
+            addEvent(EventHinge);
             addEvent(EventPeters);
             break;
     }

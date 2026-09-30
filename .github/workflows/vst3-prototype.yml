@@ -75,11 +75,23 @@ jobs:
           get_asset "https://upload.wikimedia.org/wikipedia/commons/5/5b/Dull_thud.ogg" "external-assets/event_thud.ogg"
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/200437%20bigben12345%20petersglocke.oga" "external-assets/event_peters.oga"
 
+          # Production-bank expansion: physically different source families.
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Steamwindingengineconnectingrod.ogg" "external-assets/world_steamrod.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Pneumaticpump.ogg" "external-assets/world_pneumatic.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Waterintakepumpingstation.ogg" "external-assets/world_waterpump.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Horizontalmillingmachinebeltdrive.ogg" "external-assets/texture_millbelt.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20SteelworkCoiler.ogg" "external-assets/texture_steelcoiler.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Chisel.1st.ogg" "external-assets/texture_chisel.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Machine%20installed%20fiber%20optic.ogg" "external-assets/texture_fiber.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Door%20handle%20creaking.ogg" "external-assets/event_handlecreak.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Squeaky%20door%20hinge.ogg" "external-assets/event_hinge.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Metal%20drop%20thump.ogg" "external-assets/event_metalthump.ogg"
+
       - name: Prepare deterministic v0.2 scene bank
         run: |
           python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets
           find prepared-assets -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
-          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 15
+          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 25
 
       - name: Upload prepared scene bank
         uses: actions/upload-artifact@v4

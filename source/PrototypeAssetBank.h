@@ -43,6 +43,16 @@ private:
         EventCabinet,
         EventThud,
         EventPeters,
+        WorldSteamRod,
+        WorldPneumaticPump,
+        WorldWaterPump,
+        TextureMillBelt,
+        TextureSteelCoiler,
+        TextureChisel,
+        TextureFiber,
+        EventHandleCreak,
+        EventHinge,
+        EventMetalThump,
         Count
     };
 
