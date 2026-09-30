@@ -118,10 +118,20 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42", "expansion45", "expansion48", "expansion51"), default="all")
+    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42", "expansion45", "expansion48", "expansion51", "expansion54"), default="all")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     d = args.input_dir
+
+    if args.mode == "expansion54":
+        # Verified 51-source bank is restored first; derive three new pressure/micro-event sources.
+        write(args.out, "texture_pressurehiss.wav", d/"texture_pressurehiss.ogg",
+              start=0, duration=8.0, peak=.12, speed=.42, hp=220, lp=5200)
+        write(args.out, "world_hydraulicfall.wav", d/"world_hydraulicfall.ogg",
+              start=1, duration=20, peak=.17, speed=.50, hp=45, lp=2800)
+        write(args.out, "event_metaljingle.wav", d/"event_metaljingle.ogg",
+              start=4, duration=12, channels=1, peak=.14, speed=.46, hp=500, lp=6200)
+        return 0
 
     if args.mode == "expansion51":
         # Verified 48-source bank is restored first; derive three new scene classes.

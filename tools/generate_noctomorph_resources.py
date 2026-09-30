@@ -56,6 +56,9 @@ ASSETS = [
     ("world_thunderrain.wav", 48, False, 1.0),
     ("body_chapterbell.wav", 49, False, 0.18),
     ("texture_grain.wav", 50, False, 1.0),
+    ("texture_pressurehiss.wav", 51, False, 1.0),
+    ("world_hydraulicfall.wav", 52, False, 1.0),
+    ("event_metaljingle.wav", 53, False, 1.0),
 ]
 
 

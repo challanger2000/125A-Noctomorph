@@ -215,6 +215,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addWorld(WorldThunderRain);
             addTexture(TextureInteriorHum);
             addTexture(TextureGrain);
+            addTexture(TexturePressureHiss);
             addBody(BodyGlass);
             addBody(BodyChapterBell);
             addBody(BodyWhirly);
@@ -241,6 +242,8 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureRollingRattle);
             addTexture(TextureInteriorHum);
             addTexture(TextureGrain);
+            addTexture(TexturePressureHiss);
+            addWorld(WorldHydraulicFall);
             addBody(BodyGlass);
             addBody(BodyChapterBell);
             addBody(BodyGlassRing);
@@ -319,6 +322,8 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addWorld(WorldWaves);
             addWorld(WorldForestAir);
             addWorld(WorldThunderRain);
+            addWorld(WorldHydraulicFall);
+            addTexture(TexturePressureHiss);
             addBody(BodyGong);
             addBody(BodyGlass);
             addBody(BodyWhirly);
@@ -330,6 +335,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addEvent(EventFlint);
             addEvent(EventGravel);
             addEvent(EventHollowClatter);
+            addEvent(EventMetalJingle);
             addEvent(EventCabinet);
             break;
 
@@ -353,6 +359,8 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureInteriorHum);
             addWorld(WorldForestAir);
             addWorld(WorldThunderRain);
+            addWorld(WorldHydraulicFall);
+            addTexture(TexturePressureHiss);
             addBody(BodyGlass);
             addBody(BodyGlassRing);
             addBody(BodyChapterBell);
@@ -363,6 +371,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addEvent(EventHinge);
             addEvent(EventFlint);
             addEvent(EventWoodKnock);
+            addEvent(EventMetalJingle);
             addEvent(EventPeters);
             break;
     }

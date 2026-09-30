@@ -79,6 +79,9 @@ private:
         WorldThunderRain,
         BodyChapterBell,
         TextureGrain,
+        TexturePressureHiss,
+        WorldHydraulicFall,
+        EventMetalJingle,
         Count
     };
 

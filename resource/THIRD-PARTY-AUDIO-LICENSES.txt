@@ -417,3 +417,28 @@ PUBLIC DOMAIN / CC0
     Use: VOID / RUINS / ABYSS dry granular TEXTURE material
     Changes: excerpt selection, resampling, slowing, band limiting, attenuation,
     fades, normalization, PCM16 conversion.
+
+
+52. Can of compressed air.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Can_of_compressed_air.ogg
+    Creator: stilgar / PDSounds
+    License: Public Domain
+    Use: VOID / RUINS / ABYSS / NOCTURNE pressure-hiss TEXTURE material
+    Changes: excerpt selection, resampling, strong slowing, band limiting,
+    attenuation, fades, normalization, PCM16 conversion.
+
+53. Hydraulic lift down.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Hydraulic_lift_down.ogg
+    Creator: stephan / PDSounds
+    License: Public Domain
+    Use: RUINS / ABYSS / NOCTURNE falling-pressure WORLD material
+    Changes: excerpt selection, resampling, strong slowing, band limiting,
+    attenuation, fades, normalization, PCM16 conversion.
+
+54. Bag of coins.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Bag_of_coins.ogg
+    Creator: cori
+    License: Public Domain
+    Use: ABYSS / NOCTURNE sparse high-metal micro EVENT material
+    Changes: excerpt selection, mono conversion, strong slowing, high-pass /
+    band limiting, attenuation, fades, normalization, PCM16 conversion.
