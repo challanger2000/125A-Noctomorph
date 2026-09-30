@@ -249,6 +249,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addBody(BodyGlassRing);
             addBody(BodyGong);
             addBody(BodyWhirly);
+            addBody(BodySteelChisel);
             addEvent(EventMetalDoor);
             addEvent(EventCabinet);
             addEvent(EventHandleCreak);
@@ -274,10 +275,13 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TexturePlaner);
             addBody(BodyGlass);
             addBody(BodyGong);
+            addBody(BodySteelChisel);
             addEvent(EventMetalDoor);
             addEvent(EventCabinet);
             addEvent(EventHandleCreak);
             addEvent(EventMetalThump);
+            addEvent(EventMetalDrop);
+            addEvent(EventThinMetal);
             addEvent(EventThud);
             break;
 
@@ -296,6 +300,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addBody(BodyGlass);
             addEvent(EventCabinet);
             addEvent(EventMetalThump);
+            addEvent(EventMetalDrop);
             addEvent(EventThud);
             break;
 
@@ -330,12 +335,14 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addBody(BodyBloop);
             addBody(BodyGlassRing);
             addBody(BodyChapterBell);
+            addBody(BodySteelChisel);
             addEvent(EventThud);
             addEvent(EventMetalThump);
             addEvent(EventFlint);
             addEvent(EventGravel);
             addEvent(EventHollowClatter);
             addEvent(EventMetalJingle);
+            addEvent(EventMetalDrop);
             addEvent(EventCabinet);
             break;
 
@@ -372,6 +379,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addEvent(EventFlint);
             addEvent(EventWoodKnock);
             addEvent(EventMetalJingle);
+            addEvent(EventThinMetal);
             addEvent(EventPeters);
             break;
     }
