@@ -31,13 +31,13 @@ jobs:
           mkdir -p external/real raw renders measurements/real-render
           curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" -o external/real/world.ogg
           curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Automaticpackingstation.ogg" -o external/real/texture.ogg
-          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gong%20or%20bell%20vibrant%20(short).ogg" -o external/real/body.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ticking%20glass.ogg" -o external/real/body.ogg
           curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/200437%20bigben12345%20petersglocke.oga" -o external/real/event.oga
       - name: Prepare normalized source buffers
         run: |
           python tools/prepare_audio_raw.py external/real/world.ogg raw/world.raw --peak 0.40
           python tools/prepare_audio_raw.py external/real/texture.ogg raw/texture.raw --peak 0.32
-          python tools/prepare_audio_raw.py external/real/body.ogg raw/body.raw --peak 0.26
+          python tools/prepare_audio_raw.py external/real/body.ogg raw/body.raw --peak 0.18
           python tools/prepare_audio_raw.py external/real/event.oga raw/event.raw --peak 0.35
       - name: Configure and build
         run: |
