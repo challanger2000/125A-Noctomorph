@@ -63,9 +63,9 @@ jobs:
 
       - name: Apply measured rooms
         run: |
-          python tools/apply_ir.py renders/ruins-engine.wav external/archetypes/maes-howe.wav renders/ruins-maes-howe.wav --wet 0.62 --tail-seconds 5
-          python tools/apply_ir.py renders/nocturne-engine.wav external/archetypes/hamilton.wav renders/nocturne-hamilton.wav --wet 0.74 --tail-seconds 15
-          python tools/apply_ir.py renders/abyss-engine.wav external/archetypes/hamilton.wav renders/abyss-hamilton.wav --wet 0.52 --tail-seconds 15
+          python tools/apply_ir.py renders/ruins-engine.wav external/archetypes/maes-howe.wav renders/ruins-maes-howe.wav --wet 0.62 --tail-seconds 5 --bformat-stereo
+          python tools/apply_ir.py renders/nocturne-engine.wav external/archetypes/hamilton.wav renders/nocturne-hamilton.wav --wet 0.70 --tail-seconds 15 --bformat-stereo
+          python tools/apply_ir.py renders/abyss-engine.wav external/archetypes/hamilton.wav renders/abyss-hamilton.wav --wet 0.48 --tail-seconds 15 --bformat-stereo
 
       - name: Measure archetypes
         run: |
