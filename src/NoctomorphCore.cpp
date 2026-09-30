@@ -736,7 +736,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 resonator.process(presenceExcitation, presenceL, presenceR);
 
             const float presenceAmount =
-                0.018f *
+                0.060f *
                 (0.35f + 0.65f * parameters_.evolve) *
                 (0.45f + 0.55f * parameters_.tension);
 
