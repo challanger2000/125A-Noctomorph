@@ -12,6 +12,7 @@ on:
   workflow_dispatch:
 
 jobs:
+  # Full 46-IR B-format dataset measurement.
   probe:
     runs-on: ubuntu-latest
     timeout-minutes: 20
