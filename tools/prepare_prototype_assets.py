@@ -118,10 +118,20 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42", "expansion45"), default="all")
+    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42", "expansion45", "expansion48"), default="all")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     d = args.input_dir
+
+    if args.mode == "expansion48":
+        # Verified 45-source bank is restored first; derive only three new source classes.
+        write(args.out, "world_forestair.wav", d/"world_forestair.ogg",
+              start=22, duration=44, peak=.20, speed=.46, reverse=True, hp=35, lp=2600)
+        write(args.out, "texture_rollingrattle.wav", d/"texture_rollingrattle.ogg",
+              start=1, duration=20, peak=.13, speed=.50, hp=180, lp=5200)
+        write(args.out, "texture_interiorhum.wav", d/"texture_interiorhum.ogg",
+              start=2, duration=24, peak=.14, speed=.56, hp=45, lp=2200)
+        return 0
 
     if args.mode == "expansion45":
         # Verified 42-source bank is restored first; derive only three new source classes.

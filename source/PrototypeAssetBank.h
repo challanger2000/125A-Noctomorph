@@ -73,6 +73,9 @@ private:
         TextureFeedback,
         TextureOrganicRattle,
         EventHollowClatter,
+        WorldForestAir,
+        TextureRollingRattle,
+        TextureInteriorHum,
         Count
     };
 

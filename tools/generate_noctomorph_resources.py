@@ -50,6 +50,9 @@ ASSETS = [
     ("texture_feedback.wav", 42, False, 1.0),
     ("texture_organicrattle.wav", 43, False, 1.0),
     ("event_hollowclatter.wav", 44, False, 1.0),
+    ("world_forestair.wav", 45, False, 1.0),
+    ("texture_rollingrattle.wav", 46, False, 1.0),
+    ("texture_interiorhum.wav", 47, False, 1.0),
 ]
 
 

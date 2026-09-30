@@ -366,3 +366,29 @@ PUBLIC DOMAIN / CC0
     Use: RUINS / ABYSS sparse hollow EVENT material
     Changes: mono conversion, slowing, band limiting, attenuation, fades,
     normalization, PCM16 conversion.
+
+
+46. 20090610 0 ambience.ogg
+    Source: https://commons.wikimedia.org/wiki/File:20090610_0_ambience.ogg
+    Creator: nille / PDSounds
+    License: Public Domain
+    Use: VOID / ABYSS / NOCTURNE abstract WORLD air/motion material
+    Changes: excerpt selection, reversal, resampling, strong slowing, low-pass
+    filtering, fades, normalization, PCM16 conversion. Not intended to remain
+    recognizable as a literal forest recording.
+
+47. Rolling toy rattle on floor.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Rolling_toy_rattle_on_floor.ogg
+    Creator: stephan / PDSounds
+    License: Public Domain
+    Use: RUINS / ABYSS / NOCTURNE rolling micro-motion TEXTURE material
+    Changes: excerpt selection, resampling, slowing, band limiting,
+    attenuation, fades, normalization, PCM16 conversion.
+
+48. Dishwasher end droning hissing humming.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Dishwasher_end_droning_hissing_humming.ogg
+    Creator: stephan / PDSounds
+    License: Public Domain
+    Use: VOID / RUINS / ABYSS / NOCTURNE interior low-pressure TEXTURE material
+    Changes: excerpt selection, resampling, slowing, strong low-pass filtering,
+    attenuation, fades, normalization, PCM16 conversion.

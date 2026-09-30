@@ -211,6 +211,8 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureFlowWater);
             addTexture(TextureFeedback);
             addWorld(WorldWaves);
+            addWorld(WorldForestAir);
+            addTexture(TextureInteriorHum);
             addBody(BodyGlass);
             addBody(BodyWhirly);
             addBody(BodyBloop);
@@ -233,6 +235,8 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureWoodCreak);
             addTexture(TextureStoneGrind);
             addTexture(TextureOrganicRattle);
+            addTexture(TextureRollingRattle);
+            addTexture(TextureInteriorHum);
             addBody(BodyGlass);
             addBody(BodyGlassRing);
             addBody(BodyGong);
@@ -304,7 +308,10 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureStoneGrind);
             addTexture(TextureFeedback);
             addTexture(TextureOrganicRattle);
+            addTexture(TextureRollingRattle);
+            addTexture(TextureInteriorHum);
             addWorld(WorldWaves);
+            addWorld(WorldForestAir);
             addBody(BodyGong);
             addBody(BodyGlass);
             addBody(BodyWhirly);
@@ -334,6 +341,9 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureStoneGrind);
             addTexture(TextureFeedback);
             addTexture(TextureOrganicRattle);
+            addTexture(TextureRollingRattle);
+            addTexture(TextureInteriorHum);
+            addWorld(WorldForestAir);
             addBody(BodyGlass);
             addBody(BodyGlassRing);
             addBody(BodyWhirly);

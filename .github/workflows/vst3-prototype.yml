@@ -26,14 +26,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Restore verified 42-source baseline
+      - name: Restore verified 45-source baseline
         uses: actions/download-artifact@v4
         with:
           name: noctomorph-prepared-scene-bank
           path: prepared-assets
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          run-id: 36763677175
+          run-id: 36764617499
 
       - uses: actions/setup-python@v5
         with:
@@ -42,7 +42,7 @@ jobs:
       - name: Install asset preparation dependencies
         run: python -m pip install -r tools/requirements-audio.txt
 
-      - name: Download 45-source expansion candidates
+      - name: Download 48-source expansion candidates
         shell: bash
         run: |
           set -euo pipefail
@@ -70,15 +70,15 @@ jobs:
             sleep 12
           }
 
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Acoustic%20Feedback.ogg" "external-assets/texture_feedback.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Rattlesnake.ogg" "external-assets/texture_organicrattle.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Plastic%20object%20clattering.ogg" "external-assets/event_hollowclatter.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/20090610%200%20ambience.ogg" "external-assets/world_forestair.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Rolling%20toy%20rattle%20on%20floor.ogg" "external-assets/texture_rollingrattle.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Dishwasher%20end%20droning%20hissing%20humming.ogg" "external-assets/texture_interiorhum.ogg"
 
       - name: Prepare deterministic v0.2 scene bank
         run: |
-          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion45
+          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion48
           find prepared-assets -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
-          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 45
+          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 48
 
       - name: Upload prepared scene bank
         uses: actions/upload-artifact@v4
