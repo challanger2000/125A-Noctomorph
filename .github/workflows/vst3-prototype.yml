@@ -82,7 +82,7 @@ jobs:
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Horizontalmillingmachinebeltdrive.ogg" "external-assets/texture_millbelt.ogg"
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20SteelworkCoiler.ogg" "external-assets/texture_steelcoiler.ogg"
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Chisel.1st.ogg" "external-assets/texture_chisel.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Machine%20installed%20fiber%20optic.ogg" "external-assets/texture_fiber.ogg"
+          get_asset "https://upload.wikimedia.org/wikipedia/commons/a/ad/Machine_installed_fiber_optic.ogg" "external-assets/texture_fiber.ogg"
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Door%20handle%20creaking.ogg" "external-assets/event_handlecreak.ogg"
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Squeaky%20door%20hinge.ogg" "external-assets/event_hinge.ogg"
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Metal%20drop%20thump.ogg" "external-assets/event_metalthump.ogg"
