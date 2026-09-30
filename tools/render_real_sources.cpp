@@ -41,7 +41,7 @@ int main(int argc,char** argv){
     noctomorph::Clip tc{t.l.data(),t.r.data(),t.l.size(),double(t.sr),true};
     noctomorph::Clip ec{e.l.data(),e.r.data(),e.l.size(),double(e.sr),false};
     auto engine=std::make_unique<noctomorph::Engine>(); engine->prepare(sr); engine->reset(0x125A5245414C5352ULL);
-    noctomorph::Parameters p; p.foundation=.42f;p.world=.52f;p.texture=.34f;p.body=.52f;p.tension=.44f;p.evolve=.72f;p.events=.22f;p.space=.46f;p.output=.50f;
+    noctomorph::Parameters p; p.foundation=.22f;p.world=.74f;p.texture=.58f;p.body=.30f;p.tension=.48f;p.evolve=.72f;p.events=.18f;p.space=.42f;p.output=.48f;
     engine->setParameters(p); engine->setArchetype(noctomorph::Archetype::Industrial); engine->setWorldClip(&wc);engine->setTextureClip(&tc);engine->setEventClip(&ec);engine->noteOn(36,.9f);
     std::vector<float> l(frames),r(frames); constexpr std::size_t block=257; std::size_t off=0; float peak=0.0f; long double energy=0.0;
     while(off<frames){auto n=std::min(block,frames-off);engine->process(l.data()+off,r.data()+off,n);for(std::size_t i=off;i<off+n;++i){peak=std::max(peak,std::max(std::fabs(l[i]),std::fabs(r[i])));energy+=(long double)l[i]*l[i]+(long double)r[i]*r[i];}off+=n;}
