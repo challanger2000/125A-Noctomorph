@@ -87,6 +87,9 @@ private:
         BodySteelChisel,
         EventMetalDrop,
         EventThinMetal,
+        WorldReactorHall,
+        WorldWarehouseHall,
+        WorldMausoleum,
         Count
     };
 
