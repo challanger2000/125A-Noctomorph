@@ -51,6 +51,7 @@ jobs:
           ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body.raw raw/event.raw 30 renders/noctomorph-source-only-30s.wav source-only
           ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body.raw raw/event.raw 30 renders/noctomorph-foundation-only-30s.wav foundation-only
           ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body.raw raw/event.raw 30 renders/noctomorph-body-only-30s.wav body-only
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body.raw raw/event.raw 30 renders/noctomorph-presence-only-30s.wav presence-only
           ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body.raw raw/event.raw 30 renders/noctomorph-world-texture-only-30s.wav world-texture-only
           python tools/analyze_audio.py renders/noctomorph-real-30s.wav --json measurements/real-render/30s.json
           python tools/analyze_audio.py renders/noctomorph-real-120s.wav --json measurements/real-render/120s.json
@@ -58,6 +59,7 @@ jobs:
           python tools/analyze_audio.py renders/noctomorph-source-only-30s.wav --json measurements/real-render/source-only-30s.json
           python tools/analyze_audio.py renders/noctomorph-foundation-only-30s.wav --json measurements/real-render/foundation-only-30s.json
           python tools/analyze_audio.py renders/noctomorph-body-only-30s.wav --json measurements/real-render/body-only-30s.json
+          python tools/analyze_audio.py renders/noctomorph-presence-only-30s.wav --json measurements/real-render/presence-only-30s.json
           python tools/analyze_audio.py renders/noctomorph-world-texture-only-30s.wav --json measurements/real-render/world-texture-only-30s.json
       - name: Upload listening renders and measurements
         uses: actions/upload-artifact@v4
