@@ -89,6 +89,15 @@ int main(int argc,char** argv){
     if (profile == "source-only") {
         p.foundation=.0f; p.world=.74f; p.texture=.58f; p.body=.0f;
         p.tension=.0f; p.evolve=.25f; p.events=.0f; p.space=.0f; p.output=.48f;
+    } else if (profile == "foundation-only") {
+        p.foundation=.55f; p.world=.0f; p.texture=.0f; p.body=.0f;
+        p.tension=.48f; p.evolve=.72f; p.events=.0f; p.space=.0f; p.output=.48f;
+    } else if (profile == "body-only") {
+        p.foundation=.0f; p.world=.0f; p.texture=.0f; p.body=.55f;
+        p.tension=.48f; p.evolve=.72f; p.events=.18f; p.space=.0f; p.output=.48f;
+    } else if (profile == "world-texture-only") {
+        p.foundation=.0f; p.world=.74f; p.texture=.58f; p.body=.0f;
+        p.tension=.0f; p.evolve=.72f; p.events=.0f; p.space=.0f; p.output=.48f;
     } else if (profile == "ruins") {
         archetype = noctomorph::Archetype::Ruins;
         p.foundation=.14f; p.world=.84f; p.texture=.50f; p.body=.34f;
