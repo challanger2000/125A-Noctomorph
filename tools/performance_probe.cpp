@@ -72,10 +72,10 @@ bool runCase(double sampleRate, std::size_t blockSize) {
         << " checksum=" << checksum
         << "\n";
 
-    // Deliberately generous CI gate: one synthetic Nocturne instance must
-    // remain faster than realtime even on a shared runner. Detailed p95/p99
-    // host profiling comes later with the VST3 wrapper.
-    return std::isfinite(checksum) && realtimeFraction < 1.0;
+    // Core-only CI gate: keep at least 4x realtime headroom even on a shared
+    // runner. Detailed p95/p99 deadline profiling comes later with VST3 host
+    // integration and real asset streaming.
+    return std::isfinite(checksum) && realtimeFraction < 0.25;
 }
 
 } // namespace
