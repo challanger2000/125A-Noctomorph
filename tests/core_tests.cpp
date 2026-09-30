@@ -284,6 +284,64 @@ void testEventClipActuallyRenders() {
     assert(energy > 1.0e-4);
 }
 
+
+void testRealBodyExciterChangesModalResponse() {
+    constexpr std::size_t frames = 4096;
+    std::vector<float> exciter(frames, 0.0f);
+    for (std::size_t i = 0; i < frames; ++i) {
+        const float t = static_cast<float>(i);
+        exciter[i] =
+            0.7f * std::exp(-0.0035f * t) *
+            std::sin(6.28318530718f * 173.0f * t / 48000.0f);
+    }
+
+    noctomorph::Clip clip;
+    clip.left = exciter.data();
+    clip.right = nullptr;
+    clip.frames = frames;
+    clip.sampleRate = 48000.0;
+    clip.loop = false;
+
+    auto renderBody = [&](bool withRealExciter) {
+        auto e = std::make_unique<noctomorph::Engine>();
+        e->prepare(48000.0);
+        e->reset(0x424F4459455843ULL);
+
+        noctomorph::Parameters p;
+        p.foundation = 0.0f;
+        p.world = 0.0f;
+        p.texture = 0.0f;
+        p.body = 0.75f;
+        p.tension = 0.45f;
+        p.evolve = 0.0f;
+        p.events = 0.0f;
+        p.space = 0.0f;
+        p.output = 0.5f;
+        e->setParameters(p);
+        if (withRealExciter)
+            e->setBodyExciterClip(&clip);
+        e->noteOn(36, 1.0f);
+
+        std::vector<float> l(24000), rr(24000);
+        e->process(l.data(), rr.data(), l.size());
+        return l;
+    };
+
+    const auto syntheticOnly = renderBody(false);
+    const auto realDriven = renderBody(true);
+
+    double diff = 0.0;
+    for (std::size_t i = 0; i < syntheticOnly.size(); ++i) {
+        const double d =
+            static_cast<double>(syntheticOnly[i]) -
+            static_cast<double>(realDriven[i]);
+        diff += d * d;
+    }
+
+    assert(diff > 1.0e-5);
+    assert(rms(realDriven) > 1.0e-5);
+}
+
 void testReleaseDecays() {
     noctomorph::Parameters p;
     p.space = 0.0f;
@@ -308,6 +366,7 @@ int main() {
     testFullWetSpaceHasNoImmediateDryLeak();
     testWorldClipStereoAndRateConversion();
     testEventClipActuallyRenders();
+    testRealBodyExciterChangesModalResponse();
     testReleaseDecays();
 
     std::cout << "Noctomorph core tests: PASS\n";

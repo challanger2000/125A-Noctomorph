@@ -73,7 +73,14 @@ int main(int argc,char** argv){
         p.tension=.48f; p.evolve=.72f; p.events=.18f; p.space=.42f; p.output=.48f;
     }
 
-    engine->setParameters(p); engine->setArchetype(archetype); engine->setWorldClip(&wc);engine->setTextureClip(&tc);engine->setEventClip(&ec);engine->noteOn(36,.9f);
+    engine->setParameters(p);
+    engine->setArchetype(archetype);
+    engine->setWorldClip(&wc);
+    engine->setTextureClip(&tc);
+    engine->setEventClip(&ec);
+    if (profile != "source-only")
+        engine->setBodyExciterClip(&ec);
+    engine->noteOn(36,.9f);
     std::vector<float> l(frames),r(frames); constexpr std::size_t block=257; std::size_t off=0; float peak=0.0f; long double energy=0.0;
     while(off<frames){auto n=std::min(block,frames-off);engine->process(l.data()+off,r.data()+off,n);for(std::size_t i=off;i<off+n;++i){peak=std::max(peak,std::max(std::fabs(l[i]),std::fabs(r[i])));energy+=(long double)l[i]*l[i]+(long double)r[i]*r[i];}off+=n;}
     wav(argv[5],l,r,48000); const double rms=std::sqrt(double(energy/(2.0L*frames)));
