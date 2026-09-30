@@ -44,6 +44,9 @@ def spectral_metrics(mono: np.ndarray, sr: int) -> dict:
             "energy_f90_hz": 0.0,
             "low_energy_ratio_lt120hz": 0.0,
             "high_energy_ratio_gt8khz": 0.0,
+            "presence_energy_ratio_350_3000hz": 0.0,
+            "formant_energy_ratio_400_2500hz": 0.0,
+            "spectral_flatness": 0.0,
             "dominant_peaks_hz": [],
         }
 
@@ -79,6 +82,16 @@ def spectral_metrics(mono: np.ndarray, sr: int) -> dict:
 
     low_ratio = float(np.sum(power[freqs < 120.0]) / total)
     high_ratio = float(np.sum(power[freqs > 8000.0]) / total)
+    presence_ratio = float(np.sum(power[(freqs >= 350.0) & (freqs <= 3000.0)]) / total)
+    formant_ratio = float(np.sum(power[(freqs >= 400.0) & (freqs <= 2500.0)]) / total)
+
+    positive = power[power > 1e-30]
+    spectral_flatness = 0.0
+    if positive.size:
+        spectral_flatness = float(
+            np.exp(np.mean(np.log(positive))) /
+            max(float(np.mean(positive)), 1e-30)
+        )
 
     min_distance_bins = max(1, int(12.0 / max(freqs[1] - freqs[0], 1e-9)))
     peaks, props = signal.find_peaks(
@@ -99,6 +112,9 @@ def spectral_metrics(mono: np.ndarray, sr: int) -> dict:
         "energy_f90_hz": qfreq(0.90),
         "low_energy_ratio_lt120hz": low_ratio,
         "high_energy_ratio_gt8khz": high_ratio,
+        "presence_energy_ratio_350_3000hz": presence_ratio,
+        "formant_energy_ratio_400_2500hz": formant_ratio,
+        "spectral_flatness": spectral_flatness,
         "dominant_peaks_hz": top,
     }
 
