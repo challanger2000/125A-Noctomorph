@@ -6,7 +6,7 @@ No endorsement by any source creator or licensor is implied.
 
 WORK WITH SOUNDS / CC BY 4.0
 License: https://creativecommons.org/licenses/by/4.0/
-All three recordings below were supplied to Wikimedia Commons through the
+All five recordings below were supplied to Wikimedia Commons through the
 Work With Sounds / Wikimedia Sverige cooperation project with VRT-confirmed
 permission. Required attribution and modification disclosure are preserved.
 
@@ -65,7 +65,9 @@ PUBLIC DOMAIN / CC0
 8. Ambient Noise.ogg
    Source: https://commons.wikimedia.org/wiki/File:Ambient_Noise.ogg
    Creator: L. Ginzkey / FWG
-   Reuse: free-use permission confirmed through Wikimedia VRT; see source page.
+   License: Creative Commons Attribution 2.5 Generic (CC BY 2.5)
+   License: https://creativecommons.org/licenses/by/2.5/
+   Reuse permission and authorship are confirmed through Wikimedia VRT; see source page.
    Use: VOID / ABYSS pressure-world raw material
    Changes: excerpt selection, resampling, strong slowing, low-pass filtering,
    fades, normalization.
