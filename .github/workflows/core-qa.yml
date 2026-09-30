@@ -10,6 +10,7 @@ on:
       - "src/**"
       - "tests/**"
       - "tools/render_smoke.cpp"
+      - "tools/evolution_probe.cpp"
       - ".github/workflows/core-qa.yml"
   workflow_dispatch:
 
@@ -28,6 +29,9 @@ jobs:
 
       - name: Test
         run: ctest --test-dir build -C Release --output-on-failure
+
+      - name: Five-minute evolution probe
+        run: .\build\Release\noctomorph_evolution_probe.exe
 
       - name: Smoke render
         run: .\build\Release\noctomorph_smoke_render.exe noctomorph-smoke.wav
