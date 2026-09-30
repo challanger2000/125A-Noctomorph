@@ -216,6 +216,8 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureInteriorHum);
             addTexture(TextureGrain);
             addTexture(TexturePressureHiss);
+            addTexture(TexturePostVibration);
+            addTexture(TextureWireStress);
             addBody(BodyGlass);
             addBody(BodyChapterBell);
             addBody(BodyWhirly);
