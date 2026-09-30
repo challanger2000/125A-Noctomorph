@@ -109,6 +109,7 @@ private:
 
     void updateControlState() noexcept;
     void configureBody() noexcept;
+    void configurePresence() noexcept;
     void triggerEvent() noexcept;
     void ensureLongStreams() noexcept;
     void processSpace(float dryL, float dryR, float& outL, float& outR) noexcept;
@@ -120,6 +121,7 @@ private:
     Parameters parameters_ {};
     Archetype archetype_ = Archetype::Nocturne;
     Rng rng_ {};
+    Rng presenceRng_ {};
 
     bool gate_ = false;
     int midiNote_ = 36;
@@ -141,7 +143,9 @@ private:
     static constexpr int kControlPeriod = 64;
 
     std::array<Resonator, 12> resonators_ {};
+    std::array<Resonator, 4> presenceResonators_ {};
     float bodyExcitation_ = 0.0f;
+    float presenceNoiseLowpass_ = 0.0f;
 
     const Clip* worldClip_ = nullptr;
     const Clip* textureClip_ = nullptr;
