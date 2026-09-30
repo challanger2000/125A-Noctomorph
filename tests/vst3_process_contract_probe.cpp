@@ -176,7 +176,7 @@ double renderAssetOnly(
 
     ParameterChanges initial(16);
     const std::array<std::pair<ParamID, ParamValue>, 11> values {{
-        {3000, 0.4}, // INDUSTRIAL
+        {3000, roleParam == 3007 ? 1.0 : 0.4}, // NOCTURNE for EVENT; INDUSTRIAL otherwise
         {3001, 0.0}, // FOUNDATION
         {3002, roleParam == 3002 ? 1.0 : 0.0}, // WORLD
         {3003, roleParam == 3003 ? 1.0 : 0.0}, // TEXTURE
