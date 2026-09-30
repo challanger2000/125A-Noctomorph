@@ -50,16 +50,16 @@ int main(int argc,char** argv){
         p.tension=.0f; p.evolve=.25f; p.events=.0f; p.space=.0f; p.output=.48f;
     } else if (profile == "ruins") {
         archetype = noctomorph::Archetype::Ruins;
-        p.foundation=.16f; p.world=.82f; p.texture=.46f; p.body=.42f;
-        p.tension=.40f; p.evolve=.58f; p.events=.10f; p.space=.24f; p.output=.48f;
+        p.foundation=.14f; p.world=.84f; p.texture=.50f; p.body=.34f;
+        p.tension=.40f; p.evolve=.58f; p.events=.10f; p.space=.16f; p.output=.48f;
     } else if (profile == "nocturne") {
         archetype = noctomorph::Archetype::Nocturne;
-        p.foundation=.30f; p.world=.58f; p.texture=.38f; p.body=.38f;
-        p.tension=.52f; p.evolve=.68f; p.events=.08f; p.space=.30f; p.output=.48f;
+        p.foundation=.20f; p.world=.70f; p.texture=.48f; p.body=.30f;
+        p.tension=.52f; p.evolve=.68f; p.events=.08f; p.space=.20f; p.output=.48f;
     } else if (profile == "abyss") {
         archetype = noctomorph::Archetype::Abyss;
-        p.foundation=.38f; p.world=.46f; p.texture=.28f; p.body=.62f;
-        p.tension=.72f; p.evolve=.82f; p.events=.12f; p.space=.36f; p.output=.46f;
+        p.foundation=.28f; p.world=.58f; p.texture=.40f; p.body=.50f;
+        p.tension=.72f; p.evolve=.82f; p.events=.12f; p.space=.24f; p.output=.46f;
     } else if (profile == "wasteland") {
         archetype = noctomorph::Archetype::Wasteland;
         p.foundation=.18f; p.world=.78f; p.texture=.64f; p.body=.26f;
