@@ -30,12 +30,24 @@ jobs:
       - name: Build plugin core tests and validator
         shell: pwsh
         run: |
-          cmake --build build-vst3 --config Release --target Noctomorph noctomorph_core_tests validator --parallel 2
+          cmake --build build-vst3 --config Release --target Noctomorph noctomorph_core_tests noctomorph_state_recall_probe noctomorph_process_contract_probe validator --parallel 2
 
       - name: Run core regression tests
         shell: pwsh
         run: |
           ctest --test-dir build-vst3 -C Release -R noctomorph_core_tests --output-on-failure
+
+      - name: Run state recall and process contract probes
+        shell: pwsh
+        run: |
+          $plugin = Get-ChildItem -Path build-vst3 -Recurse -Directory -Filter "Noctomorph.vst3" | Select-Object -First 1
+          $state = Get-ChildItem -Path build-vst3 -Recurse -File -Filter "noctomorph_state_recall_probe.exe" | Select-Object -First 1
+          $process = Get-ChildItem -Path build-vst3 -Recurse -File -Filter "noctomorph_process_contract_probe.exe" | Select-Object -First 1
+          if (-not $plugin -or -not $state -or -not $process) { Write-Error "VST3 probe artifact missing"; exit 1 }
+          & $state.FullName $plugin.FullName
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $process.FullName $plugin.FullName
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Locate and validate prototype VST3
         shell: pwsh

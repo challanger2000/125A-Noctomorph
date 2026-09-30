@@ -89,4 +89,31 @@ if(NOCTOMORPH_BUILD_VST3)
     target_link_libraries(Noctomorph PRIVATE sdk)
     target_compile_features(Noctomorph PRIVATE cxx_std_17)
     smtg_target_configure_version_file(Noctomorph)
+
+    add_executable(noctomorph_state_recall_probe
+        tests/vst3_state_recall_probe.cpp
+        "${vst3sdk_SOURCE_DIR}/public.sdk/source/common/memorystream.cpp"
+        "${vst3sdk_SOURCE_DIR}/public.sdk/source/vst/hosting/module_win32.cpp"
+    )
+    target_link_libraries(noctomorph_state_recall_probe PRIVATE
+        sdk_hosting sdk_common base pluginterfaces
+    )
+    target_compile_definitions(noctomorph_state_recall_probe PRIVATE
+        _CRT_SECURE_NO_WARNINGS NOMINMAX
+    )
+    target_compile_features(noctomorph_state_recall_probe PRIVATE cxx_std_17)
+
+    add_executable(noctomorph_process_contract_probe
+        tests/vst3_process_contract_probe.cpp
+        "${vst3sdk_SOURCE_DIR}/public.sdk/source/vst/hosting/eventlist.cpp"
+        "${vst3sdk_SOURCE_DIR}/public.sdk/source/vst/hosting/parameterchanges.cpp"
+        "${vst3sdk_SOURCE_DIR}/public.sdk/source/vst/hosting/module_win32.cpp"
+    )
+    target_link_libraries(noctomorph_process_contract_probe PRIVATE
+        sdk_hosting sdk_common base pluginterfaces
+    )
+    target_compile_definitions(noctomorph_process_contract_probe PRIVATE
+        _CRT_SECURE_NO_WARNINGS NOMINMAX
+    )
+    target_compile_features(noctomorph_process_contract_probe PRIVATE cxx_std_17)
 endif()
