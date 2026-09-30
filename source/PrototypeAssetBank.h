@@ -84,6 +84,9 @@ private:
         TexturePressureHiss,
         WorldHydraulicFall,
         EventMetalJingle,
+        BodySteelChisel,
+        EventMetalDrop,
+        EventThinMetal,
         Count
     };
 
