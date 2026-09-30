@@ -145,6 +145,7 @@ void Processor::applyParameter(ParamID id, float normalized) noexcept {
         case kTexture:    parameters_.texture = v; break;
         case kBody:       parameters_.body = v; break;
         case kTension:    parameters_.tension = v; break;
+        case kMotion:     parameters_.motion = v; break;
         case kEvolve:     parameters_.evolve = v; break;
         case kEvents:     parameters_.events = v; break;
         case kSpace:      parameters_.space = v; break;
@@ -264,6 +265,7 @@ tresult PLUGIN_API Processor::process(ProcessData& data) {
             case kEvents: return 7;
             case kSpace: return 8;
             case kOutput: return 9;
+            case kMotion: return 10;
             default: return -1;
         }
     };
@@ -385,6 +387,7 @@ tresult PLUGIN_API Processor::setState(IBStream* state) {
     parameters_.events = values[7];
     parameters_.space = values[8];
     parameters_.output = values[9];
+    parameters_.motion = values[10];
 
     updateEngineParameters();
     return kResultOk;
@@ -405,7 +408,8 @@ tresult PLUGIN_API Processor::getState(IBStream* state) {
         parameters_.evolve,
         parameters_.events,
         parameters_.space,
-        parameters_.output
+        parameters_.output,
+        parameters_.motion
     };
 
     return writeState(stream, values) ? kResultOk : kResultFalse;

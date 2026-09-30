@@ -40,6 +40,7 @@ tresult PLUGIN_API Controller::initialize(FUnknown* context) {
     addPercent(STR16("Texture"), kTexture, 0.25);
     addPercent(STR16("Body"), kBody, 0.35);
     addPercent(STR16("Tension"), kTension, 0.25);
+    addPercent(STR16("Motion"), kMotion, 0.35);
     addPercent(STR16("Evolve"), kEvolve, 0.35);
     addPercent(STR16("Events"), kEvents, 0.18);
     addPercent(STR16("Space"), kSpace, 0.35);
@@ -59,7 +60,7 @@ tresult PLUGIN_API Controller::setComponentState(IBStream* state) {
 
     const ParamID ids[kStateValueCount] = {
         kArchetype, kFoundation, kWorld, kTexture, kBody,
-        kTension, kEvolve, kEvents, kSpace, kOutput
+        kTension, kEvolve, kEvents, kSpace, kOutput, kMotion
     };
 
     for (int i = 0; i < kStateValueCount; ++i)

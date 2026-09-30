@@ -13,9 +13,10 @@ enum ParamIds : Steinberg::Vst::ParamID {
     kEvolve     = 3006,
     kEvents     = 3007,
     kSpace      = 3008,
-    kOutput     = 3009
+    kOutput     = 3009,
+    kMotion     = 3010
 };
 
-inline constexpr int kParamCount = 10;
+inline constexpr int kParamCount = 11;
 
 } // namespace Noctomorph

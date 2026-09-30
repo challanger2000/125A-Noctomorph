@@ -270,6 +270,8 @@ void Engine::reset(std::uint64_t seedValue) noexcept {
     noiseStateL_ = 0.0f;
     noiseStateR_ = 0.0f;
     textureHpState_ = 0.0f;
+    motionPan_ = 0.0f;
+    motionSpectral_ = 0.0f;
 
     chaosX_ = 0.11 + 0.02 * rng_.bipolar();
     chaosY_ = 0.03 * rng_.bipolar();
@@ -307,6 +309,7 @@ void Engine::setParameters(const Parameters& p) noexcept {
     parameters_.texture = clamp01(p.texture);
     parameters_.body = clamp01(p.body);
     parameters_.tension = clamp01(p.tension);
+    parameters_.motion = clamp01(p.motion);
     parameters_.evolve = clamp01(p.evolve);
     parameters_.events = clamp01(p.events);
     parameters_.space = clamp01(p.space);
@@ -429,7 +432,8 @@ void Engine::configurePresence() noexcept {
         const double drift =
             1.0 +
             sign * (0.018 * driftX + 0.012 * driftY) *
-                (0.25 + 0.75 * parameters_.evolve);
+                (0.25 + 0.75 * parameters_.evolve) *
+                (0.20 + 0.80 * parameters_.motion);
 
         const double frequency =
             kBaseFormants[i] *
@@ -457,7 +461,8 @@ void Engine::ensureLongStreams() noexcept {
         const double sourceRatio = worldClip_->sampleRate / sampleRate_;
         const double rate =
             sourceRatio * static_cast<double>(traits.worldRate) *
-            (0.88 + 0.16 * rng_.uniform01());
+            (1.0 + static_cast<double>(parameters_.motion) *
+                (-0.12 + 0.24 * rng_.uniform01()));
         const double start =
             worldClip_->frames > 8
                 ? rng_.uniform01() * static_cast<double>(worldClip_->frames - 2)
@@ -469,7 +474,8 @@ void Engine::ensureLongStreams() noexcept {
         const double sourceRatio = textureClip_->sampleRate / sampleRate_;
         const double rate =
             sourceRatio * static_cast<double>(traits.textureRate) *
-            (0.62 + 0.42 * rng_.uniform01());
+            (1.0 + static_cast<double>(parameters_.motion) *
+                (-0.28 + 0.56 * rng_.uniform01()));
         const double start =
             textureClip_->frames > 8
                 ? rng_.uniform01() * static_cast<double>(textureClip_->frames - 2)
@@ -511,10 +517,13 @@ void Engine::updateControlState() noexcept {
     const float cy = static_cast<float>(std::tanh(chaosY_ * 0.08));
     const float cz = static_cast<float>(std::tanh((chaosZ_ - 24.0) * 0.05));
 
-    oscillatorDrift_[0] = 0.006f * parameters_.evolve * cx;
-    oscillatorDrift_[1] = 0.009f * parameters_.evolve * cy;
-    oscillatorDrift_[2] = 0.013f * parameters_.evolve * cz;
-    oscillatorDrift_[3] = 0.017f * parameters_.evolve * (0.5f * cx - 0.5f * cy);
+    const float motionDepth = parameters_.evolve * parameters_.motion;
+    oscillatorDrift_[0] = 0.006f * motionDepth * cx;
+    oscillatorDrift_[1] = 0.009f * motionDepth * cy;
+    oscillatorDrift_[2] = 0.013f * motionDepth * cz;
+    oscillatorDrift_[3] = 0.017f * motionDepth * (0.5f * cx - 0.5f * cy);
+    motionPan_ = parameters_.motion * cx;
+    motionSpectral_ = parameters_.motion * cy;
 
     // Reconfigure infrequently: resonant structures slowly deform with the
     // deterministic macro-state.
@@ -712,8 +721,9 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         float worldL = 0.0f, worldR = 0.0f;
         worldVoice_.process(worldL, worldR);
         if (world > 0.0f && envelope_ > 0.0f) {
-            dryL += 0.95f * world * envelope_ * worldL;
-            dryR += 0.95f * world * envelope_ * worldR;
+            const float pan = 0.18f * motionPan_;
+            dryL += 0.95f * world * envelope_ * worldL * (1.0f - pan);
+            dryR += 0.95f * world * envelope_ * worldR * (1.0f + pan);
         }
 
         float textureL = 0.0f, textureR = 0.0f;
@@ -723,7 +733,10 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         // to real sources once a texture clip is assigned.
         const float rndL = rng_.bipolar();
         const float rndR = rng_.bipolar();
-        const float lpCoeff = 0.004f + 0.024f * (1.0f - tension);
+        const float lpBase = 0.004f + 0.024f * (1.0f - tension);
+        const float lpCoeff = std::clamp(
+            lpBase * (1.0f + 0.35f * motionSpectral_),
+            0.0015f, 0.040f);
         noiseStateL_ += lpCoeff * (rndL - noiseStateL_);
         noiseStateR_ += lpCoeff * (rndR - noiseStateR_);
         const float hpIn = 0.5f * (noiseStateL_ + noiseStateR_);
@@ -734,9 +747,10 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         if (texture > 0.0f && envelope_ > 0.0f) {
             const float realWeight = textureVoice_.active ? 0.80f : 0.0f;
             const float synthWeight = textureVoice_.active ? 0.20f : 1.0f;
-            dryL += texture * envelope_ *
+            const float pan = -0.22f * motionPan_;
+            dryL += texture * envelope_ * (1.0f - pan) *
                 (0.62f * realWeight * textureL + 0.035f * synthWeight * darkNoiseL);
-            dryR += texture * envelope_ *
+            dryR += texture * envelope_ * (1.0f + pan) *
                 (0.62f * realWeight * textureR + 0.035f * synthWeight * darkNoiseR);
         }
 

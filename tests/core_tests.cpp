@@ -507,6 +507,47 @@ void testArchetypeFamiliesAreDistinct() {
             assert(hashes[i] != hashes[j]);
 }
 
+
+void testMotionControlIsEffective() {
+    auto renderMotion = [](float motion) {
+        auto e = std::make_unique<noctomorph::Engine>();
+        e->prepare(48000.0);
+        e->reset(0x4D4F54494F4EULL);
+
+        noctomorph::Parameters p;
+        p.foundation = 0.55f;
+        p.world = 0.0f;
+        p.texture = 0.45f;
+        p.body = 0.35f;
+        p.tension = 0.40f;
+        p.motion = motion;
+        p.evolve = 0.75f;
+        p.events = 0.0f;
+        p.space = 0.20f;
+        p.output = 0.5f;
+
+        e->setParameters(p);
+        e->setArchetype(noctomorph::Archetype::Nocturne);
+        e->noteOn(36, 0.9f);
+
+        std::vector<float> l(48000 * 4), r(48000 * 4);
+        e->process(l.data(), r.data(), l.size());
+        return l;
+    };
+
+    const auto stable = renderMotion(0.0f);
+    const auto moving = renderMotion(1.0f);
+
+    double diff = 0.0;
+    for (std::size_t i = 0; i < stable.size(); ++i) {
+        const double d =
+            static_cast<double>(stable[i]) -
+            static_cast<double>(moving[i]);
+        diff += d * d;
+    }
+    assert(diff > 1.0e-4);
+}
+
 void testReleaseDecays() {
     noctomorph::Parameters p;
     p.space = 0.0f;
@@ -534,6 +575,7 @@ int main() {
     testRealBodyExciterChangesModalResponse();
     testBodyExciterDoesNotAutoRetrigger();
     testArchetypeFamiliesAreDistinct();
+    testMotionControlIsEffective();
     testReleaseDecays();
 
     std::cout << "Noctomorph core tests: PASS\n";

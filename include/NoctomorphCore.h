@@ -31,6 +31,7 @@ struct Parameters {
     float texture = 0.25f;
     float body = 0.35f;
     float tension = 0.25f;
+    float motion = 0.35f;
     float evolve = 0.35f;
     float events = 0.18f;
     float space = 0.35f;
@@ -134,6 +135,8 @@ private:
     float noiseStateL_ = 0.0f;
     float noiseStateR_ = 0.0f;
     float textureHpState_ = 0.0f;
+    float motionPan_ = 0.0f;
+    float motionSpectral_ = 0.0f;
 
     // Lorenz-like deterministic macro-state.
     double chaosX_ = 0.1;

@@ -18,16 +18,18 @@ using namespace VST3::Hosting;
 
 namespace {
 
-constexpr int32 kMagic = 0x31434F4E; // NOC1
-constexpr int32 kVersion = 1;
-constexpr std::array<ParamID,10> kIds{
-    3000,3001,3002,3003,3004,3005,3006,3007,3008,3009
+constexpr int32 kMagic = 0x31434F4E;
+constexpr int32 kVersion = 2;
+constexpr int32 kLegacyVersion = 1;
+constexpr std::array<ParamID,11> kIds{
+    3000,3001,3002,3003,3004,3005,3006,3007,3008,3009,3010
 };
 
 bool nearly(double a,double b){ return std::fabs(a-b)<1.0e-6; }
 
+template <size_t N>
 bool writeState(MemoryStream& ms,int32 magic,int32 version,
-                const std::array<float,10>& values){
+                const std::array<float,N>& values){
     IBStreamer s(&ms,kLittleEndian);
     if(!s.writeInt32(magic)||!s.writeInt32(version)) return false;
     for(float v:values) if(!s.writeFloat(v)) return false;
@@ -35,10 +37,10 @@ bool writeState(MemoryStream& ms,int32 magic,int32 version,
     return true;
 }
 
-bool readState(IComponent* component,std::array<float,10>& values){
+bool readCurrentState(IComponent* component,std::array<float,11>& values){
     MemoryStream ms;
     if(component->getState(&ms)!=kResultTrue) return false;
-    if(ms.getSize()!=48) return false;
+    if(ms.getSize()!=52) return false;
     ms.seek(0,IBStream::kIBSeekSet,nullptr);
     IBStreamer s(&ms,kLittleEndian);
     int32 magic=0,version=0;
@@ -49,9 +51,16 @@ bool readState(IComponent* component,std::array<float,10>& values){
     return true;
 }
 
-bool same(const std::array<float,10>& a,const std::array<float,10>& b){
-    for(size_t i=0;i<a.size();++i) if(!nearly(a[i],b[i])) return false;
+template <size_t N>
+bool samePrefix(const std::array<float,11>& current,
+                const std::array<float,N>& expected){
+    for(size_t i=0;i<N;++i)
+        if(!nearly(current[i],expected[i])) return false;
     return true;
+}
+
+bool same(const std::array<float,11>& a,const std::array<float,11>& b){
+    return samePrefix(a,b);
 }
 
 int run(const std::string& path){
@@ -80,11 +89,11 @@ int run(const std::string& path){
         }
         audio->release();
 
-        const std::array<float,10> expectedDefaults{
-            0.0f,0.50f,0.35f,0.25f,0.35f,0.25f,0.35f,0.18f,0.35f,0.50f
+        const std::array<float,11> expectedDefaults{
+            0.0f,0.50f,0.35f,0.25f,0.35f,0.25f,0.35f,0.18f,0.35f,0.50f,0.35f
         };
-        std::array<float,10> defaults{};
-        if(!readState(component.get(),defaults) || !same(defaults,expectedDefaults)){
+        std::array<float,11> defaults{};
+        if(!readCurrentState(component.get(),defaults) || !same(defaults,expectedDefaults)){
             std::cerr<<"[FAIL] default state mismatch\n"; return 2;
         }
 
@@ -95,8 +104,8 @@ int run(const std::string& path){
         if(!controller || controller->initialize(host)!=kResultOk)
             return 4;
 
-        const std::array<float,10> controllerValues{
-            0.8f,0.11f,0.22f,0.33f,0.44f,0.55f,0.66f,0.27f,0.78f,0.89f
+        const std::array<float,11> controllerValues{
+            0.8f,0.11f,0.22f,0.33f,0.44f,0.55f,0.66f,0.27f,0.78f,0.89f,0.41f
         };
         MemoryStream controllerState;
         if(!writeState(controllerState,kMagic,kVersion,controllerValues) ||
@@ -115,29 +124,48 @@ int run(const std::string& path){
         controller->terminate();
         controller.reset();
 
-        const std::array<float,10> custom{
-            0.6f,0.12f,0.23f,0.34f,0.45f,0.56f,0.67f,0.28f,0.79f,0.90f
+        const std::array<float,11> custom{
+            0.6f,0.12f,0.23f,0.34f,0.45f,0.56f,0.67f,0.28f,0.79f,0.90f,0.42f
         };
         MemoryStream customState;
         if(!writeState(customState,kMagic,kVersion,custom) ||
            component->setState(&customState)!=kResultTrue)
             return 7;
 
-        std::array<float,10> roundtrip{};
-        if(!readState(component.get(),roundtrip) || !same(roundtrip,custom)){
+        std::array<float,11> roundtrip{};
+        if(!readCurrentState(component.get(),roundtrip) || !same(roundtrip,custom)){
             std::cerr<<"[FAIL] state roundtrip mismatch\n"; return 8;
         }
 
+        const std::array<float,10> legacy{
+            0.4f,0.15f,0.25f,0.35f,0.45f,0.55f,0.65f,0.20f,0.75f,0.85f
+        };
+        MemoryStream legacyState;
+        if(!writeState(legacyState,kMagic,kLegacyVersion,legacy) ||
+           component->setState(&legacyState)!=kResultTrue)
+            return 9;
+
+        std::array<float,11> migrated{};
+        if(!readCurrentState(component.get(),migrated) ||
+           !samePrefix(migrated,legacy) || !nearly(migrated[10],0.35)){
+            std::cerr<<"[FAIL] legacy v1 migration mismatch\n"; return 10;
+        }
+
+        MemoryStream restoreCustom;
+        if(!writeState(restoreCustom,kMagic,kVersion,custom) ||
+           component->setState(&restoreCustom)!=kResultTrue)
+            return 11;
+
         auto expectRejectWithoutMutation=[&](int32 magic,int32 version,
-                                              std::array<float,10> values,
+                                              std::array<float,11> values,
                                               const char* label)->bool{
             MemoryStream invalid;
             if(!writeState(invalid,magic,version,values)) return false;
             if(component->setState(&invalid)==kResultTrue){
                 std::cerr<<"[FAIL] "<<label<<" accepted\n"; return false;
             }
-            std::array<float,10> after{};
-            if(!readState(component.get(),after) || !same(after,custom)){
+            std::array<float,11> after{};
+            if(!readCurrentState(component.get(),after) || !same(after,custom)){
                 std::cerr<<"[FAIL] "<<label<<" mutated valid state\n"; return false;
             }
             return true;
@@ -146,25 +174,25 @@ int run(const std::string& path){
         auto nanValues=custom;
         nanValues[4]=std::numeric_limits<float>::quiet_NaN();
         if(!expectRejectWithoutMutation(kMagic,kVersion,nanValues,"NaN"))
-            return 9;
-
-        auto rangeValues=custom;
-        rangeValues[8]=1.25f;
-        if(!expectRejectWithoutMutation(kMagic,kVersion,rangeValues,"out-of-range"))
-            return 10;
-
-        if(!expectRejectWithoutMutation(0x12345678,kVersion,custom,"bad magic"))
-            return 11;
-        if(!expectRejectWithoutMutation(kMagic,99,custom,"bad version"))
             return 12;
 
-        if(component->terminate()!=kResultOk) return 13;
-        std::cout<<"Noctomorph state/recall contract PASS\n";
+        auto rangeValues=custom;
+        rangeValues[10]=1.25f;
+        if(!expectRejectWithoutMutation(kMagic,kVersion,rangeValues,"out-of-range"))
+            return 13;
+
+        if(!expectRejectWithoutMutation(0x12345678,kVersion,custom,"bad magic"))
+            return 14;
+        if(!expectRejectWithoutMutation(kMagic,99,custom,"bad version"))
+            return 15;
+
+        if(component->terminate()!=kResultOk) return 16;
+        std::cout<<"Noctomorph state/recall contract PASS incl. v1->v2 MOTION migration\n";
         return 0;
     }
 
     std::cerr<<"[FAIL] no audio processor class\n";
-    return 14;
+    return 17;
 }
 
 } // namespace

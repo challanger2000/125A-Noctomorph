@@ -96,6 +96,7 @@ bool runBlock(IComponent* component,IAudioProcessor* processor,
     if(!addParam(params,3009,0,0.80)) return false; // OUTPUT
     if(!addParam(params,3005,0,std::numeric_limits<double>::quiet_NaN()))
         return false; // TENSION robustness
+    if(!addParam(params,3010,0,0.75)) return false; // MOTION
     if(!addParam(params,3000,0,0.80)) return false; // ABYSS archetype
 
     ProcessData data{};
@@ -174,7 +175,7 @@ double renderAssetOnly(
     out.channelBuffers32 = channels;
 
     ParameterChanges initial(16);
-    const std::array<std::pair<ParamID, ParamValue>, 10> values {{
+    const std::array<std::pair<ParamID, ParamValue>, 11> values {{
         {3000, 0.4}, // INDUSTRIAL
         {3001, 0.0}, // FOUNDATION
         {3002, roleParam == 3002 ? 1.0 : 0.0}, // WORLD
@@ -184,7 +185,8 @@ double renderAssetOnly(
         {3006, 0.35}, // EVOLVE
         {3007, roleParam == 3007 ? 1.0 : 0.0}, // EVENTS
         {3008, 0.0}, // SPACE
-        {3009, 0.5}  // OUTPUT
+        {3009, 0.5}, // OUTPUT
+        {3010, 0.35}  // MOTION
     }};
     for (const auto& [id, value] : values) {
         if (!addParam(initial, id, 0, value)) {
@@ -358,7 +360,7 @@ int run(const std::string& path){
         std::cout
             <<"Noctomorph VST3 process contract PASS: realtime/offline, "
             <<"4 rates, 5 block sizes, MIDI, automation, NaN, zero-flush, "
-            <<"activate/deactivate, embedded WORLD/TEXTURE/EVENT assets\n";
+            <<"activate/deactivate, MOTION, embedded WORLD/TEXTURE/EVENT assets\n";
         return 0;
     }
 
