@@ -1,0 +1,80 @@
+name: Noctomorph Archetype Longform QA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [dev/prototype-v0.1]
+    paths:
+      - ".github/workflows/archetype-longform.yml"
+      - "tools/longform_metrics.py"
+
+jobs:
+  longform:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install analysis dependencies
+        run: python -m pip install -r tools/requirements-audio.txt
+
+      - name: Download controlled sources and spaces
+        run: |
+          mkdir -p external raw renders measurements/longform
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" -o external/world.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Automaticpackingstation.ogg" -o external/texture.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ticking%20glass.ogg" -o external/body-bright.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gong%20or%20bell%20vibrant%20(short).ogg" -o external/body-deep.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/200437%20bigben12345%20petersglocke.oga" -o external/event.oga
+          curl -L --fail --retry 3 "https://webfiles.york.ac.uk/OPENAIR/IRs/maes-howe/b-format/mh3_000_bformat_48k.wav" -o external/maes-howe.wav
+          curl -L --fail --retry 3 "https://webfiles.york.ac.uk/OPENAIR/IRs/hamilton-mausoleum/b-format/hm2_000_bformat_48k.wav" -o external/hamilton.wav
+          curl -L --fail --retry 3 "https://webfiles.york.ac.uk/OPENAIR/IRs/r1-nuclear-reactor-hall/examples/r1_omni_48k.wav" -o external/r1.wav
+          curl -L --fail --retry 3 "https://webfiles.york.ac.uk/OPENAIR/IRs/terrys-factory-warehouse/mono/terrys_warehouse_omni.wav" -o external/terry.wav
+
+      - name: Prepare source buffers
+        run: |
+          python tools/prepare_audio_raw.py external/world.ogg raw/world.raw --peak 0.40
+          python tools/prepare_audio_raw.py external/texture.ogg raw/texture.raw --peak 0.30
+          python tools/prepare_audio_raw.py external/body-bright.ogg raw/body-bright.raw --peak 0.18
+          python tools/prepare_audio_raw.py external/body-deep.ogg raw/body-deep.raw --peak 0.24
+          python tools/prepare_audio_raw.py external/event.oga raw/event.raw --peak 0.32
+
+      - name: Configure and build
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --parallel 2
+
+      - name: Render 5-minute engine states
+        run: |
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body-bright.raw raw/event.raw 300 renders/industrial-engine.wav industrial
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body-bright.raw raw/event.raw 300 renders/ruins-engine.wav ruins
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body-bright.raw raw/event.raw 300 renders/nocturne-engine.wav nocturne
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body-deep.raw raw/event.raw 300 renders/abyss-engine.wav abyss
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body-bright.raw raw/event.raw 300 renders/wasteland-engine.wav wasteland
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body-deep.raw raw/event.raw 300 renders/void-engine.wav void
+
+      - name: Apply measured spaces
+        run: |
+          python tools/apply_ir.py renders/industrial-engine.wav external/r1.wav renders/industrial-final.wav --wet 0.42 --tail-seconds 8
+          python tools/apply_ir.py renders/ruins-engine.wav external/maes-howe.wav renders/ruins-final.wav --wet 0.62 --tail-seconds 5 --bformat-stereo
+          python tools/apply_ir.py renders/nocturne-engine.wav external/hamilton.wav renders/nocturne-final.wav --wet 0.68 --tail-seconds 15 --bformat-stereo
+          python tools/apply_ir.py renders/abyss-engine.wav external/hamilton.wav renders/abyss-final.wav --wet 0.52 --tail-seconds 15 --bformat-stereo
+          python tools/apply_ir.py renders/wasteland-engine.wav external/terry.wav renders/wasteland-final.wav --wet 0.38 --tail-seconds 20
+          python tools/apply_ir.py renders/void-engine.wav external/hamilton.wav renders/void-final.wav --wet 0.78 --tail-seconds 15 --bformat-stereo
+
+      - name: Measure longform behavior
+        run: |
+          for profile in industrial ruins nocturne abyss wasteland void; do
+            python tools/analyze_audio.py "renders/${profile}-final.wav" --json "measurements/longform/${profile}-audio.json"
+            python tools/longform_metrics.py "renders/${profile}-final.wav" --analysis-seconds 300 --json "measurements/longform/${profile}-longform.json"
+          done
+
+      - name: Upload measurements only
+        uses: actions/upload-artifact@v4
+        with:
+          name: noctomorph-archetype-longform-measurements
+          path: measurements/longform/*.json
+          if-no-files-found: error
