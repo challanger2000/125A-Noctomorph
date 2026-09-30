@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  # Asset-enabled wrapper/validator/state/process gate with functional demo GUI; archetype-specific event routing.
+  # v0.2 cinematic scene-bank gate: 15 sources, pools, demo GUI, host contract.
   windows-vst3:
     runs-on: windows-2025
     timeout-minutes: 25
