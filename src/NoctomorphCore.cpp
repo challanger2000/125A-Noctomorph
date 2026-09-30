@@ -582,8 +582,8 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         float worldL = 0.0f, worldR = 0.0f;
         worldVoice_.process(worldL, worldR);
         if (world > 0.0f && envelope_ > 0.0f) {
-            dryL += 0.34f * world * envelope_ * worldL;
-            dryR += 0.34f * world * envelope_ * worldR;
+            dryL += 0.95f * world * envelope_ * worldL;
+            dryR += 0.95f * world * envelope_ * worldR;
         }
 
         float textureL = 0.0f, textureR = 0.0f;
@@ -605,9 +605,9 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             const float realWeight = textureVoice_.active ? 0.80f : 0.0f;
             const float synthWeight = textureVoice_.active ? 0.20f : 1.0f;
             dryL += texture * envelope_ *
-                (0.22f * realWeight * textureL + 0.035f * synthWeight * darkNoiseL);
+                (0.62f * realWeight * textureL + 0.035f * synthWeight * darkNoiseL);
             dryR += texture * envelope_ *
-                (0.22f * realWeight * textureR + 0.035f * synthWeight * darkNoiseR);
+                (0.62f * realWeight * textureR + 0.035f * synthWeight * darkNoiseR);
         }
 
         float eventL = 0.0f, eventR = 0.0f;
