@@ -38,7 +38,8 @@ private:
 
     noctomorph::Engine engine_{};
     noctomorph::Parameters parameters_{};
-    noctomorph::Archetype archetype_ = noctomorph::Archetype::Nocturne;
+    // StringListParameter defaults to its first entry; keep DSP state identical.
+    noctomorph::Archetype archetype_ = noctomorph::Archetype::Void;
 
     double sampleRate_ = 48000.0;
     Steinberg::int32 activeNoteId_ = -1;
