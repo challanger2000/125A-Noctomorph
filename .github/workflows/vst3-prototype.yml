@@ -72,6 +72,10 @@ jobs:
           $resources = Join-Path $plugin.FullName "Contents\Resources"
           New-Item -ItemType Directory -Force -Path $resources | Out-Null
           Copy-Item resource/THIRD-PARTY-AUDIO-LICENSES.txt (Join-Path $resources "THIRD-PARTY-AUDIO-LICENSES.txt") -Force
+          if (-not (Test-Path (Join-Path $resources "THIRD-PARTY-AUDIO-LICENSES.txt"))) {
+            Write-Error "Third-party attribution missing from VST3 bundle"
+            exit 1
+          }
 
       - name: Run state recall and process contract probes
         shell: pwsh

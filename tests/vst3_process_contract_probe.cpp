@@ -143,6 +143,116 @@ bool runBlock(IComponent* component,IAudioProcessor* processor,
     return stopOk && inactiveOk;
 }
 
+
+double renderAssetOnly(
+    IComponent* component,
+    IAudioProcessor* processor,
+    ParamID roleParam,
+    double seconds) {
+
+    ProcessSetup setup{};
+    setup.processMode = kRealtime;
+    setup.symbolicSampleSize = kSample32;
+    setup.maxSamplesPerBlock = 256;
+    setup.sampleRate = 48000.0;
+    if (processor->setupProcessing(setup) != kResultTrue)
+        return -1.0;
+    if (component->setActive(true) != kResultTrue)
+        return -1.0;
+    if (processor->setProcessing(true) != kResultTrue) {
+        component->setActive(false);
+        return -1.0;
+    }
+
+    std::vector<float> left(256, 0.0f);
+    std::vector<float> right(256, 0.0f);
+    Sample32* channels[2] {left.data(), right.data()};
+    AudioBusBuffers out{};
+    out.numChannels = 2;
+    out.channelBuffers32 = channels;
+
+    ParameterChanges initial(16);
+    const std::array<std::pair<ParamID, ParamValue>, 10> values {{
+        {3000, 0.4}, // INDUSTRIAL
+        {3001, 0.0}, // FOUNDATION
+        {3002, roleParam == 3002 ? 1.0 : 0.0}, // WORLD
+        {3003, roleParam == 3003 ? 1.0 : 0.0}, // TEXTURE
+        {3004, 0.0}, // BODY
+        {3005, 0.0}, // TENSION
+        {3006, 0.35}, // EVOLVE
+        {3007, roleParam == 3007 ? 1.0 : 0.0}, // EVENTS
+        {3008, 0.0}, // SPACE
+        {3009, 0.5}  // OUTPUT
+    }};
+    for (const auto& [id, value] : values) {
+        if (!addParam(initial, id, 0, value)) {
+            processor->setProcessing(false);
+            component->setActive(false);
+            return -1.0;
+        }
+    }
+
+    EventList onEvents(2);
+    auto on = noteEvent(true, 0, 7001);
+    if (onEvents.addEvent(on) != kResultTrue) {
+        processor->setProcessing(false);
+        component->setActive(false);
+        return -1.0;
+    }
+
+    ProcessData data{};
+    data.processMode = kRealtime;
+    data.symbolicSampleSize = kSample32;
+    data.numInputs = 0;
+    data.numOutputs = 1;
+    data.inputs = nullptr;
+    data.outputs = &out;
+    data.inputEvents = &onEvents;
+    data.inputParameterChanges = &initial;
+
+    const std::size_t totalFrames =
+        static_cast<std::size_t>(std::llround(seconds * 48000.0));
+    std::size_t rendered = 0;
+    long double energy = 0.0;
+
+    while (rendered < totalFrames) {
+        const int32 n = static_cast<int32>(std::min<std::size_t>(
+            left.size(), totalFrames - rendered));
+        data.numSamples = n;
+
+        if (rendered != 0) {
+            data.inputEvents = nullptr;
+            data.inputParameterChanges = nullptr;
+        }
+
+        std::fill(left.begin(), left.end(), 0.0f);
+        std::fill(right.begin(), right.end(), 0.0f);
+
+        if (processor->process(data) != kResultOk ||
+            !finiteBuffers(left, right)) {
+            processor->setProcessing(false);
+            component->setActive(false);
+            return -1.0;
+        }
+
+        for (int32 i = 0; i < n; ++i) {
+            energy +=
+                static_cast<long double>(left[static_cast<std::size_t>(i)]) *
+                left[static_cast<std::size_t>(i)];
+            energy +=
+                static_cast<long double>(right[static_cast<std::size_t>(i)]) *
+                right[static_cast<std::size_t>(i)];
+        }
+        rendered += static_cast<std::size_t>(n);
+    }
+
+    processor->setProcessing(false);
+    component->setActive(false);
+
+    return std::sqrt(static_cast<double>(
+        energy / static_cast<long double>(2 * std::max<std::size_t>(1, totalFrames))));
+}
+
 int run(const std::string& path){
     trace("start: "+path);
     std::string error;
@@ -202,37 +312,55 @@ int run(const std::string& path){
             }
         }
 
+        const double worldRms = renderAssetOnly(
+            component.get(), processor, 3002, 3.0);
+        const double textureRms = renderAssetOnly(
+            component.get(), processor, 3003, 3.0);
+        const double eventRms = renderAssetOnly(
+            component.get(), processor, 3007, 12.0);
+
+        trace("asset WORLD-only rms=" + std::to_string(worldRms));
+        trace("asset TEXTURE-only rms=" + std::to_string(textureRms));
+        trace("asset EVENT-only rms=" + std::to_string(eventRms));
+
+        if (!(worldRms > 1.0e-5))
+            return fail(7, "embedded WORLD asset not active");
+        if (!(textureRms > 1.0e-5))
+            return fail(8, "embedded TEXTURE asset not active");
+        if (!(eventRms > 1.0e-7))
+            return fail(9, "embedded EVENT asset not active");
+
         ProcessSetup finalSetup{};
         finalSetup.processMode=kRealtime;
         finalSetup.symbolicSampleSize=kSample32;
         finalSetup.maxSamplesPerBlock=128;
         finalSetup.sampleRate=48000.0;
         if(processor->setupProcessing(finalSetup)!=kResultTrue)
-            return fail(7,"final setup");
+            return fail(10,"final setup");
 
         for(int i=0;i<8;++i){
             if(component->setActive(true)!=kResultTrue)
-                return fail(8,"setActive true");
+                return fail(11,"setActive true");
             if(processor->setProcessing(true)!=kResultTrue)
-                return fail(9,"setProcessing true");
+                return fail(12,"setProcessing true");
             if(processor->setProcessing(false)!=kResultTrue)
-                return fail(10,"setProcessing false");
+                return fail(13,"setProcessing false");
             if(component->setActive(false)!=kResultTrue)
-                return fail(11,"setActive false");
+                return fail(14,"setActive false");
         }
 
         processor->release();
         if(component->terminate()!=kResultOk)
-            return fail(12,"terminate");
+            return fail(15,"terminate");
 
         std::cout
             <<"Noctomorph VST3 process contract PASS: realtime/offline, "
             <<"4 rates, 5 block sizes, MIDI, automation, NaN, zero-flush, "
-            <<"activate/deactivate\n";
+            <<"activate/deactivate, embedded WORLD/TEXTURE/EVENT assets\n";
         return 0;
     }
 
-    return fail(13,"no audio processor class");
+    return fail(16,"no audio processor class");
 }
 
 } // namespace
