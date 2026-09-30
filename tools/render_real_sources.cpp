@@ -95,6 +95,10 @@ int main(int argc,char** argv){
     } else if (profile == "body-only") {
         p.foundation=.0f; p.world=.0f; p.texture=.0f; p.body=.55f;
         p.tension=.48f; p.evolve=.72f; p.events=.18f; p.space=.0f; p.output=.48f;
+    } else if (profile == "presence-only") {
+        archetype = noctomorph::Archetype::Nocturne;
+        p.foundation=.0f; p.world=.0f; p.texture=.0f; p.body=.0f;
+        p.tension=.62f; p.evolve=.80f; p.events=.0f; p.space=.0f; p.output=.50f;
     } else if (profile == "world-texture-only") {
         p.foundation=.0f; p.world=.74f; p.texture=.58f; p.body=.0f;
         p.tension=.0f; p.evolve=.72f; p.events=.0f; p.space=.0f; p.output=.48f;
