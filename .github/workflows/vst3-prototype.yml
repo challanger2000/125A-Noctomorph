@@ -13,6 +13,7 @@ on:
   workflow_dispatch:
 
 jobs:
+  # Minimal wrapper/validator gate; no GUI or third-party assets.
   windows-vst3:
     runs-on: windows-2025
     timeout-minutes: 25
