@@ -1,0 +1,47 @@
+name: Noctomorph Wikimedia Bell Source Probe
+
+on:
+  push:
+    branches:
+      - dev/prototype-v0.1
+    paths:
+      - ".github/workflows/source-probe-wikimedia-bells.yml"
+      - "tools/analyze_audio.py"
+      - "tools/requirements-audio.txt"
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install analysis dependencies
+        run: python -m pip install -r tools/requirements-audio.txt
+
+      - name: Download CC0 originals from Wikimedia Commons
+        run: |
+          mkdir -p external/wikimedia-bells measurements/wikimedia-bells
+          curl -L --fail --retry 3 \
+            "https://commons.wikimedia.org/wiki/Special:Redirect/file/198442%20bigben12345%20kapitelsglocke.wav" \
+            -o external/wikimedia-bells/WC-BELL-002.wav
+          curl -L --fail --retry 3 \
+            "https://commons.wikimedia.org/wiki/Special:Redirect/file/200437%20bigben12345%20petersglocke.oga" \
+            -o external/wikimedia-bells/WC-BELL-001.oga
+
+      - name: Measure bell originals
+        run: |
+          python tools/analyze_audio.py external/wikimedia-bells/WC-BELL-002.wav --json measurements/wikimedia-bells/WC-BELL-002.json
+          python tools/analyze_audio.py external/wikimedia-bells/WC-BELL-001.oga --json measurements/wikimedia-bells/WC-BELL-001.json
+
+      - name: Upload measurements only
+        uses: actions/upload-artifact@v4
+        with:
+          name: noctomorph-wikimedia-bell-measurements
+          path: measurements/wikimedia-bells/*.json
+          if-no-files-found: error
