@@ -123,8 +123,11 @@ The minimum engine is intentionally smaller than the eventual product:
    - bounded drift.
 
 2. **WORLD / TEXTURE**
-   - one or two real-source streams;
+   - three concurrent WORLD and three concurrent TEXTURE streams;
+   - each set is selected from a larger archetype-specific reservoir;
    - independent slow transport;
+   - prepared long beds are non-looping and may rotate to another reservoir
+     source after natural/faded completion;
    - no obvious short looping.
 
 3. **IMPOSSIBLE BODY**
@@ -167,7 +170,8 @@ Before VST3 wrapper work:
 
 - public GUI/control count;
 - archetype final names;
-- exact sample library size;
+- exact final sample library size beyond the v0.2 production target of
+  100-150 genuinely useful assets;
 - convolution vs hybrid-space production choice;
 - granular implementation details;
 - final demo timing.

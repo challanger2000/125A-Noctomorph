@@ -502,13 +502,58 @@ void Engine::configurePresence() noexcept {
 void Engine::ensureLongStreams() noexcept {
     const auto traits = traitsFor(archetype_);
 
-    for (std::size_t i = 0; i < worldPoolCount_; ++i) {
-        const Clip* clip = worldPool_[i];
-        if (!clip || worldVoices_[i].active)
+    auto worldClipInUse = [&](const Clip* candidate, std::size_t except) noexcept {
+        for (std::size_t i = 0; i < worldVoices_.size(); ++i) {
+            if (i != except && worldVoices_[i].active &&
+                worldVoices_[i].clip == candidate)
+                return true;
+        }
+        return false;
+    };
+
+    auto textureClipInUse = [&](const Clip* candidate, std::size_t except) noexcept {
+        for (std::size_t i = 0; i < textureVoices_.size(); ++i) {
+            if (i != except && textureVoices_[i].active &&
+                textureVoices_[i].clip == candidate)
+                return true;
+        }
+        return false;
+    };
+
+    for (std::size_t voiceIndex = 0; voiceIndex < worldVoices_.size(); ++voiceIndex) {
+        auto& voice = worldVoices_[voiceIndex];
+        if (voice.active || worldPoolCount_ == 0)
+            continue;
+
+        const std::size_t startIndex = std::min<std::size_t>(
+            static_cast<std::size_t>(rng_.uniform01() * worldPoolCount_),
+            worldPoolCount_ - 1);
+
+        const Clip* clip = nullptr;
+        for (std::size_t offset = 0; offset < worldPoolCount_; ++offset) {
+            const Clip* candidate =
+                worldPool_[(startIndex + offset) % worldPoolCount_];
+            if (candidate && !worldClipInUse(candidate, voiceIndex)) {
+                clip = candidate;
+                break;
+            }
+        }
+        if (!clip) {
+            for (std::size_t offset = 0; offset < worldPoolCount_; ++offset) {
+                const Clip* candidate =
+                    worldPool_[(startIndex + offset) % worldPoolCount_];
+                if (candidate) {
+                    clip = candidate;
+                    break;
+                }
+            }
+        }
+        if (!clip)
             continue;
 
         const double sourceRatio = clip->sampleRate / sampleRate_;
-        const double slotSpread = 1.0 + 0.035 * static_cast<double>(i);
+        const double slotSpread =
+            1.0 + 0.035 * static_cast<double>(voiceIndex);
         const double rate =
             sourceRatio * static_cast<double>(traits.worldRate) * slotSpread *
             (1.0 + static_cast<double>(parameters_.motion) *
@@ -517,16 +562,45 @@ void Engine::ensureLongStreams() noexcept {
             clip->frames > 8
                 ? rng_.uniform01() * static_cast<double>(clip->frames - 2)
                 : 0.0;
-        worldVoices_[i].start(clip, rate, start);
+        voice.start(clip, rate, start);
     }
 
-    for (std::size_t i = 0; i < texturePoolCount_; ++i) {
-        const Clip* clip = texturePool_[i];
-        if (!clip || textureVoices_[i].active)
+    for (std::size_t voiceIndex = 0;
+         voiceIndex < textureVoices_.size();
+         ++voiceIndex) {
+        auto& voice = textureVoices_[voiceIndex];
+        if (voice.active || texturePoolCount_ == 0)
+            continue;
+
+        const std::size_t startIndex = std::min<std::size_t>(
+            static_cast<std::size_t>(rng_.uniform01() * texturePoolCount_),
+            texturePoolCount_ - 1);
+
+        const Clip* clip = nullptr;
+        for (std::size_t offset = 0; offset < texturePoolCount_; ++offset) {
+            const Clip* candidate =
+                texturePool_[(startIndex + offset) % texturePoolCount_];
+            if (candidate && !textureClipInUse(candidate, voiceIndex)) {
+                clip = candidate;
+                break;
+            }
+        }
+        if (!clip) {
+            for (std::size_t offset = 0; offset < texturePoolCount_; ++offset) {
+                const Clip* candidate =
+                    texturePool_[(startIndex + offset) % texturePoolCount_];
+                if (candidate) {
+                    clip = candidate;
+                    break;
+                }
+            }
+        }
+        if (!clip)
             continue;
 
         const double sourceRatio = clip->sampleRate / sampleRate_;
-        const double slotSpread = 1.0 - 0.045 * static_cast<double>(i);
+        const double slotSpread =
+            1.0 - 0.045 * static_cast<double>(voiceIndex);
         const double rate =
             sourceRatio * static_cast<double>(traits.textureRate) * slotSpread *
             (1.0 + static_cast<double>(parameters_.motion) *
@@ -535,7 +609,7 @@ void Engine::ensureLongStreams() noexcept {
             clip->frames > 8
                 ? rng_.uniform01() * static_cast<double>(clip->frames - 2)
                 : 0.0;
-        textureVoices_[i].start(clip, rate, start);
+        voice.start(clip, rate, start);
     }
 }
 

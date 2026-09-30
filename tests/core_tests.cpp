@@ -233,6 +233,56 @@ void testWorldClipStereoAndRateConversion() {
     assert(diffEnergy > 1.0e-6);
 }
 
+void testWorldPoolReservoirExceedsConcurrentVoices() {
+    constexpr std::size_t clipFrames = 96;
+    std::array<std::array<float, clipFrames>, 5> audio {};
+    audio[3].fill(0.45f);
+    audio[4].fill(-0.35f);
+
+    std::array<noctomorph::Clip, 5> clips {};
+    std::array<const noctomorph::Clip*, 5> pool {};
+    for (std::size_t i = 0; i < clips.size(); ++i) {
+        clips[i].left = audio[i].data();
+        clips[i].right = nullptr;
+        clips[i].frames = clipFrames;
+        clips[i].sampleRate = 48000.0;
+        clips[i].loop = false;
+        pool[i] = &clips[i];
+    }
+
+    auto renderPool = [&](std::size_t count) {
+        auto e = std::make_unique<noctomorph::Engine>();
+        e->prepare(48000.0);
+        e->reset(0x504F4F4C524553ULL);
+
+        noctomorph::Parameters p;
+        p.foundation = 0.0f;
+        p.world = 1.0f;
+        p.texture = 0.0f;
+        p.body = 0.0f;
+        p.tension = 0.0f;
+        p.motion = 0.0f;
+        p.evolve = 0.0f;
+        p.events = 0.0f;
+        p.space = 0.0f;
+        p.output = 1.0f;
+        e->setParameters(p);
+        e->setWorldPool(pool.data(), count);
+        e->noteOn(36, 1.0f);
+
+        std::vector<float> l(48000), r(48000);
+        e->process(l.data(), r.data(), l.size());
+        return rms(l) + rms(r);
+    };
+
+    const double firstThreeOnly = renderPool(3);
+    const double fullReservoir = renderPool(5);
+
+    assert(firstThreeOnly < 1.0e-12);
+    assert(fullReservoir > 1.0e-4);
+}
+
+
 void testEventClipActuallyRenders() {
     constexpr std::size_t frames = 2048;
     std::vector<float> mono(frames, 0.0f);
@@ -571,6 +621,7 @@ int main() {
     testBlockSizeInvariance();
     testFullWetSpaceHasNoImmediateDryLeak();
     testWorldClipStereoAndRateConversion();
+    testWorldPoolReservoirExceedsConcurrentVoices();
     testEventClipActuallyRenders();
     testRealBodyExciterChangesModalResponse();
     testBodyExciterDoesNotAutoRetrigger();

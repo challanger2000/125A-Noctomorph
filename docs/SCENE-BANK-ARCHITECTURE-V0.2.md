@@ -29,21 +29,39 @@ v0.2 must use that research as actual production input.
 
 Each archetype owns a dedicated scene bank.
 
-Minimum per archetype:
+Minimum active layer count per archetype remains:
 
-- 3 WORLD beds
-- 3 TEXTURE beds
-- 2 BODY exciters
-- 4 sparse EVENT sources
-- 2 SPACE/IR choices or measured-space references
+- 3 concurrent WORLD voices
+- 3 concurrent TEXTURE voices
+- modal BODY plus a recorded-exciter reservoir
+- one sparse EVENT voice selected from a larger reservoir
+- archetype-specific SPACE / measured-space references
 - synthetic FOUNDATION family specific to that archetype
 
-Target initial production pool:
-- 18+ WORLD clips
-- 18+ TEXTURE clips
-- 12+ BODY exciters
-- 24+ EVENT clips
-- multiple measured/hybrid spaces
+The active voice count is deliberately **not** the library size. Each archetype
+must draw those voices from a substantially larger source reservoir.
+
+Production target for the next serious listening bank:
+
+- **100-150 genuinely useful audio assets total**
+- 36+ WORLD assignments
+- 30+ TEXTURE assignments
+- 18+ BODY-exciter assignments
+- 36+ EVENT assignments
+- 12+ SPACE/IR references or hybrid-space inputs
+
+Per-archetype reservoir target:
+- 6-10 WORLD sources
+- 6-10 TEXTURE sources
+- 3-6 BODY exciters
+- 8-12 EVENT sources
+- 2-4 SPACE/IR choices or measured-space references
+
+A derived asset counts as a distinct production asset only when the transform
+creates a materially different usable identity (for example a different
+physical-state segment, strong time-domain transformation, spectral extraction,
+reverse/resonant reconstruction, or another clearly different role). Tiny edits,
+gain changes, or renamed copies do not count toward the target.
 
 Sources can be shared only when transformed/routed so that their role differs
 substantially. No single recording may become the audible identity of all six
@@ -52,17 +70,21 @@ archetypes.
 ## Runtime architecture
 
 WORLD:
-- 3 concurrent stream voices;
+- 3 concurrent stream voices selected from a larger per-archetype reservoir;
 - deterministic start positions;
 - independent transport rates;
-- 20–90 second crossfade times;
-- slow gain redistribution driven by EVOLVE;
+- prepared long beds are non-looping so expired voices can select a different
+  reservoir source;
+- 20–90 second gain redistribution times;
+- slow prominence changes driven by EVOLVE;
 - no hard loop identity.
 
 TEXTURE:
-- 3 concurrent stream voices;
+- 3 concurrent stream voices selected from a larger per-archetype reservoir;
 - different spectral bands/roles;
 - independent motion;
+- prepared texture beds are non-looping so long-form playback can rotate source
+  identity;
 - one source may drop out completely for long periods.
 
 BODY:

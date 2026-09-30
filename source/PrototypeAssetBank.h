@@ -11,10 +11,10 @@ namespace Noctomorph {
 class PrototypeAssetBank {
 public:
     struct ScenePool {
-        std::array<const noctomorph::Clip*, 3> world {};
-        std::array<const noctomorph::Clip*, 3> texture {};
-        std::array<const noctomorph::Clip*, 4> body {};
-        std::array<const noctomorph::Clip*, 6> event {};
+        std::array<const noctomorph::Clip*, 12> world {};
+        std::array<const noctomorph::Clip*, 12> texture {};
+        std::array<const noctomorph::Clip*, 8> body {};
+        std::array<const noctomorph::Clip*, 16> event {};
         std::size_t worldCount = 0;
         std::size_t textureCount = 0;
         std::size_t bodyCount = 0;

@@ -155,10 +155,15 @@ private:
     float bodyExcitation_ = 0.0f;
     float presenceNoiseLowpass_ = 0.0f;
 
-    static constexpr std::size_t kWorldPoolCapacity = 3;
-    static constexpr std::size_t kTexturePoolCapacity = 3;
-    static constexpr std::size_t kEventPoolCapacity = 6;
-    static constexpr std::size_t kBodyPoolCapacity = 4;
+    // Scene reservoirs are intentionally larger than the number of
+    // simultaneously active stream voices. Long-form scenes select from these
+    // reservoirs deterministically as non-looping prepared clips expire.
+    static constexpr std::size_t kWorldPoolCapacity = 16;
+    static constexpr std::size_t kTexturePoolCapacity = 16;
+    static constexpr std::size_t kEventPoolCapacity = 24;
+    static constexpr std::size_t kBodyPoolCapacity = 12;
+    static constexpr std::size_t kWorldVoiceCount = 3;
+    static constexpr std::size_t kTextureVoiceCount = 3;
 
     std::array<const Clip*, kWorldPoolCapacity> worldPool_ {};
     std::array<const Clip*, kTexturePoolCapacity> texturePool_ {};
@@ -169,12 +174,12 @@ private:
     std::size_t eventPoolCount_ = 0;
     std::size_t bodyPoolCount_ = 0;
 
-    std::array<StreamVoice, kWorldPoolCapacity> worldVoices_ {};
-    std::array<StreamVoice, kTexturePoolCapacity> textureVoices_ {};
-    std::array<float, kWorldPoolCapacity> worldLayerGain_ {};
-    std::array<float, kWorldPoolCapacity> worldLayerTarget_ {};
-    std::array<float, kTexturePoolCapacity> textureLayerGain_ {};
-    std::array<float, kTexturePoolCapacity> textureLayerTarget_ {};
+    std::array<StreamVoice, kWorldVoiceCount> worldVoices_ {};
+    std::array<StreamVoice, kTextureVoiceCount> textureVoices_ {};
+    std::array<float, kWorldVoiceCount> worldLayerGain_ {};
+    std::array<float, kWorldVoiceCount> worldLayerTarget_ {};
+    std::array<float, kTextureVoiceCount> textureLayerGain_ {};
+    std::array<float, kTextureVoiceCount> textureLayerTarget_ {};
 
     StreamVoice eventVoice_ {};
     StreamVoice bodyExciterVoice_ {};
