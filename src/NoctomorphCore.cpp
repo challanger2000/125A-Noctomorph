@@ -255,6 +255,7 @@ void Engine::reset(std::uint64_t seedValue) noexcept {
     worldVoice_.reset();
     textureVoice_.reset();
     eventVoice_.reset();
+    bodyExciterVoice_.reset();
 
     eventCount_ = 0;
     eventCountdown_ = static_cast<int>(sampleRate_ * (2.0 + 3.0 * rng_.uniform01()));
@@ -301,6 +302,11 @@ void Engine::setEventClip(const Clip* clip) noexcept {
     eventVoice_.reset();
 }
 
+void Engine::setBodyExciterClip(const Clip* clip) noexcept {
+    bodyExciterClip_ = clip;
+    bodyExciterVoice_.reset();
+}
+
 void Engine::noteOn(int midiNote, float velocity) noexcept {
     midiNote_ = std::clamp(midiNote, 0, 127);
     velocity_ = clamp01(velocity);
@@ -310,6 +316,10 @@ void Engine::noteOn(int midiNote, float velocity) noexcept {
     if (gate_) {
         ensureLongStreams();
         bodyExcitation_ += 0.08f + 0.22f * velocity_;
+        if (bodyExciterClip_) {
+            const double sourceRatio = bodyExciterClip_->sampleRate / sampleRate_;
+            bodyExciterVoice_.start(bodyExciterClip_, sourceRatio, 0.0);
+        }
     }
 }
 
@@ -443,6 +453,12 @@ void Engine::triggerEvent() noexcept {
         const double sourceRatio = eventClip_->sampleRate / sampleRate_;
         const double rate = sourceRatio * (0.74 + 0.54 * rng_.uniform01());
         eventVoice_.start(eventClip_, rate, 0.0);
+    }
+
+    if (bodyExciterClip_) {
+        const double sourceRatio = bodyExciterClip_->sampleRate / sampleRate_;
+        const double rate = sourceRatio * (0.82 + 0.36 * rng_.uniform01());
+        bodyExciterVoice_.start(bodyExciterClip_, rate, 0.0);
     }
 
     const float eventAmount = clamp01(parameters_.events);
@@ -617,12 +633,23 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             dryR += 0.32f * envelope_ * eventR;
         }
 
-        // IMPOSSIBLE BODY: a sparse excitation enters an inharmonic modal bank.
+        // IMPOSSIBLE BODY: synthetic impulses and optional real recorded
+        // exciters drive the same inharmonic modal bank. The exciter itself is
+        // not mixed to the output here; only the resonant body's response is.
         bodyExcitation_ *= 0.9925f;
-        const float excitationNoise =
+        float exciterL = 0.0f;
+        float exciterR = 0.0f;
+        bodyExciterVoice_.process(exciterL, exciterR);
+        const float realExciter = 0.5f * (exciterL + exciterR);
+
+        const float syntheticExciter =
             bodyExcitation_ *
             (0.18f + 0.82f * std::fabs(rng_.bipolar())) *
             rng_.bipolar();
+
+        const float excitationNoise =
+            syntheticExciter +
+            realExciter * (0.18f + 0.42f * body);
 
         float bodyL = 0.0f;
         float bodyR = 0.0f;
