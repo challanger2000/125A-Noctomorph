@@ -691,21 +691,24 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             (0.18f + 0.82f * std::fabs(rng_.bipolar())) *
             rng_.bipolar();
 
+        const float excitationGain =
+            bodyExciterClip_
+                ? std::clamp(bodyExciterClip_->excitationGain, 0.0f, 4.0f)
+                : 1.0f;
+
         const float excitationNoise =
             syntheticExciter +
-            (bodyExciterVoice_.active ? 0.010f * realExciter : 0.0f);
+            (bodyExciterVoice_.active
+                ? 0.010f * excitationGain * realExciter
+                : 0.0f);
 
         float bodyL = 0.0f;
         float bodyR = 0.0f;
         if (body > 0.0f) {
             for (auto& resonator : resonators_)
                 resonator.process(excitationNoise, bodyL, bodyR);
-            // Modal-bank output is an acoustic body layer, not a second
-            // full-scale instrument. Calibrated against real WORLD/TEXTURE
-            // source RMS so BODY adds material identity without dominating it.
-            constexpr float kBodyOutputTrim = 0.075f; // about -22.5 dB
-            dryL += kBodyOutputTrim * body * envelope_ * bodyL;
-            dryR += kBodyOutputTrim * body * envelope_ * bodyR;
+            dryL += body * envelope_ * bodyL;
+            dryR += body * envelope_ * bodyR;
         }
 
         float spacedL = 0.0f;
