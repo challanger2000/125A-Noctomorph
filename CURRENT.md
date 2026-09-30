@@ -166,3 +166,18 @@ Five-minute real-source QA: **PASS for all six archetypes**.
 - No non-finite/silent long-form failure.
 - Detailed measurements: `docs/ARCHETYPE-LONGFORM-QA.md` and `measurements/longform/summary.csv`.
 - Prototype scene architecture is now sufficiently stable to begin VST3 integration without freezing the final GUI.
+
+
+## 2026-09-30 VST3 prototype checkpoint
+
+First Noctomorph VST3 instrument wrapper: **PASS**.
+
+- Steinberg Validator: **47/47 PASS**
+- State/Recall native probe: **PASS**
+- Process-contract native probe: **PASS**
+- Matrix: realtime/offline, 44.1/48/96/192 kHz, block 1/16/64/257/1024.
+- MIDI, sample-position automation, NaN sanitation, zero-sample flush and activate/deactivate lifecycle verified.
+- Instrument topology: 0 audio inputs, stereo output, MIDI/event input.
+- No GUI or embedded third-party audio yet by design.
+
+Detailed evidence: `docs/VST3-PROTOTYPE-QA.md`.
