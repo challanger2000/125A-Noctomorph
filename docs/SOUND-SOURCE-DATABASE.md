@@ -434,3 +434,135 @@ Candidate transformations to test, measure and compare:
 - low-frequency synthesis layered underneath real recordings only where needed.
 
 Any irreversible production processing should preserve the original source and metadata.
+
+
+## Reused research leads from Mechamorph
+
+These are not copied blindly from Mechamorph's release palette. They are re-evaluated specifically for Noctomorph's scene-building goal.
+
+### Large industrial / hall environments
+
+#### MECH-LEAD-001 — Factory_Ambience.wav
+Source: https://freesound.org/people/Mortifreshman/sounds/368825/
+Licence: CC0
+Origin of lead: Mechamorph large-machine source sweep
+Potential Noctomorph use:
+- distant industrial WORLD bed
+- low-level machine-hall depth
+- transformed long-form ambience
+Priority: HIGH
+
+#### MECH-LEAD-002 — Large Warehouse/Factory Ambience.wav
+Source: https://freesound.org/people/fimrod/sounds/278987/
+Licence: CC0
+Origin of lead: Mechamorph large-machine source sweep
+Description: large factory/warehouse environment, loop-oriented.
+Potential Noctomorph use:
+- INDUSTRIAL / RUINS hall layer
+- large-space background texture
+Priority: VERY HIGH
+
+#### MECH-LEAD-003 — Industrial factory working 03
+Source: https://freesound.org/people/dersinnsspace/sounds/439401/
+Licence: CC0
+Origin of lead: Mechamorph large-machine source sweep
+Description: hard industrial activity in a large naturally reverberant hall.
+Potential Noctomorph use:
+- sparse hard events inside a large-world bed
+- natural-space reference for synthetic reverb design
+Priority: HIGH
+
+#### MECH-LEAD-004 — Factory Atmosphere
+Source: https://freesound.org/people/RICHERlandTV/sounds/240134/
+Licence: CC0
+Origin of lead: Mechamorph large-machine source sweep
+Potential Noctomorph use:
+- rare background clangs
+- distant industrial event layer
+Priority: MEDIUM-HIGH
+
+#### MECH-LEAD-005 — abandoned warehouse
+Source: https://freesound.org/people/Kostrava/sounds/240895/
+Licence: CC0
+Origin of lead: Mechamorph large-machine source sweep
+Description: metal squeeze, rumble, large empty industrial environment.
+Potential Noctomorph use:
+- RUINS / INDUSTRIAL world bed
+- structural movement
+- colossal-space atmosphere
+Priority: VERY HIGH
+
+### Structural metal / stress
+
+#### MECH-LEAD-006 — Metallic Groan
+Source: https://freesound.org/people/hinchinbrook/sounds/496836/
+Licence: CC0
+Origin of lead: Mechamorph large-machine source sweep
+Description: low heavy steel/iron groan from a bunker-door source.
+Potential Noctomorph use:
+- structural stress event
+- stretched low-frequency tension
+- rare scene mutation cue
+Rule:
+- de-literalize; do not present as an obvious door/horror effect.
+Priority: VERY HIGH
+
+### Hydraulic / pressure motion
+
+#### MECH-LEAD-007 — industrial_machine_hydraulic
+Source: https://freesound.org/people/Kostrava/sounds/271328/
+Licence: CC0
+Origin of lead: Mechamorph large-machine source sweep
+Potential Noctomorph use:
+- low industrial bed
+- pressure / load motion
+- slow transformed scene movement
+Priority: HIGH
+
+#### MECH-LEAD-008 — Victorian steam escape valve
+Source: https://freesound.org/people/pnwheeler/sounds/832100/
+Licence: CC0
+Origin of lead: Mechamorph pressure-source research
+Description: real escape valve under a Victorian steam-driven beam engine.
+Potential Noctomorph use:
+- pressure-release event extraction
+- hiss/chuff microtexture
+Rule:
+- keep non-literal and sparse; avoid “steampunk” identity.
+Priority: MEDIUM-HIGH
+
+### Long coherent mechanical-state recordings
+
+#### MECH-LEAD-009 — Heidelberg printing press family
+Representative source: https://bigsoundbank.com/heidelberg-printing-press-4-s3407.html
+Licence: CC0/public-domain-equivalent on asset page
+Origin of lead: Mechamorph deep source sweep
+Potential Noctomorph use:
+- not as a foreground machine
+- mine low body resonance, room, spin-up/down, and cyclic distant motion
+Priority: RESEARCH
+
+#### MECH-LEAD-010 — 35mm cinema projector family
+Representative source: https://bigsoundbank.com/35mm-cinema-projector-7-s0071.html
+Licence: CC0/public-domain-equivalent on asset page
+Origin of lead: Mechamorph deep source sweep
+Potential Noctomorph use:
+- subtle cyclic high-frequency motion
+- start/stop transition texture
+- transformed transport flutter
+Priority: RESEARCH
+
+## Noctomorph-specific reuse rule
+
+A Mechamorph source is useful for Noctomorph only when at least one of these is true:
+- it contributes environmental space rather than literal machine identity;
+- it contains structural resonance / low-frequency mass;
+- it yields sparse events that can be de-literalized;
+- it has long coherent motion useful for scene evolution;
+- it contains real-world complexity difficult to synthesize convincingly.
+
+Reject or deprioritize:
+- small obvious clockwork;
+- foreground ratchets;
+- clearly identifiable switches/camera clicks;
+- anything that turns the scene into “a machine performance” rather than a dark world.
