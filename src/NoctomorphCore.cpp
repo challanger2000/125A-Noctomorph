@@ -962,8 +962,8 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             rng_.bipolar();
 
         const float excitationGain =
-            bodyExciterClip_
-                ? std::clamp(bodyExciterClip_->excitationGain, 0.0f, 4.0f)
+            bodyExciterVoice_.clip
+                ? std::clamp(bodyExciterVoice_.clip->excitationGain, 0.0f, 4.0f)
                 : 1.0f;
 
         const float excitationNoise =
