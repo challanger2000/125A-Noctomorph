@@ -1,0 +1,83 @@
+name: Noctomorph Archetype Listening QA
+
+on:
+  push:
+    branches: [dev/prototype-v0.1]
+    paths:
+      - ".github/workflows/archetype-listening.yml"
+      - "tools/render_real_sources.cpp"
+      - "tools/apply_ir.py"
+      - "tools/prepare_audio_raw.py"
+      - "tools/analyze_audio.py"
+      - "tools/requirements-audio.txt"
+      - "include/**"
+      - "src/**"
+      - "CMakeLists.txt"
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install analysis dependencies
+        run: python -m pip install -r tools/requirements-audio.txt
+
+      - name: Download cleared raw sources and measured spaces
+        run: |
+          mkdir -p external/archetypes raw renders measurements/archetypes
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Howling%20wind.ogg" -o external/archetypes/ruins-world.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Automaticpackingstation.ogg" -o external/archetypes/industrial-texture.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" -o external/archetypes/industrial-world.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/200437%20bigben12345%20petersglocke.oga" -o external/archetypes/event.oga
+          curl -L --fail --retry 3 "https://webfiles.york.ac.uk/OPENAIR/IRs/maes-howe/b-format/mh3_000_bformat_48k.wav" -o external/archetypes/maes-howe.wav
+          curl -L --fail --retry 3 "https://webfiles.york.ac.uk/OPENAIR/IRs/hamilton-mausoleum/b-format/hm2_000_bformat_48k.wav" -o external/archetypes/hamilton.wav
+
+      - name: Measure new raw source
+        run: python tools/analyze_audio.py external/archetypes/ruins-world.ogg --json measurements/archetypes/ruins-world-source.json
+
+      - name: Prepare source buffers
+        run: |
+          python tools/prepare_audio_raw.py external/archetypes/ruins-world.ogg raw/ruins-world.raw --peak 0.36
+          python tools/prepare_audio_raw.py external/archetypes/industrial-world.ogg raw/industrial-world.raw --peak 0.40
+          python tools/prepare_audio_raw.py external/archetypes/industrial-texture.ogg raw/texture.raw --peak 0.30
+          python tools/prepare_audio_raw.py external/archetypes/event.oga raw/event.raw --peak 0.32
+
+      - name: Configure and build
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --parallel 2
+
+      - name: Render dry engine archetypes
+        run: |
+          ./build/noctomorph_real_source_render raw/ruins-world.raw raw/texture.raw raw/event.raw 120 renders/ruins-engine.wav ruins
+          ./build/noctomorph_real_source_render raw/industrial-world.raw raw/texture.raw raw/event.raw 120 renders/nocturne-engine.wav nocturne
+          ./build/noctomorph_real_source_render raw/industrial-world.raw raw/texture.raw raw/event.raw 120 renders/abyss-engine.wav abyss
+
+      - name: Apply measured rooms
+        run: |
+          python tools/apply_ir.py renders/ruins-engine.wav external/archetypes/maes-howe.wav renders/ruins-maes-howe.wav --wet 0.62 --tail-seconds 5
+          python tools/apply_ir.py renders/nocturne-engine.wav external/archetypes/hamilton.wav renders/nocturne-hamilton.wav --wet 0.74 --tail-seconds 15
+          python tools/apply_ir.py renders/abyss-engine.wav external/archetypes/hamilton.wav renders/abyss-hamilton.wav --wet 0.52 --tail-seconds 15
+
+      - name: Measure archetypes
+        run: |
+          python tools/analyze_audio.py renders/ruins-maes-howe.wav --json measurements/archetypes/ruins.json
+          python tools/analyze_audio.py renders/nocturne-hamilton.wav --json measurements/archetypes/nocturne.json
+          python tools/analyze_audio.py renders/abyss-hamilton.wav --json measurements/archetypes/abyss.json
+
+      - name: Upload listening pack
+        uses: actions/upload-artifact@v4
+        with:
+          name: noctomorph-archetype-listening-pack
+          path: |
+            renders/*-maes-howe.wav
+            renders/*-hamilton.wav
+            measurements/archetypes/*.json
+          if-no-files-found: error
