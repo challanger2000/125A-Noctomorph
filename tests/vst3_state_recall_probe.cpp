@@ -90,7 +90,7 @@ int run(const std::string& path){
         audio->release();
 
         const std::array<float,11> expectedDefaults{
-            0.0f,0.50f,0.35f,0.25f,0.35f,0.25f,0.35f,0.18f,0.35f,0.50f,0.35f
+            0.0f,0.30f,0.42f,0.34f,0.30f,0.32f,0.45f,0.00f,0.45f,0.50f,0.45f
         };
         std::array<float,11> defaults{};
         if(!readCurrentState(component.get(),defaults) || !same(defaults,expectedDefaults)){

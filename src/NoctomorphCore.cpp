@@ -22,18 +22,18 @@ struct ArchetypeTraits {
 ArchetypeTraits traitsFor(Archetype archetype) noexcept {
     switch (archetype) {
         case Archetype::Void:
-            return {1.15f, 0.55f, 0.55f, 1.25f, 0.55f, 0.82f, 0.75f};
+            return {0.72f, 0.00f, 0.22f, 1.35f, 0.45f, 0.64f, 0.58f};
         case Archetype::Ruins:
-            return {0.75f, 1.00f, 1.10f, 0.90f, 0.75f, 0.95f, 0.85f};
+            return {0.28f, 1.10f, 0.45f, 0.78f, 0.70f, 0.76f, 0.70f};
         case Archetype::Industrial:
-            return {0.70f, 1.15f, 1.20f, 0.95f, 1.20f, 1.00f, 1.00f};
+            return {0.18f, 1.30f, 1.45f, 0.72f, 1.20f, 1.03f, 1.12f};
         case Archetype::Wasteland:
-            return {0.60f, 1.20f, 1.30f, 0.70f, 0.85f, 1.05f, 1.12f};
+            return {0.22f, 0.48f, 1.55f, 0.42f, 0.70f, 1.28f, 1.34f};
         case Archetype::Abyss:
-            return {1.10f, 0.75f, 0.65f, 1.30f, 0.65f, 0.78f, 0.72f};
+            return {0.95f, 0.00f, 0.18f, 1.55f, 0.40f, 0.52f, 0.48f};
         case Archetype::Nocturne:
         default:
-            return {0.85f, 1.00f, 0.90f, 0.90f, 0.60f, 0.88f, 0.82f};
+            return {0.42f, 0.22f, 0.58f, 0.68f, 0.55f, 0.72f, 0.66f};
     }
 }
 
@@ -354,12 +354,9 @@ void Engine::noteOn(int midiNote, float velocity) noexcept {
     // Retrigger the acoustic world without resetting macro evolution.
     if (gate_) {
         ensureLongStreams();
-        bodyExcitation_ += 0.08f + 0.22f * velocity_;
-
-        if (bodyExciterClip_) {
-            const double sourceRatio = bodyExciterClip_->sampleRate / sampleRate_;
-            bodyExciterVoice_.start(bodyExciterClip_, sourceRatio, 0.0);
-        }
+        // Note-On starts the scene itself, not a recognizable recorded hit.
+        // Real BODY exciters are reserved for explicit EVENTS.
+        bodyExcitation_ += 0.05f + 0.16f * velocity_;
     }
 }
 
@@ -654,8 +651,26 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         1.0 - std::exp(-1.0 / (std::max(0.05f, releaseSeconds) * sampleRate_)));
 
     const float baseHz = midiToHz(midiNote_);
-    static constexpr std::array<float, 4> ratios {0.50f, 1.00f, 1.4983f, 2.1189f};
-    static constexpr std::array<float, 4> foundationWeights {0.34f, 1.00f, 0.55f, 0.30f};
+    static constexpr std::array<std::array<float, 4>, 6> kFoundationRatios {{
+        {{0.25f, 0.50f, 1.013f, 1.417f}},  // VOID
+        {{0.50f, 1.00f, 1.337f, 2.003f}},  // RUINS
+        {{0.75f, 1.00f, 1.503f, 2.517f}},  // INDUSTRIAL
+        {{0.50f, 0.997f, 1.861f, 3.127f}}, // WASTELAND
+        {{0.125f,0.25f, 0.503f, 0.709f}},  // ABYSS
+        {{0.50f, 1.00f, 1.259f, 1.887f}}   // NOCTURNE
+    }};
+    static constexpr std::array<std::array<float, 4>, 6> kFoundationWeights {{
+        {{0.78f,0.48f,0.19f,0.10f}},
+        {{0.18f,0.52f,0.42f,0.20f}},
+        {{0.08f,0.34f,0.72f,0.42f}},
+        {{0.05f,0.24f,0.48f,0.70f}},
+        {{1.00f,0.58f,0.18f,0.08f}},
+        {{0.12f,0.42f,0.58f,0.38f}}
+    }};
+    const auto archetypeIndex =
+        std::min<std::size_t>(static_cast<std::size_t>(archetype_), 5u);
+    const auto& ratios = kFoundationRatios[archetypeIndex];
+    const auto& foundationWeights = kFoundationWeights[archetypeIndex];
 
     for (std::size_t n = 0; n < frames; ++n) {
         if (--controlCountdown_ <= 0) {
@@ -713,7 +728,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 sumR += sample * gR;
             }
 
-            const float tonalGain = 0.1556f * foundation * envelope_;
+            const float tonalGain = 0.105f * foundation * envelope_;
             dryL += tonalGain * sumL;
             dryR += tonalGain * sumR;
         }

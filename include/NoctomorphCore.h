@@ -26,15 +26,15 @@ struct Clip {
 };
 
 struct Parameters {
-    float foundation = 0.50f;
-    float world = 0.35f;
-    float texture = 0.25f;
-    float body = 0.35f;
-    float tension = 0.25f;
-    float motion = 0.35f;
-    float evolve = 0.35f;
-    float events = 0.18f;
-    float space = 0.35f;
+    float foundation = 0.30f;
+    float world = 0.42f;
+    float texture = 0.34f;
+    float body = 0.30f;
+    float tension = 0.32f;
+    float motion = 0.45f;
+    float evolve = 0.45f;
+    float events = 0.00f;
+    float space = 0.45f;
     float output = 0.50f;
 };
 

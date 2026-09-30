@@ -37,15 +37,15 @@ tresult PLUGIN_API Controller::initialize(FUnknown* context) {
         parameters.addParameter(parameter);
     };
 
-    addPercent(STR16("Foundation"), kFoundation, 0.50);
-    addPercent(STR16("World"), kWorld, 0.35);
-    addPercent(STR16("Texture"), kTexture, 0.25);
-    addPercent(STR16("Body"), kBody, 0.35);
-    addPercent(STR16("Tension"), kTension, 0.25);
-    addPercent(STR16("Motion"), kMotion, 0.35);
-    addPercent(STR16("Evolve"), kEvolve, 0.35);
-    addPercent(STR16("Events"), kEvents, 0.18);
-    addPercent(STR16("Space"), kSpace, 0.35);
+    addPercent(STR16("Foundation"), kFoundation, 0.30);
+    addPercent(STR16("World"), kWorld, 0.42);
+    addPercent(STR16("Texture"), kTexture, 0.34);
+    addPercent(STR16("Body"), kBody, 0.30);
+    addPercent(STR16("Tension"), kTension, 0.32);
+    addPercent(STR16("Motion"), kMotion, 0.45);
+    addPercent(STR16("Evolve"), kEvolve, 0.45);
+    addPercent(STR16("Events"), kEvents, 0.00);
+    addPercent(STR16("Space"), kSpace, 0.45);
     addPercent(STR16("Output"), kOutput, 0.50);
 
     return kResultOk;
