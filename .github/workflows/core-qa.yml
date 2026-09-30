@@ -1,0 +1,40 @@
+name: Noctomorph Core QA
+
+on:
+  push:
+    branches:
+      - dev/prototype-v0.1
+    paths:
+      - "CMakeLists.txt"
+      - "include/**"
+      - "src/**"
+      - "tests/**"
+      - "tools/render_smoke.cpp"
+      - ".github/workflows/core-qa.yml"
+  workflow_dispatch:
+
+jobs:
+  core:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S . -B build -A x64
+
+      - name: Build
+        run: cmake --build build --config Release --parallel 2
+
+      - name: Test
+        run: ctest --test-dir build -C Release --output-on-failure
+
+      - name: Smoke render
+        run: .\build\Release\noctomorph_smoke_render.exe noctomorph-smoke.wav
+
+      - name: Upload smoke render
+        uses: actions/upload-artifact@v4
+        with:
+          name: noctomorph-core-smoke
+          path: noctomorph-smoke.wav
+          if-no-files-found: error
