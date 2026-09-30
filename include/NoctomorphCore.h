@@ -47,6 +47,7 @@ public:
     void setWorldClip(const Clip* clip) noexcept;
     void setTextureClip(const Clip* clip) noexcept;
     void setEventClip(const Clip* clip) noexcept;
+    void setBodyExciterClip(const Clip* clip) noexcept;
 
     void noteOn(int midiNote, float velocity) noexcept;
     void noteOff() noexcept;
@@ -144,9 +145,11 @@ private:
     const Clip* worldClip_ = nullptr;
     const Clip* textureClip_ = nullptr;
     const Clip* eventClip_ = nullptr;
+    const Clip* bodyExciterClip_ = nullptr;
     StreamVoice worldVoice_ {};
     StreamVoice textureVoice_ {};
     StreamVoice eventVoice_ {};
+    StreamVoice bodyExciterVoice_ {};
 
     std::uint64_t eventCount_ = 0;
     int eventCountdown_ = 0;
