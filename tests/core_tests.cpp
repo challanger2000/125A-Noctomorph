@@ -342,6 +342,76 @@ void testRealBodyExciterChangesModalResponse() {
     assert(rms(realDriven) > 1.0e-5);
 }
 
+
+void testBodyExciterDrivesModalBank() {
+    constexpr std::size_t frames = 16384;
+    std::vector<float> source(frames);
+    for (std::size_t i = 0; i < frames; ++i) {
+        const float time = static_cast<float>(i) / 48000.0f;
+        const float carrier =
+            0.22f * std::sin(6.28318530718f * 731.0f * time) +
+            0.14f * std::sin(6.28318530718f * 1187.0f * time);
+        const float pulse =
+            (i % 997u) < 18u
+                ? 0.35f * (1.0f - static_cast<float>(i % 997u) / 18.0f)
+                : 0.0f;
+        source[i] = carrier + pulse;
+    }
+
+    noctomorph::Clip clip {source.data(), nullptr, frames, 48000.0, true};
+
+    auto makeEngine = [&]() {
+        auto e = std::make_unique<noctomorph::Engine>();
+        e->prepare(48000.0);
+        e->reset(0x424F445945584349ULL);
+        noctomorph::Parameters p;
+        p.foundation = 0.0f;
+        p.world = 0.0f;
+        p.texture = 0.0f;
+        p.body = 0.75f;
+        p.tension = 0.45f;
+        p.evolve = 0.0f;
+        p.events = 0.0f;
+        p.space = 0.0f;
+        p.output = 0.5f;
+        e->setParameters(p);
+        e->setArchetype(noctomorph::Archetype::Industrial);
+        return e;
+    };
+
+    auto syntheticOnly = makeEngine();
+    auto realDriven = makeEngine();
+    realDriven->setBodyExciterClip(&clip);
+    syntheticOnly->noteOn(36, 1.0f);
+    realDriven->noteOn(36, 1.0f);
+
+    constexpr std::size_t total = 48000 * 3;
+    std::vector<float> aL(257), aR(257), bL(257), bR(257);
+    long double syntheticEnergy = 0.0;
+    long double realEnergy = 0.0;
+    std::size_t done = 0;
+
+    while (done < total) {
+        const auto n = std::min<std::size_t>(257, total - done);
+        syntheticOnly->process(aL.data(), aR.data(), n);
+        realDriven->process(bL.data(), bR.data(), n);
+        for (std::size_t i = 0; i < n; ++i) {
+            assert(std::isfinite(bL[i]));
+            assert(std::isfinite(bR[i]));
+            if (done + i > 24000) {
+                syntheticEnergy += static_cast<long double>(aL[i]) * aL[i] +
+                                   static_cast<long double>(aR[i]) * aR[i];
+                realEnergy += static_cast<long double>(bL[i]) * bL[i] +
+                              static_cast<long double>(bR[i]) * bR[i];
+            }
+        }
+        done += n;
+    }
+
+    assert(realEnergy > syntheticEnergy * 1.5L);
+    assert(realEnergy > 1.0e-5L);
+}
+
 void testReleaseDecays() {
     noctomorph::Parameters p;
     p.space = 0.0f;

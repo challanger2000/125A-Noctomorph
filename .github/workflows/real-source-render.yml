@@ -31,11 +31,13 @@ jobs:
           mkdir -p external/real raw renders measurements/real-render
           curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" -o external/real/world.ogg
           curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Automaticpackingstation.ogg" -o external/real/texture.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Paperpulprecyclingmill.ogg" -o external/real/body.ogg
           curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/200437%20bigben12345%20petersglocke.oga" -o external/real/event.oga
       - name: Prepare normalized source buffers
         run: |
           python tools/prepare_audio_raw.py external/real/world.ogg raw/world.raw --peak 0.40
           python tools/prepare_audio_raw.py external/real/texture.ogg raw/texture.raw --peak 0.32
+          python tools/prepare_audio_raw.py external/real/body.ogg raw/body.raw --peak 0.30
           python tools/prepare_audio_raw.py external/real/event.oga raw/event.raw --peak 0.35
       - name: Configure and build
         run: |
@@ -43,10 +45,10 @@ jobs:
           cmake --build build --parallel 2
       - name: Render and measure
         run: |
-          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/event.raw 30 renders/noctomorph-real-30s.wav
-          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/event.raw 120 renders/noctomorph-real-120s.wav
-          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/event.raw 300 renders/noctomorph-real-300s.wav
-          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/event.raw 30 renders/noctomorph-source-only-30s.wav source-only
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body.raw raw/event.raw 30 renders/noctomorph-real-30s.wav
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body.raw raw/event.raw 120 renders/noctomorph-real-120s.wav
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body.raw raw/event.raw 300 renders/noctomorph-real-300s.wav
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body.raw raw/event.raw 30 renders/noctomorph-source-only-30s.wav source-only
           python tools/analyze_audio.py renders/noctomorph-real-30s.wav --json measurements/real-render/30s.json
           python tools/analyze_audio.py renders/noctomorph-real-120s.wav --json measurements/real-render/120s.json
           python tools/analyze_audio.py renders/noctomorph-real-300s.wav --json measurements/real-render/300s.json

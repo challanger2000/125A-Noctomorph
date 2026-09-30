@@ -150,6 +150,7 @@ private:
     StreamVoice textureVoice_ {};
     StreamVoice eventVoice_ {};
     StreamVoice bodyExciterVoice_ {};
+    float bodyExciterLowpass_ = 0.0f;
 
     std::uint64_t eventCount_ = 0;
     int eventCountdown_ = 0;

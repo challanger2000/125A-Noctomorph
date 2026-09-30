@@ -256,6 +256,7 @@ void Engine::reset(std::uint64_t seedValue) noexcept {
     textureVoice_.reset();
     eventVoice_.reset();
     bodyExciterVoice_.reset();
+    bodyExciterLowpass_ = 0.0f;
 
     eventCount_ = 0;
     eventCountdown_ = static_cast<int>(sampleRate_ * (2.0 + 3.0 * rng_.uniform01()));
@@ -305,6 +306,7 @@ void Engine::setEventClip(const Clip* clip) noexcept {
 void Engine::setBodyExciterClip(const Clip* clip) noexcept {
     bodyExciterClip_ = clip;
     bodyExciterVoice_.reset();
+    bodyExciterLowpass_ = 0.0f;
 }
 
 void Engine::noteOn(int midiNote, float velocity) noexcept {
@@ -316,10 +318,6 @@ void Engine::noteOn(int midiNote, float velocity) noexcept {
     if (gate_) {
         ensureLongStreams();
         bodyExcitation_ += 0.08f + 0.22f * velocity_;
-        if (bodyExciterClip_) {
-            const double sourceRatio = bodyExciterClip_->sampleRate / sampleRate_;
-            bodyExciterVoice_.start(bodyExciterClip_, sourceRatio, 0.0);
-        }
     }
 }
 
@@ -387,6 +385,17 @@ void Engine::ensureLongStreams() noexcept {
                 ? rng_.uniform01() * static_cast<double>(textureClip_->frames - 2)
                 : 0.0;
         textureVoice_.start(textureClip_, rate, start);
+    }
+
+    if (bodyExciterClip_ && !bodyExciterVoice_.active) {
+        const double sourceRatio = bodyExciterClip_->sampleRate / sampleRate_;
+        const double rate =
+            sourceRatio * (0.72 + 0.30 * rng_.uniform01());
+        const double start =
+            bodyExciterClip_->frames > 8
+                ? rng_.uniform01() * static_cast<double>(bodyExciterClip_->frames - 2)
+                : 0.0;
+        bodyExciterVoice_.start(bodyExciterClip_, rate, start);
     }
 }
 
@@ -640,7 +649,13 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         float exciterL = 0.0f;
         float exciterR = 0.0f;
         bodyExciterVoice_.process(exciterL, exciterR);
-        const float realExciter = 0.5f * (exciterL + exciterR);
+        const float realExciterMono = 0.5f * (exciterL + exciterR);
+        const float bodyHpCoeff =
+            static_cast<float>(1.0 - std::exp(-kTwoPi * 42.0 / sampleRate_));
+        bodyExciterLowpass_ +=
+            bodyHpCoeff * (realExciterMono - bodyExciterLowpass_);
+        const float realExciter =
+            softClip(2.25f * (realExciterMono - bodyExciterLowpass_));
 
         const float syntheticExciter =
             bodyExcitation_ *
@@ -649,7 +664,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
 
         const float excitationNoise =
             syntheticExciter +
-            realExciter * (0.18f + 0.42f * body);
+            (bodyExciterVoice_.active ? 0.32f * realExciter : 0.0f);
 
         float bodyL = 0.0f;
         float bodyR = 0.0f;
