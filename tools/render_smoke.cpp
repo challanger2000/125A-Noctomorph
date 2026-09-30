@@ -66,9 +66,9 @@ int main(int argc, char** argv) {
     constexpr double seconds = 30.0;
     const std::size_t frames = static_cast<std::size_t>(sampleRate * seconds);
 
-    noctomorph::Engine engine;
-    engine.prepare(sampleRate);
-    engine.reset(0x125A4E4F43544F4DULL);
+    auto engine = std::make_unique<noctomorph::Engine>();
+    engine->prepare(sampleRate);
+    engine->reset(0x125A4E4F43544F4DULL);
 
     noctomorph::Parameters p;
     p.foundation = 0.58f;
@@ -81,9 +81,9 @@ int main(int argc, char** argv) {
     p.space = 0.48f;
     p.output = 0.50f;
 
-    engine.setParameters(p);
-    engine.setArchetype(noctomorph::Archetype::Nocturne);
-    engine.noteOn(36, 0.9f);
+    engine->setParameters(p);
+    engine->setArchetype(noctomorph::Archetype::Nocturne);
+    engine->noteOn(36, 0.9f);
 
     std::vector<float> left(frames);
     std::vector<float> right(frames);
@@ -92,13 +92,13 @@ int main(int argc, char** argv) {
     std::size_t offset = 0;
     while (offset < frames) {
         const auto n = std::min(block, frames - offset);
-        engine.process(left.data() + offset, right.data() + offset, n);
+        engine->process(left.data() + offset, right.data() + offset, n);
         offset += n;
     }
 
     writeWav(output, left, right, static_cast<std::uint32_t>(sampleRate));
     std::cout << "Rendered " << output
-              << " | events=" << engine.eventCount()
+              << " | events=" << engine->eventCount()
               << " | seconds=" << seconds << "\n";
     return 0;
 }
