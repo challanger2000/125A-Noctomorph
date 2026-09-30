@@ -42,7 +42,7 @@ jobs:
             local out="$2"
             echo "Downloading $out"
             local ok=0
-            for attempt in 1 2 3 4 5 6 7 8; do
+            for attempt in 1 2 3 4 5 6; do
               if curl -A "125A-Noctomorph/0.2 (research build; github.com/challanger2000)" \
                 -L --fail --connect-timeout 20 --max-time 240 \
                 "$url" -o "$out"; then
@@ -50,13 +50,17 @@ jobs:
                 break
               fi
               rm -f "$out"
-              sleep $((attempt * 6))
+              # Back off hard on 429/temporary CDN failures.
+              sleep $((attempt * 20))
             done
             if [ "$ok" -ne 1 ] || [ ! -s "$out" ]; then
               echo "Asset download failed: $url" >&2
               exit 1
             fi
-            sleep 3
+            # Wikimedia aggressively rate-limits shared CI runner IPs. Keep
+            # acquisition deliberately slow; Actions time is cheaper than
+            # repeated failed full runs and this path is not realtime-critical.
+            sleep 12
           }
 
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" "external-assets/world_paper.ogg"
