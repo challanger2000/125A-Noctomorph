@@ -512,7 +512,14 @@ void Engine::processSpace(float dryL, float dryR, float& outL, float& outR) noex
         return;
     }
 
-    const float input = 0.5f * (dryL + dryR);
+    const float mid = 0.5f * (dryL + dryR);
+    const float side = 0.5f * (dryL - dryR);
+    const std::array<float, 4> input {
+        0.72f * dryL + 0.18f * mid,
+        0.72f * dryR + 0.18f * mid,
+        0.54f * mid + 0.30f * side,
+        0.54f * mid - 0.30f * side
+    };
     std::array<float, 4> d {};
     for (std::size_t i = 0; i < d.size(); ++i)
         d[i] = delays_[i].read();
@@ -530,7 +537,7 @@ void Engine::processSpace(float dryL, float dryR, float& outL, float& outR) noex
         reverbDamping_[i] +=
             damping * (mixed[i] - reverbDamping_[i]);
         const float injected =
-            input * (0.17f + 0.05f * static_cast<float>(i)) +
+            input[i] * (0.17f + 0.05f * static_cast<float>(i)) +
             feedback * reverbDamping_[i];
         delays_[i].write(softClip(injected));
         delays_[i].advance();
@@ -591,7 +598,12 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         // FOUNDATION: dark tonal field. Tension deliberately bends upper voices
         // away from a simple consonant stack.
         if (foundation > 0.0f && envelope_ > 0.0f) {
-            float sum = 0.0f;
+            float sumL = 0.0f;
+            float sumR = 0.0f;
+            static constexpr std::array<float, 4> foundationPan {
+                0.0f, 0.0f, -0.34f, 0.38f
+            };
+
             for (std::size_t i = 0; i < oscillatorPhase_.size(); ++i) {
                 const float tensionWarp =
                     1.0f +
@@ -605,12 +617,20 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 if (oscillatorPhase_[i] >= kTwoPi)
                     oscillatorPhase_[i] = std::fmod(oscillatorPhase_[i], kTwoPi);
 
-                const float amp = foundationWeights[i];
-                sum += amp * static_cast<float>(std::sin(oscillatorPhase_[i]));
+                const float sample =
+                    foundationWeights[i] *
+                    static_cast<float>(std::sin(oscillatorPhase_[i]));
+
+                const float pan01 = 0.5f * (foundationPan[i] + 1.0f);
+                const float gL = std::sqrt(std::max(0.0f, 1.0f - pan01));
+                const float gR = std::sqrt(std::max(0.0f, pan01));
+                sumL += sample * gL;
+                sumR += sample * gR;
             }
-            const float tonal = 0.11f * foundation * envelope_ * sum;
-            dryL += tonal;
-            dryR += tonal;
+
+            const float tonalGain = 0.1556f * foundation * envelope_;
+            dryL += tonalGain * sumL;
+            dryR += tonalGain * sumR;
         }
 
         float worldL = 0.0f, worldR = 0.0f;
