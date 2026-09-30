@@ -9,6 +9,34 @@ namespace {
 constexpr double kTwoPi = 6.283185307179586476925286766559;
 constexpr float kSqrtHalf = 0.7071067811865475244f;
 
+struct ArchetypeTraits {
+    float foundationGain;
+    float worldGain;
+    float textureGain;
+    float bodyGain;
+    float eventRate;
+    float worldRate;
+    float textureRate;
+};
+
+ArchetypeTraits traitsFor(Archetype archetype) noexcept {
+    switch (archetype) {
+        case Archetype::Void:
+            return {1.15f, 0.55f, 0.55f, 1.25f, 0.55f, 0.82f, 0.75f};
+        case Archetype::Ruins:
+            return {0.75f, 1.00f, 1.10f, 0.90f, 0.75f, 0.95f, 0.85f};
+        case Archetype::Industrial:
+            return {0.70f, 1.15f, 1.20f, 0.95f, 1.20f, 1.00f, 1.00f};
+        case Archetype::Wasteland:
+            return {0.60f, 1.20f, 1.30f, 0.70f, 0.85f, 1.05f, 1.12f};
+        case Archetype::Abyss:
+            return {1.10f, 0.75f, 0.65f, 1.30f, 0.65f, 0.78f, 0.72f};
+        case Archetype::Nocturne:
+        default:
+            return {0.85f, 1.00f, 0.90f, 0.90f, 0.60f, 0.88f, 0.82f};
+    }
+}
+
 float sanitize01(float value) noexcept {
     if (!std::isfinite(value))
         return 0.0f;
@@ -423,10 +451,13 @@ void Engine::configurePresence() noexcept {
 }
 
 void Engine::ensureLongStreams() noexcept {
+    const auto traits = traitsFor(archetype_);
+
     if (worldClip_ && !worldVoice_.active) {
         const double sourceRatio = worldClip_->sampleRate / sampleRate_;
         const double rate =
-            sourceRatio * (0.88 + 0.16 * rng_.uniform01());
+            sourceRatio * static_cast<double>(traits.worldRate) *
+            (0.88 + 0.16 * rng_.uniform01());
         const double start =
             worldClip_->frames > 8
                 ? rng_.uniform01() * static_cast<double>(worldClip_->frames - 2)
@@ -437,7 +468,8 @@ void Engine::ensureLongStreams() noexcept {
     if (textureClip_ && !textureVoice_.active) {
         const double sourceRatio = textureClip_->sampleRate / sampleRate_;
         const double rate =
-            sourceRatio * (0.62 + 0.42 * rng_.uniform01());
+            sourceRatio * static_cast<double>(traits.textureRate) *
+            (0.62 + 0.42 * rng_.uniform01());
         const double start =
             textureClip_->frames > 8
                 ? rng_.uniform01() * static_cast<double>(textureClip_->frames - 2)
@@ -522,8 +554,9 @@ void Engine::triggerEvent() noexcept {
     }
 
     const float eventAmount = clamp01(parameters_.events);
+    const auto traits = traitsFor(archetype_);
     const float archetypeFactor =
-        0.88f + 0.08f * static_cast<float>(static_cast<unsigned>(archetype_));
+        1.0f / std::max(0.25f, traits.eventRate);
 
     // EVENTS must scale from genuinely sparse to dense.
     // Low settings are cinematic punctuation, not a constant random ticker.
@@ -597,10 +630,11 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
     if (!left || !right || frames == 0)
         return;
 
-    const float foundation = parameters_.foundation;
-    const float world = parameters_.world;
-    const float texture = parameters_.texture;
-    const float body = parameters_.body;
+    const auto traits = traitsFor(archetype_);
+    const float foundation = parameters_.foundation * traits.foundationGain;
+    const float world = parameters_.world * traits.worldGain;
+    const float texture = parameters_.texture * traits.textureGain;
+    const float body = parameters_.body * traits.bodyGain;
     const float tension = parameters_.tension;
 
     const float attackSeconds = 0.035f;

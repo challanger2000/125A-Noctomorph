@@ -463,6 +463,50 @@ void testBodyExciterDoesNotAutoRetrigger() {
     assert(tailRms < earlyRms * 0.05);
 }
 
+
+void testArchetypeFamiliesAreDistinct() {
+    noctomorph::Parameters p;
+    p.foundation = 0.55f;
+    p.world = 0.0f;
+    p.texture = 0.35f;
+    p.body = 0.55f;
+    p.tension = 0.45f;
+    p.evolve = 0.65f;
+    p.events = 0.0f;
+    p.space = 0.25f;
+    p.output = 0.5f;
+
+    std::array<std::uint64_t, 6> hashes {};
+    for (int index = 0; index < 6; ++index) {
+        auto e = std::make_unique<noctomorph::Engine>();
+        e->prepare(48000.0);
+        e->reset(0x4152434845545950ULL);
+        e->setParameters(p);
+        e->setArchetype(static_cast<noctomorph::Archetype>(index));
+        e->noteOn(36, 0.9f);
+
+        std::vector<float> l(48000 * 3), r(48000 * 3);
+        e->process(l.data(), r.data(), l.size());
+
+        std::uint64_t h = 1469598103934665603ULL;
+        for (std::size_t i = 0; i < l.size(); i += 97) {
+            const auto ql = static_cast<std::int32_t>(
+                std::lround(std::clamp(l[i], -1.0f, 1.0f) * 1000000.0f));
+            const auto qr = static_cast<std::int32_t>(
+                std::lround(std::clamp(r[i], -1.0f, 1.0f) * 1000000.0f));
+            h ^= static_cast<std::uint32_t>(ql);
+            h *= 1099511628211ULL;
+            h ^= static_cast<std::uint32_t>(qr);
+            h *= 1099511628211ULL;
+        }
+        hashes[static_cast<std::size_t>(index)] = h;
+    }
+
+    for (std::size_t i = 0; i < hashes.size(); ++i)
+        for (std::size_t j = i + 1; j < hashes.size(); ++j)
+            assert(hashes[i] != hashes[j]);
+}
+
 void testReleaseDecays() {
     noctomorph::Parameters p;
     p.space = 0.0f;
@@ -489,6 +533,7 @@ int main() {
     testEventClipActuallyRenders();
     testRealBodyExciterChangesModalResponse();
     testBodyExciterDoesNotAutoRetrigger();
+    testArchetypeFamiliesAreDistinct();
     testReleaseDecays();
 
     std::cout << "Noctomorph core tests: PASS\n";
