@@ -622,8 +622,10 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         float spacedR = 0.0f;
         processSpace(dryL, dryR, spacedL, spacedR);
 
-        // OUTPUT: 50 % = unity, 0 % = silence, 100 % = +6.02 dB.
-        const float gain = 2.0f * parameters_.output;
+        // OUTPUT: 0 % = silence, 50 % = nominal -6.02 dB trim,
+        // 100 % = nominal unity. The default leaves headroom for real-source
+        // layers and modal/event summation.
+        const float gain = parameters_.output;
         left[n] = softClip(spacedL * gain);
         right[n] = softClip(spacedR * gain);
 
