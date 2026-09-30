@@ -1,0 +1,43 @@
+{
+  "channels": 4,
+  "container_format": "WAV",
+  "crest_factor": 376.2537444213704,
+  "dc_offset": -1.1126200358072917e-10,
+  "dominant_peaks_hz": [38.818359375,125.9765625,139.892578125,156.005859375,183.10546875,197.75390625,283.447265625,295.8984375,314.208984375,374.267578125,394.775390625,417.48046875],
+  "duration_seconds": 15.0,
+  "energy_f10_hz": 156.005859375,
+  "energy_f50_hz": 803.466796875,
+  "energy_f90_hz": 2492.431640625,
+  "event_density_per_second": 2.0,
+  "finite_samples_only": true,
+  "frames": 720000,
+  "high_energy_ratio_gt8khz": 0.0011589932699143186,
+  "impulse_response": {
+    "decay_to_minus10_seconds": 0.688875,
+    "decay_to_minus20_seconds": 2.64775,
+    "decay_to_minus30_seconds": 5.126833333333333,
+    "decay_to_minus60_seconds": 14.568729166666667,
+    "direct_arrival_sample": 569,
+    "direct_arrival_seconds": 0.011854166666666667,
+    "early_0_80ms_to_late_energy_db": 3.493352444555412
+  },
+  "impulse_response_channels": [
+    {"decay_to_minus10_seconds":1.1154166666666667,"decay_to_minus20_seconds":3.296875,"decay_to_minus30_seconds":6.113,"decay_to_minus60_seconds":14.834666666666667,"direct_arrival_sample":569,"direct_arrival_seconds":0.011854166666666667,"early_0_80ms_to_late_energy_db":0.3491562970237084},
+    {"decay_to_minus10_seconds":0.5404583333333334,"decay_to_minus20_seconds":2.4345833333333333,"decay_to_minus30_seconds":5.2764375,"decay_to_minus60_seconds":14.738083333333334,"direct_arrival_sample":569,"direct_arrival_seconds":0.011854166666666667,"early_0_80ms_to_late_energy_db":4.832864733555407},
+    {"decay_to_minus10_seconds":1.29,"decay_to_minus20_seconds":3.6165208333333334,"decay_to_minus30_seconds":6.627020833333333,"decay_to_minus60_seconds":14.9056875,"direct_arrival_sample":578,"direct_arrival_seconds":0.012041666666666668,"early_0_80ms_to_late_energy_db":-3.4809051182760546},
+    {"decay_to_minus10_seconds":1.4234583333333333,"decay_to_minus20_seconds":3.6292708333333334,"decay_to_minus30_seconds":6.395270833333333,"decay_to_minus60_seconds":14.802729166666667,"direct_arrival_sample":740,"direct_arrival_seconds":0.015416666666666667,"early_0_80ms_to_late_energy_db":-5.921830315479566}
+  ],
+  "loopability": {"edge_correlation":0.010793843569085994,"edge_rms_delta_db":62.441278701263855,"score":0.004873852714057284},
+  "low_energy_ratio_lt120hz": 0.053024446785717896,
+  "path": "external/openair-gothic/hamilton-mausoleum-bformat.wav",
+  "peak_dbfs": -2.1280767629483472,
+  "peak_linear": 0.7827014923095703,
+  "rms_dbfs": -53.63769337609982,
+  "rms_linear": 0.002080249044466691,
+  "sample_rate": 48000,
+  "sha256": "e58665dfd8a848e6ebcd8f1e982289aca187781502eeba6d5d8cd581bffb96c5",
+  "silence_ratio_below_minus90dbfs": 0.5329555555555555,
+  "spectral_centroid_hz": 1135.4769948017868,
+  "stereo_correlation": 0.4869419990432165,
+  "subtype": "PCM_24"
+}
