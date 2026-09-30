@@ -118,10 +118,20 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42", "expansion45", "expansion48"), default="all")
+    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42", "expansion45", "expansion48", "expansion51"), default="all")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     d = args.input_dir
+
+    if args.mode == "expansion51":
+        # Verified 48-source bank is restored first; derive three new scene classes.
+        write(args.out, "world_thunderrain.wav", d/"world_thunderrain.ogg",
+              start=0, duration=28, peak=.20, speed=.50, hp=30, lp=2800)
+        write(args.out, "body_chapterbell.wav", d/"body_chapterbell.wav",
+              start=1, duration=10, channels=1, peak=.13, speed=.38, hp=35, lp=3000)
+        write(args.out, "texture_grain.wav", d/"texture_grain.ogg",
+              start=0, duration=16, peak=.13, speed=.52, hp=180, lp=5200)
+        return 0
 
     if args.mode == "expansion48":
         # Verified 45-source bank is restored first; derive only three new source classes.

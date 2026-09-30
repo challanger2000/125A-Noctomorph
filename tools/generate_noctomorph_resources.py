@@ -53,6 +53,9 @@ ASSETS = [
     ("world_forestair.wav", 45, False, 1.0),
     ("texture_rollingrattle.wav", 46, False, 1.0),
     ("texture_interiorhum.wav", 47, False, 1.0),
+    ("world_thunderrain.wav", 48, False, 1.0),
+    ("body_chapterbell.wav", 49, False, 0.18),
+    ("texture_grain.wav", 50, False, 1.0),
 ]
 
 

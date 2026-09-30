@@ -76,6 +76,9 @@ private:
         WorldForestAir,
         TextureRollingRattle,
         TextureInteriorHum,
+        WorldThunderRain,
+        BodyChapterBell,
+        TextureGrain,
         Count
     };
 
