@@ -2430,3 +2430,354 @@ Noctomorph should use heritage acoustics as real-world anchors, then extend them
 - synthetic late tails;
 - modal-body injection;
 - spatial motion after convolution.
+
+
+## Final broad-sweep additions — 2026-09-30
+
+### OpenAIR unusual spaces
+
+#### DATA-IR-004 — R1 Nuclear Reactor Hall
+Primary project: https://www.york.ac.uk/physics-engineering-technology/research/communication-technologies/projects/open-acoustic-impulse-response-library/
+Mirror/reference listing: https://github.com/DatanoiseTV/doobie/blob/main/external/openair-irs/README.md
+Licence: CC BY 4.0
+Type: measured room impulse response
+Description: R1 nuclear reactor hall, Sweden.
+Potential use:
+- monumental industrial SPACE anchor;
+- decay / early-reflection reference;
+- hybrid convolution + synthetic-tail design.
+Priority: EXTREMELY HIGH
+
+#### DATA-IR-005 — Terry's Factory Warehouse
+Primary project: OpenAIR, University of York
+Licence: CC BY 4.0
+Type: measured industrial-space IR
+Potential use:
+- factory / warehouse spatial anchor;
+- INDUSTRIAL archetype;
+- real early-reflection structure.
+Priority: VERY HIGH
+
+#### DATA-IR-006 — Maes Howe Tomb
+Primary project: OpenAIR, University of York
+Licence: CC BY 4.0
+Type: measured stone-space IR
+Potential use:
+- small ancient stone resonator;
+- RUINS / GOTHIC spatial coloration;
+- spectral/body convolution experiments.
+Priority: VERY HIGH
+
+#### DATA-IR-007 — Hamilton Mausoleum
+Primary project: OpenAIR, University of York
+Licence: CC BY 4.0
+Type: measured heritage-space IR
+Potential use:
+- monumental circular/stone decay reference;
+- GOTHIC / RUINS space.
+Priority: VERY HIGH
+
+### Long structural / transport resonance
+
+#### FS-STRUCT-010 — ICE train vibration, contact microphone
+Source: https://freesound.org/people/felix.blume/sounds/169052/
+Creator: Felix Blume
+Licence: CC0
+Type: real train-body structural recording
+Specs: WAV, mono, 96 kHz / 24-bit source lineage, ~5:01
+Potential use:
+- continuous structural vibration;
+- magnetic/rail-like tonal field;
+- long-form non-loop foundation material.
+Priority: EXTREMELY HIGH
+
+#### FS-STRUCT-011 — ICE train vibration, stereo + contact blend
+Source: https://freesound.org/people/felix.blume/sounds/168811/
+Creator: Felix Blume
+Licence: CC0
+Type: real train / contact-mic + MS recording
+Specs: WAV, stereo, 96 kHz / 24-bit, ~5:01
+Potential use:
+- WORLD + BODY paired-source study;
+- spatial/structural crossfade.
+Priority: VERY HIGH
+
+#### FS-STRUCT-012 — Freight train passing, contact mic
+Source: https://freesound.org/people/felix.blume/sounds/238255/
+Creator: Felix Blume
+Licence: CC0
+Type: real rail vibration
+Potential use:
+- transient-to-sustain structural event;
+- evolving low-frequency body motion.
+Priority: VERY HIGH
+
+#### FS-STRUCT-013 — Wire fence, dual contact mics
+Source: https://beta.freesound.org/people/Andrew.soundscape/sounds/671053/
+Creator: Andrew.soundscape
+Licence: CC0
+Type: real wind-excited structure
+Specs: WAV, stereo, 96 kHz / 32-bit, 2:00.694
+Potential use:
+- high-resolution non-periodic structural texture;
+- impossible-wire body source.
+Priority: EXTREMELY HIGH
+
+#### FS-STRUCT-014 — Large metal water-tank / cage / propane-tank family
+Pack: https://freesound.org/people/CHallSmith/packs/46349/
+Creator: CHallSmith
+Licence: verify each individual file; pack contains recent personally recorded metal/contact-mic material
+Type: real large metal bodies
+Potential use:
+- huge resonant-object pool;
+- impact/modal extraction;
+- industrial event/body library.
+Priority: EXTREMELY HIGH DISCOVERY POOL
+
+### Resonant metal / gong sources
+
+#### FS-GONG-001 — Gong 96 kHz / 24-bit
+Source: https://freesound.org/people/psuess/sounds/194432/
+Creator: psuess
+Licence: CC0
+Type: real gong
+Specs: WAV, 96 kHz / 24-bit, 24.316 s
+Potential use:
+- clean modal-decay source;
+- pitch-stretched monumental tone;
+- mode-ratio analysis.
+Priority: VERY HIGH
+
+#### FS-GONG-002 — Gong variant 96 kHz / 24-bit
+Source: https://freesound.org/people/psuess/sounds/194433/
+Creator: psuess
+Licence: CC0
+Type: real gong
+Potential use:
+- alternate modal family.
+Priority: HIGH
+
+#### FS-GONG-003 — Tuned gong F#, close
+Source: https://freesound.org/people/thma/sounds/245877/
+Creator: thma
+Licence: CC0
+Type: real gong
+Specs: stereo, 96 kHz, 32-bit container, 32.008 s
+Potential use:
+- pitched modal body;
+- harmonic/inharmonic reference.
+Priority: VERY HIGH
+
+#### FS-GONG-004 — Tuned gong F#, soft
+Source: https://freesound.org/people/thma/sounds/245876/
+Creator: thma
+Licence: CC0
+Type: real gong
+Specs: stereo, 96 kHz, 32-bit container, 37.812 s
+Potential use:
+- low-excitation modal measurement;
+- dynamic-response comparison.
+Priority: VERY HIGH
+
+#### FS-GONG-005 — Paiste Gong in Large Room
+Source: https://freesound.org/people/michaelkroz/sounds/752021/
+Creator: michaelkroz
+Licence: CC0
+Type: real gong in large room
+Specs: WAV, stereo, 96 kHz / 24-bit, 4:47.714
+Potential use:
+- long resonant tail and room coupling;
+- dark monumental source mining.
+Priority: EXTREMELY HIGH
+
+### Bowed / friction / tonal metal
+
+#### FS-TONAL-005 — Bowed singing saw
+Source: https://freesound.org/people/NikoletB/sounds/846421/
+Creator: NikoletB
+Licence: CC0
+Type: real bowed metal
+Specs: WAV, stereo, 88.2 kHz / 32-bit, 3.999 s
+Potential use:
+- glissando / unstable pitch source;
+- formant-like metallic tone;
+- abstract voice/body hybrids.
+Priority: VERY HIGH
+
+#### FS-TONAL-006 — Bowed cymbal / overlapping acousmatic texture
+Source: https://freesound.org/people/Thomas_Bey_William_Bailey/sounds/826537/
+Creator: Thomas_Bey_William_Bailey
+Licence: CC0
+Type: processed bowed-cymbal / feedback texture
+Specs: WAV, stereo, 48 kHz / 32-bit, 1:40.388
+Potential use:
+- reference / transformation-source candidate;
+- complex bowed-metal spectral field.
+Priority: HIGH, CONDITIONALLY PRODUCTION
+
+### Hydrophone / submerged physical systems
+
+#### FS-HYDRO-001 — Metal sink drain, hydrophone
+Source: https://freesound.org/people/JavierZumer/sounds/422655/
+Creator: JavierZumer
+Licence: CC0
+Type: real hydrophone recording
+Specs: WAV, mono, 48 kHz / 24-bit, 17.402 s
+Potential use:
+- submerged metallic resonance;
+- vortex/gurgle microstructure;
+- alien fluid-machine source.
+Priority: VERY HIGH
+
+#### FS-HYDRO-002 — Fisher dock / submerged plumbing hydrophone
+Source: https://freesound.org/people/Sadiquecat/sounds/828915/
+Creator: Sadiquecat
+Licence: CC0
+Type: real hydrophone field recording
+Specs: FLAC, stereo, 48 kHz / 24-bit, 25:19.950
+Potential use:
+- very long underwater structural motion;
+- non-repeating low-level world texture;
+- source mining for unknown-fluid systems.
+Priority: EXTREMELY HIGH
+
+### Metal tanks / large hollow bodies
+
+#### FS-OBJ-005 — Large oil tank impacts
+Source: https://freesound.org/people/klakmart/sounds/108264/
+Creator: klakmart
+Licence: CC0
+Type: real large metal tank
+Specs: WAV, mono, 48 kHz / 24-bit, 53.589 s
+Potential use:
+- clean large-body modal response;
+- excitation/resonance library.
+Priority: VERY HIGH
+
+### Sparse dark-world events
+
+#### FS-EVENT-001 — Distant train horn, 96 kHz / 24-bit
+Source: https://freesound.org/people/TRP/sounds/573180/
+Creator: TRP
+Licence: CC0
+Type: real distant urban/rail event
+Specs: WAV, mono, 96 kHz / 24-bit, 40.5 s
+Potential use:
+- extremely sparse world event;
+- transformed long-tone event.
+Priority: HIGH
+
+#### FS-EVENT-002 — Distant train horn, stereo
+Source: https://freesound.org/people/TRP/sounds/574427/
+Creator: TRP
+Licence: CC0
+Type: real distant rail event
+Specs: FLAC, stereo, 48 kHz / 24-bit, 25.787 s
+Potential use:
+- alternate spatial event.
+Priority: HIGH
+
+#### FS-EVENT-003 — Distant dog
+Source: https://freesound.org/people/alberto59/sounds/615258/
+Creator: alberto59
+Licence: CC0
+Type: real field recording
+Specs: WAV, mono, 48 kHz / 16-bit, 33.483 s
+Potential use:
+- rare exterior event.
+Priority: MEDIUM-HIGH
+
+#### FS-EVENT-004 — Tunnel footsteps vintage effect
+Source: https://freesound.org/people/craigsmith/sounds/480615/
+Creator/uploader: craigsmith / USC preservation lineage
+Licence page: CC0
+Type: vintage tunnel footsteps
+Potential use:
+- REFERENCE / EVENT candidate only after underlying-rights provenance is rechecked.
+Priority: RIGHTS REVIEW
+
+### Stone / granular excitation
+
+#### FS-STONE-001 — Stone/shell scrape and impact set
+Source: https://freesound.org/people/Sonicquinn/sounds/435838/
+Creator: Sonicquinn
+Licence: CC0
+Type: real stone/shell steps/impacts/scrapes
+Specs: WAV, mono, 96 kHz / 24-bit, 1:40.727
+Potential use:
+- granular stone exciters;
+- RUINS microtexture;
+- transient pool.
+Priority: VERY HIGH
+
+### Door / hinge / structural friction
+
+#### FS-WOODMET-001 — Old fireproof metal door long squeak
+Source: https://freesound.org/people/MathewHenry/sounds/700696/
+Creator: MathewHenry
+Licence: CC0
+Type: real metal door/hinge
+Specs: WAV, mono, 44.1 kHz / 24-bit, 20.625 s
+Potential use:
+- slow friction curve;
+- structural groan event;
+- pitch/time-stretched source.
+Priority: HIGH
+
+#### FS-WOODMET-002 — Rusty metal creak
+Source: https://freesound.org/people/unfa/sounds/207993/
+Creator: unfa
+Licence: CC0
+Type: raw rusty metal creak
+Specs: FLAC, stereo, 96 kHz / 24-bit, 55.598 s
+Potential use:
+- high-resolution friction/hinge source;
+- spectral-body mining.
+Priority: VERY HIGH
+
+### Organ / chapel one-shot library
+
+#### FS-ORG-003 — VSCO 2 CE Organ One-Shot Family
+Representative source: https://freesound.org/people/sgossner/sounds/373723/
+Creator/uploader: sgossner / Versilian Studios Chamber Orchestra 2 CE
+Licence: CC0 / public-domain community edition per source page
+Type: organ one-shot sample family
+Potential use:
+- isolated pitch-stable organ partial sources;
+- formant/modal analysis;
+- synthetic foundation seed;
+- avoids dependence on musical organ performances.
+Priority: EXTREMELY HIGH
+
+### Additional CC0 discovery pool
+
+#### POOL-OGA-001 — LEGIT Audio “The Shop” free CC0 subset
+Source: https://opengameart.org/content/the-shop
+Licence: CC0 for files distributed on OpenGameArt
+Content:
+- real shop/interior appliance drones and room tones.
+Potential use:
+- appliance/motor foundation;
+- creative transformation.
+Priority: HIGH DISCOVERY POOL
+
+#### POOL-OGA-002 — Scrapes
+Source: https://opengameart.org/content/scrapes
+Licence: CC0
+Content:
+- cinder-block dragging/scraping; WAV available.
+Potential use:
+- friction/transient pool.
+Priority: MEDIUM-HIGH
+
+## Final-source rule update
+
+Noctomorph now has sufficient diversity that production selection should favor **fewer, stronger, complementary sources** rather than continuing to accumulate generic alternatives.
+
+A source moves from DISCOVERY to PRODUCTION only if it adds at least one of:
+- a new physical behavior;
+- a materially different resonant body;
+- a distinct spatial decay;
+- a new long-form evolution pattern;
+- a sparse event role not already well covered;
+- a cleaner/higher-resolution replacement for an existing candidate.
