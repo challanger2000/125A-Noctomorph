@@ -1,13 +1,6 @@
 name: Noctomorph OpenAIR Gothic Space Probe
 
 on:
-  push:
-    branches:
-      - dev/prototype-v0.1
-    paths:
-      - ".github/workflows/source-probe-openair-gothic.yml"
-      - "tools/analyze_audio.py"
-      - "tools/requirements-audio.txt"
   workflow_dispatch:
 
 jobs:

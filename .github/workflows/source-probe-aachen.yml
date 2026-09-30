@@ -1,14 +1,6 @@
 name: Noctomorph Aachen Cathedral IR Probe
 
 on:
-  push:
-    branches:
-      - dev/prototype-v0.1
-    paths:
-      - ".github/workflows/source-probe-aachen.yml"
-      - "tools/analyze_audio.py"
-      - "tools/analyze_ir_folder.py"
-      - "tools/requirements-audio.txt"
   workflow_dispatch:
 
 jobs:

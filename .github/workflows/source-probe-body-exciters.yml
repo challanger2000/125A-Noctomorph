@@ -1,12 +1,6 @@
 name: Noctomorph Body Exciter Source Probe
 
 on:
-  push:
-    branches: [dev/prototype-v0.1]
-    paths:
-      - ".github/workflows/source-probe-body-exciters.yml"
-      - "tools/analyze_audio.py"
-      - "tools/requirements-audio.txt"
   workflow_dispatch:
 
 jobs:
