@@ -76,3 +76,47 @@ Interpretation:
 ## Measurement note
 
 The current decay figures are deterministic engineering measurements from the repository analysis utility. They are not being claimed as standards-compliant RT60/T30 values; they are peak-aligned Schroeder-style decay landmarks for source comparison.
+
+
+## DATA-IR-006 — OpenAIR Maes Howe Tomb
+
+Status: **MEASURED**
+
+- format: 4-channel B-format WAV, 48 kHz / 24-bit
+- duration: 1.000 s
+- SHA-256: `0b68eb5ae862a7f0e45c97a1eeb4c332e9dc98dfd10f3444d7812254a94cdbb0`
+- direct arrival: 42.98 ms
+- decay to -20 dB: 0.108 s
+- decay to -30 dB: 0.196 s
+- decay to -60 dB: 0.528 s
+- channel -60 dB range: 0.561–0.608 s
+- early 0–80 ms / late energy: +16.50 dB
+- spectral centroid: 3.968 kHz
+
+Interpretation:
+- very short, hard stone-space response rather than a conventional long reverb;
+- excellent candidate for body coloration / stone resonator stages;
+- useful contrast to the long cathedral and mausoleum spaces;
+- likely more valuable as a physical coloration component than as the main SPACE tail.
+
+## DATA-IR-007 — OpenAIR Hamilton Mausoleum
+
+Status: **MEASURED**
+
+- format: 4-channel B-format WAV, 48 kHz / 24-bit
+- duration: 15.000 s
+- SHA-256: `e58665dfd8a848e6ebcd8f1e982289aca187781502eeba6d5d8cd581bffb96c5`
+- direct arrival: 11.85 ms
+- decay to -20 dB: 2.648 s
+- decay to -30 dB: 5.127 s
+- decay to -60 dB: 14.569 s
+- channel -60 dB range: 14.738–14.906 s
+- early 0–80 ms / late energy: +3.49 dB
+- spectral centroid: 1.135 kHz
+
+Interpretation:
+- genuinely monumental Gothic/stone tail;
+- substantially longer than R1 and Aachen mean positions;
+- strong candidate for upper-range SPACE / NOCTURNE / RUINS states;
+- the B-format channels make later spatial decoding preferable to naive mono collapse.
+
