@@ -31,6 +31,30 @@ def decode_ir(ir: np.ndarray, channel: int) -> np.ndarray:
     return ir[:, channel]
 
 
+def decode_bformat_stereo(ir: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Simple engineering stereo decode for FuMa-style W/X/Y/Z B-format.
+
+    This is intentionally a listening/measurement probe, not the final
+    production decoder. It preserves directional differences instead of
+    collapsing the measured field to W-only mono.
+    """
+    if ir.shape[1] < 3:
+        mono = decode_ir(ir, 0)
+        return mono, mono
+
+    w = ir[:, 0]
+    x = ir[:, 1]
+    y = ir[:, 2]
+
+    left = w + 0.55 * x + 0.35 * y
+    right = w - 0.55 * x + 0.35 * y
+
+    peak = max(float(np.max(np.abs(left))), float(np.max(np.abs(right))), 1e-12)
+    left = left / peak
+    right = right / peak
+    return left, right
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("input", type=Path)
@@ -40,29 +64,35 @@ def main() -> int:
     ap.add_argument("--ir-channel", type=int, default=0,
                     help="B-format/default channel to use as mono convolution kernel")
     ap.add_argument("--tail-seconds", type=float, default=0.0)
+    ap.add_argument("--bformat-stereo", action="store_true",
+                    help="decode W/X/Y B-format to distinct left/right kernels")
     ap.add_argument("--ceiling-dbfs", type=float, default=-1.0)
     args = ap.parse_args()
 
     dry, sr = read_audio(args.input)
     ir, ir_sr = read_audio(args.ir)
     ir = resample_if_needed(ir, ir_sr, sr)
-    kernel = decode_ir(ir, args.ir_channel)
-
-    peak_ir = float(np.max(np.abs(kernel))) if kernel.size else 0.0
-    if peak_ir <= 1e-12:
-        raise SystemExit("IR is silent")
-    kernel = kernel / peak_ir
+    if args.bformat_stereo:
+        kernel_l, kernel_r = decode_bformat_stereo(ir)
+    else:
+        kernel = decode_ir(ir, args.ir_channel)
+        peak_ir = float(np.max(np.abs(kernel))) if kernel.size else 0.0
+        if peak_ir <= 1e-12:
+            raise SystemExit("IR is silent")
+        kernel = kernel / peak_ir
+        kernel_l = kernel
+        kernel_r = kernel
 
     tail = max(0, int(round(args.tail_seconds * sr)))
-    out_len = dry.shape[0] + kernel.shape[0] - 1
+    out_len = dry.shape[0] + max(kernel_l.shape[0], kernel_r.shape[0]) - 1
     if tail > 0:
         out_len = min(out_len, dry.shape[0] + tail)
 
     wet = np.zeros((out_len, 2), dtype=np.float64)
-    for ch in range(min(2, dry.shape[1])):
-        wet[:, ch] = signal.fftconvolve(dry[:, ch], kernel, mode="full")[:out_len]
-    if dry.shape[1] == 1:
-        wet[:, 1] = wet[:, 0]
+    dry_l = dry[:, 0]
+    dry_r = dry[:, 1] if dry.shape[1] > 1 else dry[:, 0]
+    wet[:, 0] = signal.fftconvolve(dry_l, kernel_l, mode="full")[:out_len]
+    wet[:, 1] = signal.fftconvolve(dry_r, kernel_r, mode="full")[:out_len]
 
     dry_pad = np.zeros_like(wet)
     dry_pad[:dry.shape[0], 0] = dry[:, 0]
@@ -92,6 +122,7 @@ def main() -> int:
     print(f"ir_sr={ir_sr}")
     print(f"ir_channels={ir.shape[1]}")
     print(f"kernel_channel={args.ir_channel}")
+    print(f"bformat_stereo={args.bformat_stereo}")
     print(f"wet={wet_amount}")
     print(f"output_seconds={mixed.shape[0]/sr:.6f}")
     print(f"output_peak={float(np.max(np.abs(mixed))):.9f}")
