@@ -445,20 +445,27 @@ void Engine::triggerEvent() noexcept {
         eventVoice_.start(eventClip_, rate, 0.0);
     }
 
-    const float density =
-        0.15f +
-        0.85f * parameters_.events *
-        (0.40f + 0.60f * parameters_.evolve);
-
+    const float eventAmount = clamp01(parameters_.events);
     const float archetypeFactor =
-        0.85f + 0.12f * static_cast<float>(static_cast<unsigned>(archetype_));
+        0.88f + 0.08f * static_cast<float>(static_cast<unsigned>(archetype_));
+
+    // EVENTS must scale from genuinely sparse to dense.
+    // Low settings are cinematic punctuation, not a constant random ticker.
+    const double baseGapSeconds =
+        2.0 +
+        40.0 * static_cast<double>((1.0f - eventAmount) * (1.0f - eventAmount));
+
+    const double evolveAcceleration =
+        1.0 - 0.25 * static_cast<double>(parameters_.evolve * eventAmount);
 
     const double gapSeconds =
         std::clamp(
-            archetypeFactor * (10.0 - 8.5 * density) *
-                (0.65 + 0.90 * rng_.uniform01()),
-            0.65,
-            18.0);
+            archetypeFactor *
+                baseGapSeconds *
+                evolveAcceleration *
+                (0.65 + 0.70 * rng_.uniform01()),
+            0.75,
+            70.0);
 
     eventCountdown_ = std::max(1, static_cast<int>(gapSeconds * sampleRate_));
 }
