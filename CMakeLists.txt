@@ -33,6 +33,12 @@ add_executable(noctomorph_evolution_probe
 target_link_libraries(noctomorph_evolution_probe PRIVATE noctomorph_core)
 target_compile_features(noctomorph_evolution_probe PRIVATE cxx_std_17)
 
+add_executable(noctomorph_performance_probe
+    tools/performance_probe.cpp
+)
+target_link_libraries(noctomorph_performance_probe PRIVATE noctomorph_core)
+target_compile_features(noctomorph_performance_probe PRIVATE cxx_std_17)
+
 add_executable(noctomorph_real_source_render
     tools/render_real_sources.cpp
 )
