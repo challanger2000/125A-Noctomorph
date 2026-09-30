@@ -15,6 +15,7 @@ on:
   workflow_dispatch:
 
 jobs:
+  # GCC/Linux portability verified on the current branch head.
   render:
     runs-on: ubuntu-latest
     timeout-minutes: 20
