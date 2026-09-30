@@ -1613,3 +1613,229 @@ It is complete only when:
 - production candidates have compatible licensing/provenance;
 - the palette supports both subtle song-layer behavior and full cinematic scenes;
 - the material can support real and unreal worlds without relying on generic premade dark drones.
+
+
+## Deep sweep additions — curated pass
+
+### High-value spatial / Gothic spaces
+
+#### FS-SPACE-003 — Cathedral IR 5m Stereo
+Source: https://freesound.org/people/Nox_Sound/sounds/648945/
+Creator: Nox_Sound
+Licence: CC0
+Type: measured / recorded cathedral impulse response
+Specs: WAV, stereo, 96 kHz / 24-bit, 2.614 s
+Potential use:
+- convolution benchmark
+- sacred-space coloration
+- hybrid FDN/convolution comparison
+Priority: VERY HIGH
+
+#### FS-GOTH-005 — Barcelona Cathedral del Mar interior
+Source: https://freesound.org/people/Nimlos/sounds/524630/
+Creator: Nimlos
+Licence: CC0
+Type: real cathedral field recording
+Specs: WAV, stereo, 96 kHz / 24-bit, 55.667 s
+Potential use:
+- stone-space character
+- crowd-free segmentation if possible
+Caution:
+- public-space content may include people; curate only clean sections.
+Priority: HIGH
+
+#### FS-GOTH-006 — Hallgrimskirkja large nave ambience
+Source: https://freesound.org/people/NickTayloe/sounds/828537/
+Creator: NickTayloe
+Licence: CC0
+Type: real church field recording
+Specs: FLAC, stereo, 44.1 kHz / 24-bit, 18:03.529
+Description: huge reverberant nave with long-form natural room behavior.
+Potential use:
+- spatial behavior reference
+- long-room texture mining
+Caution:
+- contains walla/coughs/shuffling; not a clean bed by default.
+Priority: RESEARCH / CONDITIONAL
+
+### Bells / monumental metal
+
+#### WC-BELL-001 — St. Petersglocke / Cologne Cathedral
+Source: https://commons.wikimedia.org/wiki/File:200437_bigben12345_petersglocke.oga
+Creator/uploader lineage: BIGBEN12345 / Wikimedia mirror
+Licence: CC0
+Type: real cathedral bell recording
+Duration: ~60 s
+Potential use:
+- monumental low bell modal analysis
+- rare GOTHIC event
+- stretched/filtered resonance source
+Caution:
+- source quality is consumer-recording grade; use mainly for spectral/modal character, not pristine full-band foreground.
+Priority: HIGH
+
+#### WC-BELL-002 — Kapitelsglocke / Cologne Cathedral
+Source: https://commons.wikimedia.org/wiki/File:198442_bigben12345_kapitelsglocke.wav
+Licence: CC0
+Type: real cathedral bell recording
+Duration: ~38 s
+Potential use:
+- alternate bell modal family
+- event variation / spectral extraction
+Priority: HIGH
+
+### Glass / brittle resonant bodies
+
+#### FS-GLASS-001 — Glass resonating
+Source: https://freesound.org/people/eoinot/sounds/622730/
+Creator: eoinot
+Licence: CC0
+Type: real resonant glass recording
+Specs: WAV, stereo, 44.1 kHz / 24-bit, 45.081 s
+Description: finger-excited wine-glass resonance.
+Potential use:
+- glass modal-body extraction
+- unreal resonator
+- slowly beating partial source
+Priority: VERY HIGH
+
+#### FS-GLASS-002 — Crystal wine glass D# resonance
+Source: https://freesound.org/people/Department64/sounds/544397/
+Creator: Department64
+Licence: CC0
+Type: real resonant glass recording
+Specs: WAV, stereo, 48 kHz / 16-bit, 8.863 s
+Description: clean crystal glass tone.
+Potential use:
+- clean modal reference
+- transposed resonator bank seed
+Priority: HIGH
+
+#### FS-GLASS-003 — Broken glass scrape/crack texture
+Source: https://freesound.org/people/jhumbucker/sounds/250544/
+Creator: jhumbucker
+Licence: CC0
+Type: real glass texture recording
+Specs: WAV, mono, 96 kHz / 24-bit, 40.868 s
+Potential use:
+- brittle high-frequency texture
+- granular / spectral tension source
+Rule:
+- use as material physics, not horror cliché.
+Priority: HIGH
+
+#### FS-GLASS-004 — Large glass plate scrape / shake family
+Representative:
+- https://freesound.org/people/RutgerMuller/sounds/104345/
+- https://freesound.org/people/RutgerMuller/sounds/104347/
+Creator: RutgerMuller
+Licence: CC0
+Type: real glass plate recording
+Specs: AIFF, stereo, 48 kHz / 24-bit
+Potential use:
+- low glass rumble
+- plate resonance
+- scrape / flex texture
+Priority: HIGH
+
+#### FS-GLASS-005 — High-resolution glass/ceramic scrape micro-events
+Representative:
+https://freesound.org/people/Anthousai/sounds/447663/
+Creator: Anthousai
+Licence: CC0
+Type: real foley
+Specs: WAV, stereo, 96 kHz / 24-bit
+Potential use:
+- tiny brittle excitation grains
+- granular layer seed
+Priority: MEDIUM-HIGH
+
+### Electrical infrastructure / wind-farm structures
+
+#### FS-ELEC-005 — Wind-farm substation / structure settling
+Source: https://freesound.org/people/theloniousdump/sounds/718985/
+Creator: theloniousdump
+Licence: CC0
+Type: real night field recording
+Specs: M4A, mono, 48 kHz, 18.069 s
+Description: substation harmonics, overhead wires, large metallic structure settling, wind.
+Potential use:
+- electrical harmonic reference
+- structure event mining
+Caution:
+- low-bitrate M4A; use as event/reference, not pristine foundation.
+Priority: MEDIUM-HIGH
+
+#### FS-ELEC-006 — Distant substation hum coupled to stream ambience
+Source: https://freesound.org/people/JW_Audio/sounds/798042/
+Creator: JW_Audio
+Licence: CC0
+Type: real field recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 1:33.384
+Description: natural stream with distant electrical hum.
+Potential use:
+- isolate/learn distant-grid harmonic behavior
+- layered unreal infrastructure worlds
+Caution:
+- birds/water dominate parts; not a direct foundation bed.
+Priority: RESEARCH
+
+### Tonal acoustic seeds
+
+#### FS-TONAL-003 — Bowed cello note A3
+Source: https://freesound.org/people/smoseson/sounds/48024/
+Creator: smoseson
+Licence: CC0
+Type: real instrument sample
+Specs: WAV, stereo, 44.1 kHz / 16-bit, 12.346 s
+Potential use:
+- clean bowed-string excitation
+- resonator / spectral morph seed
+- synthetic-foundation crossfade target
+Priority: HIGH
+
+#### FS-TONAL-004 — Rosined cello-bow friction, dark filtered texture
+Source: https://freesound.org/people/Abolla/sounds/213914/
+Creator: Abolla
+Licence: CC0
+Type: real bow-friction recording, filtered
+Specs: WAV, mono, 48 kHz / 24-bit, 28.707 s
+Potential use:
+- dark organic friction bed
+- low-passed granular texture
+Priority: VERY HIGH
+
+### Designed-source caution
+
+#### REJECT-DESIGN-001 — Atmosphere_Scifi_Bunker_Loop_Stereo
+Source: https://freesound.org/people/Nox_Sound/sounds/817225/
+Licence: CC0
+Decision: REFERENCE ONLY
+Reason:
+- already a designed dark/dystopian atmosphere;
+- useful for competitive listening;
+- embedding it would weaken Noctomorph's own identity.
+
+#### REJECT-RIGHTS-001 — Cellos Destroyed and Droned with Paulstretch
+Source: https://freesound.org/people/RutgerMuller/sounds/195850/
+Page licence: CC0
+Decision: DO NOT USE AS PRODUCTION SOURCE
+Reason:
+- description states it derives from a cello cloud from a Scelsi piece;
+- uploader-level CC0 does not by itself establish rights in the underlying composition/performance;
+- unnecessary chain-of-title risk.
+Use:
+- architecture/listening reference only.
+
+## Curation rule refinement
+
+For each production candidate, validate two separate things:
+
+1. **File-page licence**
+   - CC0 / public domain / explicit redistribution permission.
+
+2. **Underlying-rights provenance**
+   - uploader actually recorded/created the material, or
+   - source chain is independently public-domain/cleared.
+
+A CC0 badge on a derivative upload is not sufficient if the underlying recording, performance or composition may carry separate rights.
