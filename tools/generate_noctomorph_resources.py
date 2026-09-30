@@ -65,6 +65,9 @@ ASSETS = [
     ("world_reactorhall.wav", 57, False, 1.0),
     ("world_warehousehall.wav", 58, False, 1.0),
     ("world_mausoleum.wav", 59, False, 1.0),
+    ("texture_postvibration.wav", 60, False, 1.0),
+    ("texture_wirestress.wav", 61, False, 1.0),
+    ("world_cavechamber.wav", 62, False, 1.0),
 ]
 
 
