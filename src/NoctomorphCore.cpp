@@ -230,6 +230,7 @@ void Engine::prepare(double sampleRate) noexcept {
 
 void Engine::reset(std::uint64_t seedValue) noexcept {
     rng_.seed(seedValue);
+    presenceRng_.seed(seedValue ^ 0x50524553454E4345ULL);
 
     gate_ = false;
     midiNote_ = 36;
@@ -249,8 +250,11 @@ void Engine::reset(std::uint64_t seedValue) noexcept {
 
     for (auto& r : resonators_)
         r.reset();
+    for (auto& r : presenceResonators_)
+        r.reset();
 
     bodyExcitation_ = 0.0f;
+    presenceNoiseLowpass_ = 0.0f;
 
     worldVoice_.reset();
     textureVoice_.reset();
@@ -266,6 +270,7 @@ void Engine::reset(std::uint64_t seedValue) noexcept {
     reverbDamping_.fill(0.0f);
 
     configureBody();
+    configurePresence();
 }
 
 void Engine::setParameters(const Parameters& p) noexcept {
@@ -286,6 +291,7 @@ void Engine::setArchetype(Archetype archetype) noexcept {
         ? archetype
         : Archetype::Nocturne;
     configureBody();
+    configurePresence();
 }
 
 void Engine::setWorldClip(const Clip* clip) noexcept {
@@ -373,6 +379,44 @@ void Engine::configureBody() noexcept {
     }
 }
 
+void Engine::configurePresence() noexcept {
+    static constexpr std::array<double, 4> kBaseFormants {
+        430.0, 780.0, 1320.0, 2150.0
+    };
+    static constexpr std::array<float, 4> kPan {
+        -0.58f, 0.42f, -0.24f, 0.62f
+    };
+
+    const double driftX = std::tanh(chaosX_ * 0.055);
+    const double driftY = std::tanh(chaosY_ * 0.050);
+    const float tension = parameters_.tension;
+
+    for (std::size_t i = 0; i < presenceResonators_.size(); ++i) {
+        const double sign = (i & 1u) ? -1.0 : 1.0;
+        const double drift =
+            1.0 +
+            sign * (0.018 * driftX + 0.012 * driftY) *
+                (0.25 + 0.75 * parameters_.evolve);
+
+        const double frequency =
+            kBaseFormants[i] *
+            drift *
+            (1.0 + sign * 0.018 * static_cast<double>(tension));
+
+        const double decay =
+            0.035 +
+            0.018 * static_cast<double>(i) +
+            0.035 * static_cast<double>(parameters_.evolve);
+
+        const float gain =
+            (0.045f / (1.0f + 0.22f * static_cast<float>(i))) *
+            (0.45f + 0.55f * tension);
+
+        presenceResonators_[i].configure(
+            sampleRate_, frequency, decay, gain, kPan[i]);
+    }
+}
+
 void Engine::ensureLongStreams() noexcept {
     if (worldClip_ && !worldVoice_.active) {
         const double sourceRatio = worldClip_->sampleRate / sampleRate_;
@@ -445,8 +489,11 @@ void Engine::updateControlState() noexcept {
     oscillatorDrift_[2] = 0.013f * parameters_.evolve * cz;
     oscillatorDrift_[3] = 0.017f * parameters_.evolve * (0.5f * cx - 0.5f * cy);
 
-    // Reconfigure infrequently: body is slowly deformed by tension/evolution.
+    // Reconfigure infrequently: resonant structures slowly deform with the
+    // deterministic macro-state.
     configureBody();
+    if (archetype_ == Archetype::Nocturne)
+        configurePresence();
 
     if (parameters_.events <= 0.0f) {
         eventCountdown_ = static_cast<int>(sampleRate_);
@@ -669,6 +716,32 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         if (eventVoice_.active) {
             dryL += 0.32f * envelope_ * eventL;
             dryR += 0.32f * envelope_ * eventR;
+        }
+
+        // NOCTURNE PRESENCE: an abstract quasi-vocal field made only from
+        // deterministic noise exciting drifting formant resonances. No literal
+        // choir, words or vocal sample is used.
+        if (archetype_ == Archetype::Nocturne && envelope_ > 0.0f) {
+            const float presenceNoise = presenceRng_.bipolar();
+            const float presenceLpCoeff = static_cast<float>(
+                1.0 - std::exp(-kTwoPi * 95.0 / sampleRate_));
+            presenceNoiseLowpass_ +=
+                presenceLpCoeff * (presenceNoise - presenceNoiseLowpass_);
+            const float presenceExcitation =
+                0.11f * (presenceNoise - 0.70f * presenceNoiseLowpass_);
+
+            float presenceL = 0.0f;
+            float presenceR = 0.0f;
+            for (auto& resonator : presenceResonators_)
+                resonator.process(presenceExcitation, presenceL, presenceR);
+
+            const float presenceAmount =
+                0.018f *
+                (0.35f + 0.65f * parameters_.evolve) *
+                (0.45f + 0.55f * parameters_.tension);
+
+            dryL += presenceAmount * envelope_ * presenceL;
+            dryR += presenceAmount * envelope_ * presenceR;
         }
 
         // IMPOSSIBLE BODY: synthetic impulses and optional real recorded
