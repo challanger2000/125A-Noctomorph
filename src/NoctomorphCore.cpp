@@ -350,7 +350,16 @@ void Engine::configureBody() noexcept {
             (0.12 + 0.11 * static_cast<double>(i)) *
             (0.65 + 2.7 * parameters_.body);
 
+        float lowModeScale = 1.0f;
+        if (i == 0)
+            lowModeScale = (archetype_ == Archetype::Abyss || archetype_ == Archetype::Void) ? 0.55f : 0.24f;
+        else if (i == 1)
+            lowModeScale = (archetype_ == Archetype::Abyss || archetype_ == Archetype::Void) ? 0.72f : 0.42f;
+        else if (i == 2)
+            lowModeScale = 0.82f;
+
         const float gain =
+            lowModeScale *
             (0.090f / (1.0f + 0.16f * static_cast<float>(i))) *
             (0.25f + 0.75f * parameters_.body);
 
