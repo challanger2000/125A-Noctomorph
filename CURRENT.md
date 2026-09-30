@@ -155,3 +155,14 @@ Key result:
 - Complete core with Presence passes the realtime performance gate with >11x realtime at 192 kHz in the current CI environment.
 - BODY-exciter lifecycle corrected: a source now excites BODY at Note-On and defined events only; it is no longer silently auto-restarted as a continuous long stream.
 - A dedicated regression test prevents BODY auto-retrigger from returning.
+
+
+## 2026-09-30 six-archetype longform checkpoint
+
+Five-minute real-source QA: **PASS for all six archetypes**.
+
+- 300 one-second windows checked per archetype.
+- Exact duplicate one-second windows: **0 for all six**.
+- No non-finite/silent long-form failure.
+- Detailed measurements: `docs/ARCHETYPE-LONGFORM-QA.md` and `measurements/longform/summary.csv`.
+- Prototype scene architecture is now sufficiently stable to begin VST3 integration without freezing the final GUI.
