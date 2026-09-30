@@ -1839,3 +1839,189 @@ For each production candidate, validate two separate things:
    - source chain is independently public-domain/cleared.
 
 A CC0 badge on a derivative upload is not sufficient if the underlying recording, performance or composition may carry separate rights.
+
+
+## Gumroad / indie-tool architecture references — 2026-09-30
+
+These are **behavior and architecture references**, not sources to copy or redistribute.
+
+### REF-GUM-001 — Ambiotica
+Source: https://989477922824.gumroad.com/l/ambiotica
+Type: regenerative ambient processor
+Observed architecture:
+- rolling looper;
+- granular cloud;
+- parallel micro-loop;
+- modulated chord-tuned reverb;
+- feedback/regeneration from the reverb tail back into the source;
+- one macro (“Gravity”) coordinating the system.
+
+Noctomorph takeaway:
+- recursive transformation is useful for long-term evolution;
+- separate time scales can coexist without sounding like one obvious loop;
+- feedback must be bounded and state-aware to avoid runaway energy.
+Priority: VERY HIGH ARCHITECTURE REFERENCE
+
+### REF-GUM-002 — Grain Storm
+Source: https://snakeshaky.gumroad.com/l/grainstorm
+Type: Max for Live granular exploration device
+Observed architecture:
+- very slow or very fast buffer scrubbing;
+- granular drone-to-percussive continuum;
+- Decay / Ramp / Sample-and-Hold controls;
+- freezable long reverb;
+- smoothing filter.
+
+Noctomorph takeaway:
+- a single source can traverse sustained, textural and event-like states;
+- granular playback position should be independently controllable from grain behavior;
+- S&H-style state changes could help generate sparse “world events”.
+Priority: HIGH ARCHITECTURE REFERENCE
+
+### REF-GUM-003 — 7ewdResyntheis
+Source: https://7ewd.gumroad.com/l/7ewdResyntheis
+Type: granular resynthesis VST
+Observed architecture:
+- transforms live/input rhythm and contour through a separate sample corpus;
+- real-time similar-grain search;
+- CPU/GPU search modes;
+- source folders and corpus-based matching.
+
+Noctomorph takeaway:
+- “behavior from one source, timbre from another” strongly matches the impossible-world concept;
+- a lighter-weight corpus-selection idea may be valuable even without ML/GPU dependence.
+Priority: VERY HIGH CONCEPT REFERENCE
+
+### REF-GUM-004 — Abstructs
+Source: https://sonusdept.gumroad.com/l/abstructs
+Type: Max for Live experimental-device collection
+Relevant concepts:
+- dense evolving-spectrum synthesis;
+- independent magnitude/phase spectral shifting;
+- multi-line delays with probability;
+- spectrum feature extraction;
+- randomized sample-player variation;
+- spectral magnitude/phase suppression/inversion;
+- dedicated drone-generation devices.
+
+Noctomorph takeaway:
+- spectral state mutation can create unreal transitions that are not achievable by ordinary filtering;
+- probability should alter event structure, not merely randomize every parameter.
+Priority: HIGH RESEARCH REFERENCE
+
+### REF-GUM-005 — Drone Liquifier
+Source: https://tomcosm.gumroad.com/l/CSccE
+Type: granular + long-reverb drone processor
+Observed architecture:
+- granular rearrangement;
+- four LFOs;
+- very long reverb;
+- intended to preserve source timbre while converting it into evolving drone material.
+
+Noctomorph takeaway:
+- useful baseline for what a simple drone processor already does;
+- Noctomorph must substantially exceed this by adding state evolution, multi-role layering, physical-source cross-coupling and event logic.
+Priority: COMPETITIVE BASELINE
+
+### REF-GUM-006 — Texture Loom 1.5
+Source: https://s1gnsofl1fe.gumroad.com/l/texture-loom
+Type: dual-source sample/granular instrument
+Observed architecture:
+- two independently controlled sample engines;
+- conventional or granular mode per source;
+- grain size, density, spray, width, window and pitch jitter;
+- playhead travel independent from grain direction;
+- frozen playhead state.
+
+Noctomorph takeaway:
+- independent source transport vs micro-grain motion is highly relevant;
+- dual-source interaction can be a useful minimum building block for WORLD/TEXTURE transformations.
+Priority: VERY HIGH ARCHITECTURE REFERENCE
+
+### REF-GUM-007 — Panacousticon Series
+Source: https://emilianopennisi.gumroad.com/l/dkgxa
+Type: Max for Live instruments focused on cold / industrial / death-ambient language
+Observed concepts:
+- synthesis;
+- granular fragmentation;
+- tape memory;
+- generative drone;
+- organic noise;
+- very high-density granular microscope;
+- medium-density suspended texture;
+- ultra-short locked fragments.
+
+Noctomorph takeaway:
+- grain density itself can define distinct perceptual regimes;
+- “one algorithm with different density” can become multiple scene behaviors;
+- cold/dark identity can arise from process language, not premade horror samples.
+Priority: VERY HIGH AESTHETIC / ARCHITECTURE REFERENCE
+
+### REF-GUM-008 — Noise Map
+Source: https://remodevico.gumroad.com/l/noisemap
+Type: Max for Live sample/noise soundscape device
+Observed architecture:
+- 2D morphing field;
+- white noise, pink noise, tones and sample source;
+- smooth interpolation across a control map;
+- automatable path through the space.
+
+Noctomorph takeaway:
+- state-space navigation may be more musically useful than exposing dozens of independent random modulators;
+- an EVOLVE trajectory could travel through a constrained multidimensional scene state.
+Priority: HIGH CONCEPT REFERENCE
+
+### REF-GUM-009 — LIRA•8 digital interpretation
+Source: https://mikemorenodsp.gumroad.com/l/lira-8
+Type: digital drone-synth interpretation
+Observed concepts:
+- multiple tunable voices;
+- cross-FM;
+- dual delay;
+- slow modulation / hyper-LFO;
+- distortion.
+
+Noctomorph takeaway:
+- cross-coupled oscillators can provide unstable but coherent synthetic foundations;
+- any similar idea should be original and generic DSP, not an imitation of a specific commercial hardware implementation.
+Priority: SYNTHESIS REFERENCE
+
+## Gumroad-derived engine hypotheses
+
+The indie-tool sweep suggests several high-value Noctomorph experiments:
+
+1. **Recursive regeneration**
+   - transformed tail re-enters a controlled earlier stage;
+   - energy-limited, band-limited, state-aware.
+
+2. **Multi-timescale granular system**
+   - macro transport: seconds to minutes;
+   - meso grains: 100 ms–seconds;
+   - micro grains: milliseconds;
+   - sparse event extraction as a fourth regime.
+
+3. **Behavior/timbre decoupling**
+   - one source provides timing/dynamics;
+   - another provides spectral body;
+   - synthetic foundation supplies pitch/sub continuity.
+
+4. **State-space evolution**
+   - EVOLVE traverses constrained scene states rather than applying arbitrary LFOs;
+   - each archetype owns a valid region and transition graph.
+
+5. **Spectral mutation**
+   - selective magnitude/phase manipulation;
+   - partial retention/suppression;
+   - spectral freezing / cross-morphing;
+   - always bounded to avoid metallic aliasing/noise collapse.
+
+6. **Independent transport and grain motion**
+   - source position, grain direction, density, spread and pitch jitter evolve separately.
+
+7. **Density regimes**
+   - sparse particles;
+   - suspended mid-density texture;
+   - dense spectral cloud;
+   - frozen micro-fragment pressure.
+
+These are research hypotheses, not committed product features. Each must be prototyped, measured and auditioned before entering the final architecture.
