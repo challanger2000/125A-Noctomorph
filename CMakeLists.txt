@@ -27,5 +27,11 @@ add_executable(noctomorph_smoke_render
 target_link_libraries(noctomorph_smoke_render PRIVATE noctomorph_core)
 target_compile_features(noctomorph_smoke_render PRIVATE cxx_std_17)
 
+add_executable(noctomorph_evolution_probe
+    tools/evolution_probe.cpp
+)
+target_link_libraries(noctomorph_evolution_probe PRIVATE noctomorph_core)
+target_compile_features(noctomorph_evolution_probe PRIVATE cxx_std_17)
+
 enable_testing()
 add_test(NAME noctomorph_core_tests COMMAND noctomorph_core_tests)

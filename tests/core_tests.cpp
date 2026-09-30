@@ -32,7 +32,8 @@ RenderResult render(
     const noctomorph::Parameters& p,
     double sampleRate,
     double seconds,
-    bool releaseHalfway = false) {
+    bool releaseHalfway = false,
+    std::size_t blockSize = 257) {
 
     auto e = std::make_unique<noctomorph::Engine>();
     e->prepare(sampleRate);
@@ -46,7 +47,7 @@ RenderResult render(
     result.left.resize(frames);
     result.right.resize(frames);
 
-    constexpr std::size_t block = 257;
+    const std::size_t block = std::max<std::size_t>(1, blockSize);
     std::size_t offset = 0;
     while (offset < frames) {
         if (releaseHalfway && offset >= frames / 2 && e->active())
@@ -138,6 +139,47 @@ void testExtremeFiniteAcrossRates() {
     }
 }
 
+
+void testBlockSizeInvariance() {
+    noctomorph::Parameters p;
+    p.evolve = 0.71f;
+    p.events = 0.43f;
+    p.space = 0.57f;
+
+    const auto reference = render(0xB10C5EEDULL, p, 48000.0, 4.0, false, 1);
+    for (std::size_t block : {16u, 64u, 257u, 1024u}) {
+        const auto candidate = render(0xB10C5EEDULL, p, 48000.0, 4.0, false, block);
+        assert(reference.left == candidate.left);
+        assert(reference.right == candidate.right);
+        assert(reference.events == candidate.events);
+    }
+}
+
+void testFullWetSpaceHasNoImmediateDryLeak() {
+    noctomorph::Engine e;
+    e.prepare(48000.0);
+    e.reset(0x5AACEULL);
+
+    noctomorph::Parameters p;
+    p.foundation = 0.75f;
+    p.world = 0.0f;
+    p.texture = 0.0f;
+    p.body = 0.0f;
+    p.events = 0.0f;
+    p.space = 1.0f;
+    p.output = 0.5f;
+    e.setParameters(p);
+    e.noteOn(36, 1.0f);
+
+    std::vector<float> l(1024), r(1024);
+    e.process(l.data(), r.data(), l.size());
+
+    for (std::size_t i = 0; i < l.size(); ++i) {
+        assert(std::fabs(l[i]) < 1.0e-12f);
+        assert(std::fabs(r[i]) < 1.0e-12f);
+    }
+}
+
 void testReleaseDecays() {
     noctomorph::Parameters p;
     p.space = 0.0f;
@@ -158,6 +200,8 @@ int main() {
     testZeroSemantics();
     testDefaultIsAliveAndFinite();
     testExtremeFiniteAcrossRates();
+    testBlockSizeInvariance();
+    testFullWetSpaceHasNoImmediateDryLeak();
     testReleaseDecays();
 
     std::cout << "Noctomorph core tests: PASS\n";
