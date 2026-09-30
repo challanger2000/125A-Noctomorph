@@ -22,6 +22,7 @@ struct Clip {
     std::size_t frames = 0;
     double sampleRate = 48000.0;
     bool loop = false;
+    float excitationGain = 1.0f; // BODY-exciter calibration only
 };
 
 struct Parameters {
