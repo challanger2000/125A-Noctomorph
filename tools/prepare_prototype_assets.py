@@ -3,8 +3,11 @@ from __future__ import annotations
 
 import argparse
 import math
+import subprocess
+import tempfile
 from pathlib import Path
 
+import imageio_ffmpeg
 import numpy as np
 import soundfile as sf
 from scipy import signal
@@ -13,7 +16,26 @@ TARGET_SR = 48000
 
 
 def load_audio(path: Path) -> np.ndarray:
-    audio, sr = sf.read(str(path), always_2d=True, dtype="float64")
+    try:
+        audio, sr = sf.read(str(path), always_2d=True, dtype="float64")
+    except sf.LibsndfileError:
+        # Some Wikimedia OGG files use codecs that the Windows libsndfile
+        # build cannot decode. Fall back to a bundled FFmpeg executable.
+        with tempfile.TemporaryDirectory() as td:
+            decoded = Path(td) / "decoded.wav"
+            cmd = [
+                imageio_ffmpeg.get_ffmpeg_exe(),
+                "-v", "error",
+                "-y",
+                "-i", str(path),
+                "-ar", str(TARGET_SR),
+                "-ac", "2",
+                "-c:a", "pcm_s24le",
+                str(decoded),
+            ]
+            subprocess.run(cmd, check=True)
+            audio, sr = sf.read(str(decoded), always_2d=True, dtype="float64")
+
     if audio.size == 0:
         raise RuntimeError(f"empty source: {path}")
     if sr != TARGET_SR:
