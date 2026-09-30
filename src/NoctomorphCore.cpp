@@ -286,8 +286,14 @@ void Engine::reset(std::uint64_t seedValue) noexcept {
     bodyExcitation_ = 0.0f;
     presenceNoiseLowpass_ = 0.0f;
 
-    worldVoice_.reset();
-    textureVoice_.reset();
+    for (auto& voice : worldVoices_)
+        voice.reset();
+    for (auto& voice : textureVoices_)
+        voice.reset();
+    worldLayerGain_ = {0.72f, 0.24f, 0.08f};
+    worldLayerTarget_ = worldLayerGain_;
+    textureLayerGain_ = {0.58f, 0.30f, 0.12f};
+    textureLayerTarget_ = textureLayerGain_;
     eventVoice_.reset();
     bodyExciterVoice_.reset();
     bodyExciterLowpass_ = 0.0f;
@@ -325,25 +331,67 @@ void Engine::setArchetype(Archetype archetype) noexcept {
     configurePresence();
 }
 
-void Engine::setWorldClip(const Clip* clip) noexcept {
-    worldClip_ = clip;
-    worldVoice_.reset();
+void Engine::setWorldPool(
+    const Clip* const* clips, std::size_t count) noexcept {
+    worldPool_.fill(nullptr);
+    worldPoolCount_ = std::min(count, worldPool_.size());
+    for (std::size_t i = 0; i < worldPoolCount_; ++i)
+        worldPool_[i] = clips ? clips[i] : nullptr;
+    for (auto& voice : worldVoices_)
+        voice.reset();
+    worldLayerGain_ = {0.72f, 0.24f, 0.08f};
+    worldLayerTarget_ = worldLayerGain_;
 }
 
-void Engine::setTextureClip(const Clip* clip) noexcept {
-    textureClip_ = clip;
-    textureVoice_.reset();
+void Engine::setTexturePool(
+    const Clip* const* clips, std::size_t count) noexcept {
+    texturePool_.fill(nullptr);
+    texturePoolCount_ = std::min(count, texturePool_.size());
+    for (std::size_t i = 0; i < texturePoolCount_; ++i)
+        texturePool_[i] = clips ? clips[i] : nullptr;
+    for (auto& voice : textureVoices_)
+        voice.reset();
+    textureLayerGain_ = {0.58f, 0.30f, 0.12f};
+    textureLayerTarget_ = textureLayerGain_;
 }
 
-void Engine::setEventClip(const Clip* clip) noexcept {
-    eventClip_ = clip;
+void Engine::setEventPool(
+    const Clip* const* clips, std::size_t count) noexcept {
+    eventPool_.fill(nullptr);
+    eventPoolCount_ = std::min(count, eventPool_.size());
+    for (std::size_t i = 0; i < eventPoolCount_; ++i)
+        eventPool_[i] = clips ? clips[i] : nullptr;
     eventVoice_.reset();
 }
 
-void Engine::setBodyExciterClip(const Clip* clip) noexcept {
-    bodyExciterClip_ = clip;
+void Engine::setBodyExciterPool(
+    const Clip* const* clips, std::size_t count) noexcept {
+    bodyPool_.fill(nullptr);
+    bodyPoolCount_ = std::min(count, bodyPool_.size());
+    for (std::size_t i = 0; i < bodyPoolCount_; ++i)
+        bodyPool_[i] = clips ? clips[i] : nullptr;
     bodyExciterVoice_.reset();
     bodyExciterLowpass_ = 0.0f;
+}
+
+void Engine::setWorldClip(const Clip* clip) noexcept {
+    const Clip* clips[1] {clip};
+    setWorldPool(clips, clip ? 1u : 0u);
+}
+
+void Engine::setTextureClip(const Clip* clip) noexcept {
+    const Clip* clips[1] {clip};
+    setTexturePool(clips, clip ? 1u : 0u);
+}
+
+void Engine::setEventClip(const Clip* clip) noexcept {
+    const Clip* clips[1] {clip};
+    setEventPool(clips, clip ? 1u : 0u);
+}
+
+void Engine::setBodyExciterClip(const Clip* clip) noexcept {
+    const Clip* clips[1] {clip};
+    setBodyExciterPool(clips, clip ? 1u : 0u);
 }
 
 void Engine::noteOn(int midiNote, float velocity) noexcept {
@@ -454,32 +502,41 @@ void Engine::configurePresence() noexcept {
 void Engine::ensureLongStreams() noexcept {
     const auto traits = traitsFor(archetype_);
 
-    if (worldClip_ && !worldVoice_.active) {
-        const double sourceRatio = worldClip_->sampleRate / sampleRate_;
+    for (std::size_t i = 0; i < worldPoolCount_; ++i) {
+        const Clip* clip = worldPool_[i];
+        if (!clip || worldVoices_[i].active)
+            continue;
+
+        const double sourceRatio = clip->sampleRate / sampleRate_;
+        const double slotSpread = 1.0 + 0.035 * static_cast<double>(i);
         const double rate =
-            sourceRatio * static_cast<double>(traits.worldRate) *
+            sourceRatio * static_cast<double>(traits.worldRate) * slotSpread *
             (1.0 + static_cast<double>(parameters_.motion) *
-                (-0.12 + 0.24 * rng_.uniform01()));
+                (-0.14 + 0.28 * rng_.uniform01()));
         const double start =
-            worldClip_->frames > 8
-                ? rng_.uniform01() * static_cast<double>(worldClip_->frames - 2)
+            clip->frames > 8
+                ? rng_.uniform01() * static_cast<double>(clip->frames - 2)
                 : 0.0;
-        worldVoice_.start(worldClip_, rate, start);
+        worldVoices_[i].start(clip, rate, start);
     }
 
-    if (textureClip_ && !textureVoice_.active) {
-        const double sourceRatio = textureClip_->sampleRate / sampleRate_;
-        const double rate =
-            sourceRatio * static_cast<double>(traits.textureRate) *
-            (1.0 + static_cast<double>(parameters_.motion) *
-                (-0.28 + 0.56 * rng_.uniform01()));
-        const double start =
-            textureClip_->frames > 8
-                ? rng_.uniform01() * static_cast<double>(textureClip_->frames - 2)
-                : 0.0;
-        textureVoice_.start(textureClip_, rate, start);
-    }
+    for (std::size_t i = 0; i < texturePoolCount_; ++i) {
+        const Clip* clip = texturePool_[i];
+        if (!clip || textureVoices_[i].active)
+            continue;
 
+        const double sourceRatio = clip->sampleRate / sampleRate_;
+        const double slotSpread = 1.0 - 0.045 * static_cast<double>(i);
+        const double rate =
+            sourceRatio * static_cast<double>(traits.textureRate) * slotSpread *
+            (1.0 + static_cast<double>(parameters_.motion) *
+                (-0.32 + 0.64 * rng_.uniform01()));
+        const double start =
+            clip->frames > 8
+                ? rng_.uniform01() * static_cast<double>(clip->frames - 2)
+                : 0.0;
+        textureVoices_[i].start(clip, rate, start);
+    }
 }
 
 void Engine::updateControlState() noexcept {
@@ -522,6 +579,16 @@ void Engine::updateControlState() noexcept {
     motionPan_ = parameters_.motion * cx;
     motionSpectral_ = parameters_.motion * cy;
 
+    // 20–90 second deterministic scene redistribution. The sources keep
+    // playing while their prominence moves, so the world evolves without
+    // obvious preset switching.
+    worldLayerTarget_[0] = 0.28f + 0.72f * clamp01(0.5f + 0.5f * cx);
+    worldLayerTarget_[1] = 0.16f + 0.68f * clamp01(0.5f + 0.5f * cy);
+    worldLayerTarget_[2] = 0.10f + 0.56f * clamp01(0.5f + 0.5f * cz);
+    textureLayerTarget_[0] = 0.20f + 0.68f * clamp01(0.5f - 0.5f * cy);
+    textureLayerTarget_[1] = 0.14f + 0.70f * clamp01(0.5f + 0.5f * cz);
+    textureLayerTarget_[2] = 0.08f + 0.62f * clamp01(0.5f - 0.5f * cx);
+
     // Reconfigure infrequently: resonant structures slowly deform with the
     // deterministic macro-state.
     configureBody();
@@ -547,16 +614,32 @@ void Engine::triggerEvent() noexcept {
 
     bodyExcitation_ += force;
 
-    if (eventClip_) {
-        const double sourceRatio = eventClip_->sampleRate / sampleRate_;
-        const double rate = sourceRatio * (0.74 + 0.54 * rng_.uniform01());
-        eventVoice_.start(eventClip_, rate, 0.0);
+    if (eventPoolCount_ > 0) {
+        const std::size_t index = std::min<std::size_t>(
+            static_cast<std::size_t>(rng_.uniform01() * eventPoolCount_),
+            eventPoolCount_ - 1);
+        const Clip* clip = eventPool_[index];
+        if (clip) {
+            const double sourceRatio = clip->sampleRate / sampleRate_;
+            const double rate = sourceRatio * (0.72 + 0.58 * rng_.uniform01());
+            const double start =
+                clip->frames > 32
+                    ? rng_.uniform01() * static_cast<double>(clip->frames / 5)
+                    : 0.0;
+            eventVoice_.start(clip, rate, start);
+        }
     }
 
-    if (bodyExciterClip_) {
-        const double sourceRatio = bodyExciterClip_->sampleRate / sampleRate_;
-        const double rate = sourceRatio * (0.82 + 0.36 * rng_.uniform01());
-        bodyExciterVoice_.start(bodyExciterClip_, rate, 0.0);
+    if (bodyPoolCount_ > 0) {
+        const std::size_t index = std::min<std::size_t>(
+            static_cast<std::size_t>(rng_.uniform01() * bodyPoolCount_),
+            bodyPoolCount_ - 1);
+        const Clip* clip = bodyPool_[index];
+        if (clip) {
+            const double sourceRatio = clip->sampleRate / sampleRate_;
+            const double rate = sourceRatio * (0.78 + 0.44 * rng_.uniform01());
+            bodyExciterVoice_.start(clip, rate, 0.0);
+        }
     }
 
     const float eventAmount = clamp01(parameters_.events);
@@ -733,16 +816,72 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             dryR += tonalGain * sumR;
         }
 
-        float worldL = 0.0f, worldR = 0.0f;
-        worldVoice_.process(worldL, worldR);
-        if (world > 0.0f && envelope_ > 0.0f) {
-            const float pan = 0.18f * motionPan_;
-            dryL += 0.95f * world * envelope_ * worldL * (1.0f - pan);
-            dryR += 0.95f * world * envelope_ * worldR * (1.0f + pan);
+        const float sceneFadeSeconds =
+            90.0f - 70.0f * parameters_.evolve;
+        const float sceneFadeCoeff = static_cast<float>(
+            1.0 - std::exp(-1.0 / (
+                std::max(5.0f, sceneFadeSeconds) * sampleRate_)));
+
+        float worldL = 0.0f;
+        float worldR = 0.0f;
+        float worldGainSum = 0.0f;
+        for (std::size_t i = 0; i < worldVoices_.size(); ++i) {
+            worldLayerGain_[i] +=
+                sceneFadeCoeff *
+                (worldLayerTarget_[i] - worldLayerGain_[i]);
+
+            float l = 0.0f;
+            float r = 0.0f;
+            worldVoices_[i].process(l, r);
+            if (!worldVoices_[i].active)
+                continue;
+
+            const float slotPan =
+                (static_cast<float>(i) - 1.0f) * 0.18f +
+                0.14f * motionPan_;
+            const float g = std::max(0.0f, worldLayerGain_[i]);
+            worldL += g * l * (1.0f - slotPan);
+            worldR += g * r * (1.0f + slotPan);
+            worldGainSum += g;
+        }
+        if (worldGainSum > 1.0f) {
+            worldL /= worldGainSum;
+            worldR /= worldGainSum;
         }
 
-        float textureL = 0.0f, textureR = 0.0f;
-        textureVoice_.process(textureL, textureR);
+        if (world > 0.0f && envelope_ > 0.0f) {
+            dryL += 0.98f * world * envelope_ * worldL;
+            dryR += 0.98f * world * envelope_ * worldR;
+        }
+
+        float textureL = 0.0f;
+        float textureR = 0.0f;
+        float textureGainSum = 0.0f;
+        bool anyTextureActive = false;
+        for (std::size_t i = 0; i < textureVoices_.size(); ++i) {
+            textureLayerGain_[i] +=
+                sceneFadeCoeff *
+                (textureLayerTarget_[i] - textureLayerGain_[i]);
+
+            float l = 0.0f;
+            float r = 0.0f;
+            textureVoices_[i].process(l, r);
+            if (!textureVoices_[i].active)
+                continue;
+
+            anyTextureActive = true;
+            const float slotPan =
+                (1.0f - static_cast<float>(i)) * 0.22f -
+                0.18f * motionPan_;
+            const float g = std::max(0.0f, textureLayerGain_[i]);
+            textureL += g * l * (1.0f - slotPan);
+            textureR += g * r * (1.0f + slotPan);
+            textureGainSum += g;
+        }
+        if (textureGainSum > 1.0f) {
+            textureL /= textureGainSum;
+            textureR /= textureGainSum;
+        }
 
         // Synthetic fallback texture: filtered noise, intentionally subordinate
         // to real sources once a texture clip is assigned.
@@ -760,8 +899,8 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         const float darkNoiseR = noiseStateR_ - 0.45f * textureHpState_;
 
         if (texture > 0.0f && envelope_ > 0.0f) {
-            const float realWeight = textureVoice_.active ? 0.80f : 0.0f;
-            const float synthWeight = textureVoice_.active ? 0.20f : 1.0f;
+            const float realWeight = anyTextureActive ? 0.88f : 0.0f;
+            const float synthWeight = anyTextureActive ? 0.12f : 1.0f;
             const float pan = -0.22f * motionPan_;
             dryL += texture * envelope_ * (1.0f - pan) *
                 (0.62f * realWeight * textureL + 0.035f * synthWeight * darkNoiseL);

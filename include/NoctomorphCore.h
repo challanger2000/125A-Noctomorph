@@ -51,6 +51,11 @@ public:
     void setEventClip(const Clip* clip) noexcept;
     void setBodyExciterClip(const Clip* clip) noexcept;
 
+    void setWorldPool(const Clip* const* clips, std::size_t count) noexcept;
+    void setTexturePool(const Clip* const* clips, std::size_t count) noexcept;
+    void setEventPool(const Clip* const* clips, std::size_t count) noexcept;
+    void setBodyExciterPool(const Clip* const* clips, std::size_t count) noexcept;
+
     void noteOn(int midiNote, float velocity) noexcept;
     void noteOff() noexcept;
 
@@ -150,12 +155,27 @@ private:
     float bodyExcitation_ = 0.0f;
     float presenceNoiseLowpass_ = 0.0f;
 
-    const Clip* worldClip_ = nullptr;
-    const Clip* textureClip_ = nullptr;
-    const Clip* eventClip_ = nullptr;
-    const Clip* bodyExciterClip_ = nullptr;
-    StreamVoice worldVoice_ {};
-    StreamVoice textureVoice_ {};
+    static constexpr std::size_t kWorldPoolCapacity = 3;
+    static constexpr std::size_t kTexturePoolCapacity = 3;
+    static constexpr std::size_t kEventPoolCapacity = 6;
+    static constexpr std::size_t kBodyPoolCapacity = 4;
+
+    std::array<const Clip*, kWorldPoolCapacity> worldPool_ {};
+    std::array<const Clip*, kTexturePoolCapacity> texturePool_ {};
+    std::array<const Clip*, kEventPoolCapacity> eventPool_ {};
+    std::array<const Clip*, kBodyPoolCapacity> bodyPool_ {};
+    std::size_t worldPoolCount_ = 0;
+    std::size_t texturePoolCount_ = 0;
+    std::size_t eventPoolCount_ = 0;
+    std::size_t bodyPoolCount_ = 0;
+
+    std::array<StreamVoice, kWorldPoolCapacity> worldVoices_ {};
+    std::array<StreamVoice, kTexturePoolCapacity> textureVoices_ {};
+    std::array<float, kWorldPoolCapacity> worldLayerGain_ {};
+    std::array<float, kWorldPoolCapacity> worldLayerTarget_ {};
+    std::array<float, kTexturePoolCapacity> textureLayerGain_ {};
+    std::array<float, kTexturePoolCapacity> textureLayerTarget_ {};
+
     StreamVoice eventVoice_ {};
     StreamVoice bodyExciterVoice_ {};
     float bodyExciterLowpass_ = 0.0f;
