@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  # Minimal wrapper/validator/state/process gate; no GUI or third-party assets.
+  # Asset-enabled wrapper/validator/state/process gate; no GUI yet.
   windows-vst3:
     runs-on: windows-2025
     timeout-minutes: 25
@@ -21,11 +21,38 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install asset preparation dependencies
+        shell: pwsh
+        run: python -m pip install -r tools/requirements-audio.txt
+
+      - name: Download cleared production-source candidates
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path external-assets, prepared-assets, generated-assets | Out-Null
+          curl.exe -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" -o external-assets/world.ogg
+          curl.exe -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Automaticpackingstation.ogg" -o external-assets/texture.ogg
+          curl.exe -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ticking%20glass.ogg" -o external-assets/body-bright.ogg
+          curl.exe -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gong%20or%20bell%20vibrant%20(short).ogg" -o external-assets/body-deep.ogg
+          curl.exe -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/200437%20bigben12345%20petersglocke.oga" -o external-assets/event.oga
+
+      - name: Prepare deterministic embedded asset subset
+        shell: pwsh
+        run: |
+          python tools/prepare_prototype_assets.py --world external-assets/world.ogg --texture external-assets/texture.ogg --body-bright external-assets/body-bright.ogg --body-deep external-assets/body-deep.ogg --event external-assets/event.oga --out prepared-assets
+          python tools/generate_noctomorph_resources.py prepared-assets generated-assets
+          Get-ChildItem prepared-assets
+          Get-ChildItem generated-assets
+
       - name: Configure VST3 prototype
         shell: pwsh
         run: |
           cmake --version
-          cmake -S . -B build-vst3 -G "Visual Studio 18 2026" -A x64 -DNOCTOMORPH_BUILD_VST3=ON
+          $generated = (Resolve-Path generated-assets).Path
+          cmake -S . -B build-vst3 -G "Visual Studio 18 2026" -A x64 -DNOCTOMORPH_BUILD_VST3=ON "-DNOCTOMORPH_GENERATED_ASSET_DIR=$generated"
 
       - name: Build plugin core tests and validator
         shell: pwsh
@@ -36,6 +63,15 @@ jobs:
         shell: pwsh
         run: |
           ctest --test-dir build-vst3 -C Release -R noctomorph_core_tests --output-on-failure
+
+      - name: Install third-party attribution in bundle
+        shell: pwsh
+        run: |
+          $plugin = Get-ChildItem -Path build-vst3 -Recurse -Directory -Filter "Noctomorph.vst3" | Select-Object -First 1
+          if (-not $plugin) { Write-Error "Noctomorph.vst3 not found"; exit 1 }
+          $resources = Join-Path $plugin.FullName "Contents\Resources"
+          New-Item -ItemType Directory -Force -Path $resources | Out-Null
+          Copy-Item resource/THIRD-PARTY-AUDIO-LICENSES.txt (Join-Path $resources "THIRD-PARTY-AUDIO-LICENSES.txt") -Force
 
       - name: Run state recall and process contract probes
         shell: pwsh

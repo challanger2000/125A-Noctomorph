@@ -50,6 +50,8 @@ add_test(NAME noctomorph_core_tests COMMAND noctomorph_core_tests)
 
 
 option(NOCTOMORPH_BUILD_VST3 "Build the Noctomorph VST3 prototype wrapper" OFF)
+set(NOCTOMORPH_GENERATED_ASSET_DIR "" CACHE PATH
+    "Optional generated Windows embedded-asset directory")
 
 if(NOCTOMORPH_BUILD_VST3)
     include(FetchContent)
@@ -74,6 +76,8 @@ if(NOCTOMORPH_BUILD_VST3)
         source/state_format.h
         source/processor.h
         source/processor.cpp
+        source/PrototypeAssetBank.h
+        source/PrototypeAssetBank.cpp
         source/controller.h
         source/controller.cpp
         source/entry.cpp
@@ -85,6 +89,27 @@ if(NOCTOMORPH_BUILD_VST3)
         "${CMAKE_CURRENT_SOURCE_DIR}/include"
         "${CMAKE_CURRENT_SOURCE_DIR}/source"
     )
+
+    if(WIN32 AND NOCTOMORPH_GENERATED_ASSET_DIR)
+        if(NOT EXISTS
+           "${NOCTOMORPH_GENERATED_ASSET_DIR}/noctomorph_assets_generated.h")
+            message(FATAL_ERROR "Generated Noctomorph asset header missing")
+        endif()
+        if(NOT EXISTS
+           "${NOCTOMORPH_GENERATED_ASSET_DIR}/noctomorph_assets_generated.rc")
+            message(FATAL_ERROR "Generated Noctomorph asset RC missing")
+        endif()
+
+        target_include_directories(Noctomorph PRIVATE
+            "${NOCTOMORPH_GENERATED_ASSET_DIR}"
+        )
+        target_sources(Noctomorph PRIVATE
+            "${NOCTOMORPH_GENERATED_ASSET_DIR}/noctomorph_assets_generated.rc"
+        )
+        target_compile_definitions(Noctomorph PRIVATE
+            NOCTOMORPH_HAS_EMBEDDED_ASSETS=1
+        )
+    endif()
 
     target_link_libraries(Noctomorph PRIVATE sdk)
     target_compile_features(Noctomorph PRIVATE cxx_std_17)

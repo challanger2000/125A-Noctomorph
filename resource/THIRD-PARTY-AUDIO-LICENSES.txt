@@ -1,0 +1,57 @@
+125A Noctomorph — Third-Party Audio Sources
+Prototype asset bank, 2026-09-30
+
+The following source recordings are embedded in transformed/derived form.
+
+1. WWS PaperMachinePM4.ogg
+   Creator / attribution: Work With Sounds / Torsten Nilsson
+   Source page:
+   https://commons.wikimedia.org/wiki/File:WWS_PaperMachinePM4.ogg
+   License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+   License:
+   https://creativecommons.org/licenses/by/4.0/
+   Changes for Noctomorph:
+   selected excerpt, stereo channel normalization, resampled to 48 kHz where
+   required, short edge fades, peak normalization, converted to PCM16 WAV and
+   embedded as WORLD raw material.
+
+2. WWS Automaticpackingstation.ogg
+   Creator / attribution: Work With Sounds / Torsten Nilsson
+   Source page:
+   https://commons.wikimedia.org/wiki/File:WWS_Automaticpackingstation.ogg
+   License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+   License:
+   https://creativecommons.org/licenses/by/4.0/
+   Changes for Noctomorph:
+   selected excerpt, stereo channel normalization, resampled to 48 kHz where
+   required, short edge fades, peak normalization, converted to PCM16 WAV and
+   embedded as TEXTURE raw material.
+
+3. Ticking glass.ogg
+   Creator: Marble Toast
+   Source page:
+   https://commons.wikimedia.org/wiki/File:Ticking_glass.ogg
+   License: CC0 1.0 Universal
+   Changes:
+   selected excerpt, mono conversion, 48 kHz preparation, fades, peak
+   normalization and PCM16 conversion for BODY excitation.
+
+4. Gong or bell vibrant (short).ogg
+   Source lineage: PDSounds / Stephan
+   Source page:
+   https://commons.wikimedia.org/wiki/File:Gong_or_bell_vibrant_(short).ogg
+   License: CC0 1.0 Universal
+   Changes:
+   mono conversion, 48 kHz preparation, fades, peak normalization and PCM16
+   conversion for deep BODY excitation.
+
+5. 200437 bigben12345 petersglocke.oga
+   Creator: BIGBEN12345
+   Source page:
+   https://commons.wikimedia.org/wiki/File:200437_bigben12345_petersglocke.oga
+   License: CC0 1.0 Universal
+   Changes:
+   selected excerpt, stereo preparation, 48 kHz preparation, fades, peak
+   normalization and PCM16 conversion for sparse EVENT use.
+
+No endorsement by any source creator or licensor is implied.

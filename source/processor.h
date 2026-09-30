@@ -3,6 +3,7 @@
 #include "public.sdk/source/vst/vstaudioeffect.h"
 #include "pluginterfaces/vst/ivstevents.h"
 #include "NoctomorphCore.h"
+#include "PrototypeAssetBank.h"
 
 namespace Noctomorph {
 
@@ -32,11 +33,14 @@ public:
 private:
     void applyParameter(Steinberg::Vst::ParamID id, float normalized) noexcept;
     void updateEngineParameters() noexcept;
+    void applyAssetProfile() noexcept;
     void resetEngine() noexcept;
     void handleNoteOn(const Steinberg::Vst::Event& event) noexcept;
     void handleNoteOff(const Steinberg::Vst::Event& event) noexcept;
 
     noctomorph::Engine engine_{};
+    PrototypeAssetBank assetBank_{};
+    bool assetsLoaded_ = false;
     noctomorph::Parameters parameters_{};
     // StringListParameter defaults to its first entry; keep DSP state identical.
     noctomorph::Archetype archetype_ = noctomorph::Archetype::Void;

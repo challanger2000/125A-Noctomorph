@@ -54,6 +54,11 @@ tresult PLUGIN_API Processor::initialize(FUnknown* context) {
 
     addAudioOutput(STR16("Stereo Out"), SpeakerArr::kStereo);
     addEventInput(STR16("Event In"), 16);
+
+    // Asset loading occurs during component initialization, never in process().
+    // Failure leaves a valid synthetic-fallback instrument.
+    assetsLoaded_ = assetBank_.load();
+    applyAssetProfile();
     return kResultOk;
 }
 
@@ -95,12 +100,33 @@ tresult PLUGIN_API Processor::setBusArrangements(
     return AudioEffect::setBusArrangements(inputs, numIns, outputs, numOuts);
 }
 
+void Processor::applyAssetProfile() noexcept {
+    if (!assetsLoaded_) {
+        engine_.setWorldClip(nullptr);
+        engine_.setTextureClip(nullptr);
+        engine_.setBodyExciterClip(nullptr);
+        engine_.setEventClip(nullptr);
+        return;
+    }
+
+    engine_.setWorldClip(assetBank_.world());
+    engine_.setTextureClip(assetBank_.texture());
+    engine_.setEventClip(assetBank_.event());
+
+    const bool deepBody =
+        archetype_ == noctomorph::Archetype::Abyss ||
+        archetype_ == noctomorph::Archetype::Void;
+    engine_.setBodyExciterClip(
+        deepBody ? assetBank_.bodyDeep() : assetBank_.bodyBright());
+}
+
 void Processor::resetEngine() noexcept {
     activeNoteId_ = -1;
     activePitch_ = -1;
     transportWasPlaying_ = false;
     engine_.reset(kPrototypeSeed);
     engine_.setArchetype(archetype_);
+    applyAssetProfile();
     updateEngineParameters();
 }
 
@@ -112,6 +138,7 @@ void Processor::applyParameter(ParamID id, float normalized) noexcept {
         case kArchetype:
             archetype_ = archetypeFromIndex(archetypeIndex(v));
             engine_.setArchetype(archetype_);
+            applyAssetProfile();
             break;
         case kFoundation: parameters_.foundation = v; break;
         case kWorld:      parameters_.world = v; break;
@@ -348,6 +375,7 @@ tresult PLUGIN_API Processor::setState(IBStream* state) {
         return kResultFalse;
 
     archetype_ = archetypeFromIndex(archetypeIndex(values[0]));
+    applyAssetProfile();
     parameters_.foundation = values[1];
     parameters_.world = values[2];
     parameters_.texture = values[3];
