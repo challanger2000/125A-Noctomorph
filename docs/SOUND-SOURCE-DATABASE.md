@@ -2292,3 +2292,141 @@ Examples:
 - distant bell modes seed synthetic coupled resonators.
 
 This should be a central Noctomorph design principle.
+
+
+## Heritage acoustics / structural excitation expansion — 2026-09-30
+
+### Cathedral acoustics datasets
+
+#### DATA-IR-001 — Aachen Cathedral, St. Nicholas Chapel
+Source: https://zenodo.org/records/22207913
+Creators: Martin Zerwas, Selin Kayku
+Licence: CC BY 4.0
+Type: measured room-acoustic dataset
+Contents:
+- 46 measured room impulse responses;
+- 4-channel B-format (FuMa);
+- 48 kHz WAV;
+- 45 source-receiver combinations plus repeat measurement;
+- omnidirectional dodecahedron source;
+- Sennheiser Ambeo / IRIS 3D receiver;
+- exponential sine-sweep capture;
+- ISO 3382-1 measurement procedure;
+- late-Gothic coupled two-storey chapel;
+- approx. 3050 m³;
+- mid-frequency reverberation time approx. 4.6 s.
+Commercial-use status:
+- permitted under CC BY 4.0 with attribution, licence link and indication of changes.
+Potential use:
+- production convolution source if attribution obligations are included in product documentation;
+- reference for coupled-volume decay;
+- B-format spatial research;
+- benchmark for hybrid FDN/convolution space design.
+Priority: EXTREMELY HIGH
+
+#### DATA-IR-002 — York Minster Chapter House
+Source: https://zenodo.org/records/4040994
+Licence: CC BY-NC-SA 4.0
+Type: measured and simulated B-format room impulse-response dataset
+Potential use:
+- RESEARCH / ACOUSTIC REFERENCE ONLY
+Reason:
+- NonCommercial restriction is incompatible with commercial Noctomorph embedding.
+Priority: HIGH REFERENCE
+
+#### DATA-IR-003 — Ely Cathedral Lady Chapel
+Source: https://zenodo.org/records/5150020
+Licence: CC BY-NC-SA 4.0
+Type: measured and simulated B-format room impulse-response dataset
+Potential use:
+- RESEARCH / ACOUSTIC REFERENCE ONLY
+Reason:
+- NonCommercial restriction is incompatible with commercial Noctomorph embedding.
+Priority: HIGH REFERENCE
+
+### Structural / contact-mic additions
+
+#### FS-STRUCT-005 — Metal post / cable vibration, contact mic
+Source: https://freesound.org/people/felix.blume/sounds/476742/
+Creator: Felix Blume
+Licence: CC0
+Type: real structural contact-mic recording
+Specs: WAV, mono, 96 kHz / 24-bit, 4:04.352
+Description:
+- vibration of a metal post;
+- cable knocking;
+- wind-driven structural motion;
+- captured with H2a Aquarian contact mic.
+Potential use:
+- long non-periodic structural layer;
+- spectral/body extraction;
+- impossible-body excitation;
+- transformed metallic-world foundation.
+Priority: EXTREMELY HIGH
+
+#### FS-STRUCT-006 — Contact mic metal scrape, yard objects
+Source: https://freesound.org/people/ilmari_freesound/sounds/585517/
+Creator: ilmari_freesound
+Licence: CC0
+Type: real contact-mic recording
+Specs: WAV, mono, 96 kHz / 24-bit, 45.198 s
+Potential use:
+- micro-grain excitation;
+- friction texture;
+- resonator drive;
+- spectral-smear source.
+Priority: VERY HIGH
+
+#### FS-STRUCT-007 — Contact mic metal scrape variant
+Source: https://freesound.org/people/ilmari_freesound/sounds/585528/
+Creator: ilmari_freesound
+Licence: CC0
+Type: real contact-mic recording
+Specs: WAV, mono, 96 kHz / 24-bit, 13.050 s
+Potential use:
+- alternate friction/excitation source.
+Priority: HIGH
+
+#### FS-STRUCT-008 — Keys scraped against metal gate, contact mic #1
+Source: https://freesound.org/people/JarredGibb/sounds/219059/
+Creator: JarredGibb
+Licence: CC0
+Type: real contact-mic metal-on-metal recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 21.645 s
+Potential use:
+- aggressive friction grain source;
+- high-frequency metallic excitation;
+- transformed industrial event.
+Priority: HIGH
+
+#### FS-STRUCT-009 — Keys scraped against metal gate, contact mic #2
+Source: https://freesound.org/people/JarredGibb/sounds/219060/
+Creator: JarredGibb
+Licence: CC0
+Type: real contact-mic metal-on-metal recording
+Specs: WAV, stereo, 48 kHz / 24-bit, 16.661 s
+Potential use:
+- alternate scrape/event pool.
+Priority: HIGH
+
+## Heritage-acoustics policy
+
+Measured heritage-space impulse responses are valuable because they provide:
+- real multi-rate decay;
+- direction-dependent early energy;
+- physically plausible late-field behavior;
+- unusual coupled-volume signatures.
+
+But production use requires exact licence classification:
+- CC0 / Public Domain: preferred;
+- CC BY: acceptable only if attribution and modification notices are deliberately shipped;
+- CC BY-NC / NC-SA: reference only for a commercial product;
+- unclear/custom terms: do not embed until cleared.
+
+Noctomorph should use heritage acoustics as real-world anchors, then extend them into unreal spaces through:
+- IR morphing;
+- filtered / frequency-dependent decay remapping;
+- early/late field decoupling;
+- synthetic late tails;
+- modal-body injection;
+- spatial motion after convolution.
