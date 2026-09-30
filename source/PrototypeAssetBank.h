@@ -90,6 +90,9 @@ private:
         WorldReactorHall,
         WorldWarehouseHall,
         WorldMausoleum,
+        TexturePostVibration,
+        TextureWireStress,
+        WorldCaveChamber,
         Count
     };
 
