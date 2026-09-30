@@ -118,10 +118,20 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42", "expansion45", "expansion48", "expansion51", "expansion54", "expansion57"), default="all")
+    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42", "expansion45", "expansion48", "expansion51", "expansion54", "expansion57", "expansion60"), default="all")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     d = args.input_dir
+
+    if args.mode == "expansion60":
+        # Verified 57-source bank is restored first; add three large architectural WORLD identities.
+        write(args.out, "world_reactorhall.wav", d/"world_reactorhall.wav",
+              start=0, duration=19.0, peak=.18, speed=.55, reverse=True, hp=30, lp=3200)
+        write(args.out, "world_warehousehall.wav", d/"world_warehousehall.wav",
+              start=0, duration=22.0, peak=.17, speed=.48, reverse=True, hp=28, lp=2800)
+        write(args.out, "world_mausoleum.wav", d/"world_mausoleum.wav",
+              start=0, duration=15.0, peak=.16, speed=.42, reverse=True, hp=35, lp=3000)
+        return 0
 
     if args.mode == "expansion57":
         # Verified 54-source bank is restored first; add one resonant BODY and two contrasting metal EVENTS.
