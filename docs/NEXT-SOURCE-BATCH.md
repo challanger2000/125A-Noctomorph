@@ -158,3 +158,48 @@ Optimize without sonic loss:
 
 A larger memory footprint is acceptable when it produces measurable source
 diversity and audible scene differentiation.
+
+
+## Additional verified candidates — 2026-09-30
+
+### WC-AMB-001 — Uneasy rustling ambience
+Source:
+https://commons.wikimedia.org/wiki/File:Uneasy_rustling_ambience.ogg
+
+Licence:
+Public Domain (PDSounds lineage).
+
+Use direction:
+- NOCTURNE / VOID micro-movement;
+- sparse high-mid environmental agitation;
+- transformed TEXTURE, not foreground horror FX.
+
+### WC-HALL-001 — Indoor swimming pool hall
+Source:
+https://commons.wikimedia.org/wiki/File:Indoor_swimming_pool_hall.ogg
+
+Licence:
+Public Domain (PDSounds lineage).
+
+Use direction:
+- hall/reflection extraction;
+- RUINS / NOCTURNE architectural-space raw material;
+- only segments without intelligible human content may be considered for production.
+
+### NOAA-LF-001 — Bloop
+Source:
+https://commons.wikimedia.org/wiki/File:Bloop.ogg
+
+Licence:
+Public Domain (NOAA official work).
+
+Use direction:
+- low-frequency BODY / EVENT analysis only;
+- potentially derive a heavily transformed ABYSS mass;
+- never use as a recognizable novelty sample.
+
+## Selection rule for the next batch
+
+Prefer sources that add a new physical identity. Do not add a candidate merely
+because it is legally easy to acquire. At least half of the next accepted batch
+must increase non-industrial scene diversity.
