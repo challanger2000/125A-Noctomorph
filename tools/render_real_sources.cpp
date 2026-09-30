@@ -34,24 +34,49 @@ void wav(const char* path,const std::vector<float>& l,const std::vector<float>& 
 }
 
 int main(int argc,char** argv){
-    if(argc<6){std::cerr<<"usage: render_real_sources WORLD.raw TEXTURE.raw EVENT.raw seconds output.wav\n";return 2;}
+    if(argc<6){std::cerr<<"usage: render_real_sources WORLD.raw TEXTURE.raw EVENT.raw seconds output.wav [profile]\n";return 2;}
     RawAudio w,t,e; if(!loadRaw(argv[1],w)||!loadRaw(argv[2],t)||!loadRaw(argv[3],e)){std::cerr<<"raw load failed\n";return 3;}
     const double sr=48000.0; const double seconds=std::clamp(std::stod(argv[4]),1.0,600.0); const std::size_t frames=static_cast<std::size_t>(sr*seconds);
     noctomorph::Clip wc{w.l.data(),w.r.data(),w.l.size(),double(w.sr),true};
     noctomorph::Clip tc{t.l.data(),t.r.data(),t.l.size(),double(t.sr),true};
     noctomorph::Clip ec{e.l.data(),e.r.data(),e.l.size(),double(e.sr),false};
     auto engine=std::make_unique<noctomorph::Engine>(); engine->prepare(sr); engine->reset(0x125A5245414C5352ULL);
-    noctomorph::Parameters p; p.foundation=.22f;p.world=.74f;p.texture=.58f;p.body=.30f;p.tension=.48f;p.evolve=.72f;p.events=.18f;p.space=.42f;p.output=.48f;
-    const bool sourceOnly = argc >= 7 && std::string(argv[6]) == "source-only";
-    if (sourceOnly) {
-        p.foundation = 0.0f;
-        p.body = 0.0f;
-        p.events = 0.0f;
+    noctomorph::Parameters p;
+    noctomorph::Archetype archetype = noctomorph::Archetype::Industrial;
+    std::string profile = argc >= 7 ? std::string(argv[6]) : "industrial";
+
+    if (profile == "source-only") {
+        p.foundation=.0f; p.world=.74f; p.texture=.58f; p.body=.0f;
+        p.tension=.0f; p.evolve=.25f; p.events=.0f; p.space=.0f; p.output=.48f;
+    } else if (profile == "ruins") {
+        archetype = noctomorph::Archetype::Ruins;
+        p.foundation=.16f; p.world=.82f; p.texture=.46f; p.body=.42f;
+        p.tension=.40f; p.evolve=.58f; p.events=.10f; p.space=.24f; p.output=.48f;
+    } else if (profile == "nocturne") {
+        archetype = noctomorph::Archetype::Nocturne;
+        p.foundation=.30f; p.world=.58f; p.texture=.38f; p.body=.38f;
+        p.tension=.52f; p.evolve=.68f; p.events=.08f; p.space=.30f; p.output=.48f;
+    } else if (profile == "abyss") {
+        archetype = noctomorph::Archetype::Abyss;
+        p.foundation=.38f; p.world=.46f; p.texture=.28f; p.body=.62f;
+        p.tension=.72f; p.evolve=.82f; p.events=.12f; p.space=.36f; p.output=.46f;
+    } else if (profile == "wasteland") {
+        archetype = noctomorph::Archetype::Wasteland;
+        p.foundation=.18f; p.world=.78f; p.texture=.64f; p.body=.26f;
+        p.tension=.46f; p.evolve=.74f; p.events=.14f; p.space=.22f; p.output=.48f;
+    } else if (profile == "void") {
+        archetype = noctomorph::Archetype::Void;
+        p.foundation=.42f; p.world=.24f; p.texture=.18f; p.body=.52f;
+        p.tension=.64f; p.evolve=.54f; p.events=.04f; p.space=.44f; p.output=.46f;
+    } else {
+        p.foundation=.22f; p.world=.74f; p.texture=.58f; p.body=.30f;
+        p.tension=.48f; p.evolve=.72f; p.events=.18f; p.space=.42f; p.output=.48f;
     }
-    engine->setParameters(p); engine->setArchetype(noctomorph::Archetype::Industrial); engine->setWorldClip(&wc);engine->setTextureClip(&tc);engine->setEventClip(&ec);engine->noteOn(36,.9f);
+
+    engine->setParameters(p); engine->setArchetype(archetype); engine->setWorldClip(&wc);engine->setTextureClip(&tc);engine->setEventClip(&ec);engine->noteOn(36,.9f);
     std::vector<float> l(frames),r(frames); constexpr std::size_t block=257; std::size_t off=0; float peak=0.0f; long double energy=0.0;
     while(off<frames){auto n=std::min(block,frames-off);engine->process(l.data()+off,r.data()+off,n);for(std::size_t i=off;i<off+n;++i){peak=std::max(peak,std::max(std::fabs(l[i]),std::fabs(r[i])));energy+=(long double)l[i]*l[i]+(long double)r[i]*r[i];}off+=n;}
     wav(argv[5],l,r,48000); const double rms=std::sqrt(double(energy/(2.0L*frames)));
-    std::cout<<"real-source render seconds="<<seconds<<" peak="<<peak<<" rms="<<rms<<" events="<<engine->eventCount()<<"\n";
+    std::cout<<"real-source render profile="<<profile<<" seconds="<<seconds<<" peak="<<peak<<" rms="<<rms<<" events="<<engine->eventCount()<<"\n";
     return (!std::isfinite(peak)||!std::isfinite(rms)||peak>.892f||rms<1e-6)?4:0;
 }
