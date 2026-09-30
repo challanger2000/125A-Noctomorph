@@ -26,14 +26,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Restore verified 34-source baseline
+      - name: Restore verified 36-source baseline
         uses: actions/download-artifact@v4
         with:
           name: noctomorph-prepared-scene-bank
           path: prepared-assets
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          run-id: 36753236233
+          run-id: 36758450833
 
       - uses: actions/setup-python@v5
         with:
@@ -42,7 +42,7 @@ jobs:
       - name: Install asset preparation dependencies
         run: python -m pip install -r tools/requirements-audio.txt
 
-      - name: Download 36-source expansion candidates
+      - name: Download 39-source expansion candidates
         shell: bash
         run: |
           set -euo pipefail
@@ -70,14 +70,15 @@ jobs:
             sleep 12
           }
 
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flowing-water-100019.ogg" "external-assets/texture_flowwater.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Flintstone.ogg" "external-assets/event_flint.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Assorted%20creaking%20noises%20of%20office%20chair.ogg" "external-assets/texture_woodcreak.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Rubber%20squeaking.ogg" "external-assets/texture_rubber.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Knocking%20on%20wood%20or%20door.ogg" "external-assets/event_woodknock.ogg"
 
       - name: Prepare deterministic v0.2 scene bank
         run: |
-          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion36
+          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion39
           find prepared-assets -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
-          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 36
+          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 39
 
       - name: Upload prepared scene bank
         uses: actions/upload-artifact@v4

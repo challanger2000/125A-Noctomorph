@@ -118,10 +118,20 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36"), default="all")
+    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39"), default="all")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     d = args.input_dir
+
+    if args.mode == "expansion39":
+        # Verified 36-source bank is restored first; derive only three new body/material assets.
+        write(args.out, "texture_woodcreak.wav", d/"texture_woodcreak.ogg",
+              start=8, duration=28, peak=.16, speed=.46, hp=90, lp=3600)
+        write(args.out, "texture_rubber.wav", d/"texture_rubber.ogg",
+              start=0, duration=10, peak=.14, speed=.42, hp=180, lp=4200)
+        write(args.out, "event_woodknock.wav", d/"event_woodknock.ogg",
+              start=0, duration=6.0, channels=1, peak=.17, speed=.52, hp=90, lp=3200)
+        return 0
 
     if args.mode == "expansion36":
         # Verified 34-source bank is restored first; derive only the two new assets.

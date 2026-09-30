@@ -64,6 +64,9 @@ private:
         BodyBloop,
         TextureFlowWater,
         EventFlint,
+        TextureWoodCreak,
+        TextureRubber,
+        EventWoodKnock,
         Count
     };
 

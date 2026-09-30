@@ -41,6 +41,9 @@ ASSETS = [
     ("body_bloop.wav", 33, False, 0.22),
     ("texture_flowwater.wav", 34, False, 1.0),
     ("event_flint.wav", 35, False, 1.0),
+    ("texture_woodcreak.wav", 36, False, 1.0),
+    ("texture_rubber.wav", 37, False, 1.0),
+    ("event_woodknock.wav", 38, False, 1.0),
 ]
 
 
