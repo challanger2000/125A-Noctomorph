@@ -46,9 +46,11 @@ jobs:
           ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/event.raw 30 renders/noctomorph-real-30s.wav
           ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/event.raw 120 renders/noctomorph-real-120s.wav
           ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/event.raw 300 renders/noctomorph-real-300s.wav
+          ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/event.raw 30 renders/noctomorph-source-only-30s.wav source-only
           python tools/analyze_audio.py renders/noctomorph-real-30s.wav --json measurements/real-render/30s.json
           python tools/analyze_audio.py renders/noctomorph-real-120s.wav --json measurements/real-render/120s.json
           python tools/analyze_audio.py renders/noctomorph-real-300s.wav --json measurements/real-render/300s.json
+          python tools/analyze_audio.py renders/noctomorph-source-only-30s.wav --json measurements/real-render/source-only-30s.json
       - name: Upload listening renders and measurements
         uses: actions/upload-artifact@v4
         with:
