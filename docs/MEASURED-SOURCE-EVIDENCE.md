@@ -1,5 +1,34 @@
 # Measured Source Evidence
 
+## DATA-IR-001 — Aachen Cathedral, St. Nicholas Chapel
+
+Status: **MEASURED — FULL DATASET**
+
+Dataset facts:
+- 46 measured room impulse responses;
+- all 48 kHz;
+- all 4-channel B-format;
+- 26 files are 10.0 s, 19 files are 6.0 s, 1 file is 7.0 s;
+- individual SHA-256 values are recorded in `measurements/aachen/DATA-IR-001-summary.csv`.
+
+Measured comparison range:
+- direct arrival: **7.71–111.48 ms**, mean **42.90 ms**
+- decay to -20 dB: **0.716–1.361 s**, mean **1.098 s**
+- decay to -30 dB: **1.424–2.166 s**, mean **1.822 s**
+- decay to -60 dB: **4.483–9.965 s**, mean **7.546 s**
+- per-channel -60 dB range across the dataset: **4.567–9.941 s**
+- spectral centroid: **1.607–1.724 kHz**, mean **1.662 kHz**
+
+Interpretation:
+- source/receiver position materially changes the decay signature;
+- this is much more useful than treating the chapel as one fixed reverb preset;
+- shorter and longer coupled-volume states can be selected or morphed deliberately;
+- B-format channels make it useful for later spatial decoding/research rather than only mono convolution;
+- because the dataset is CC BY 4.0, production use requires attribution, licence link and modification disclosure.
+
+Engineering note:
+The repository's -60 dB figures are deterministic comparison landmarks from peak-aligned Schroeder-style energy decay. They are **not** presented as standards-compliant RT60/T30 values.
+
 ## DATA-IR-004 — OpenAIR R1 Nuclear Reactor Hall
 
 Status: **MEASURED**

@@ -31,12 +31,6 @@ Broad research sweep: **COMPLETE ENOUGH TO BUILD**
 - No major source-family blind spot remained in the coverage matrix.
 - New sources are now added only when they beat an existing candidate or fill a concrete implementation need.
 
-Key documents:
-- `docs/SOUND-SOURCE-DATABASE.md`
-- `docs/RESEARCH-COVERAGE.md`
-- `docs/PRODUCTION-SHORTLIST.csv`
-- `docs/PRODUCTION-PREP.md`
-
 ## Prototype core status
 
 Branch: `dev/prototype-v0.1`
@@ -67,6 +61,8 @@ Verified:
 - 100 % SPACE has no immediate dry leak;
 - finite/extreme behavior at 44.1 / 48 / 96 / 192 kHz;
 - note-off release decay;
+- WORLD stereo playback and source-rate conversion hook;
+- EVENT clip playback hook;
 - 30 s smoke render;
 - 5 min evolution probe.
 
@@ -90,13 +86,16 @@ Implemented:
 - OpenAIR CI source probe;
 - Aachen Cathedral full-dataset CI probe.
 
-Measured production candidates already committed as evidence:
+Measured production evidence:
+- DATA-IR-001 — Aachen Cathedral St. Nicholas Chapel: **46/46 measured**
 - DATA-IR-004 — OpenAIR R1 Nuclear Reactor Hall
 - DATA-IR-005 — OpenAIR Terry's Factory Warehouse
 
-Aachen Cathedral DATA-IR-001:
-- 46 measured B-format IRs expected;
-- full-dataset CI measurement currently in progress at this status checkpoint.
+Aachen DATA-IR-001:
+- all 46 files are 48 kHz / 4-channel B-format;
+- measured -60 dB comparison landmark spans 4.483–9.965 s;
+- mean measured -60 dB landmark: 7.546 s;
+- full per-file hashes and metrics: `measurements/aachen/DATA-IR-001-summary.csv`.
 
 ## Repository audio policy
 
@@ -115,9 +114,8 @@ Release embedding is a separate deliberate step after legal and audio QA.
 
 ## Next gates
 
-1. Complete Aachen Cathedral full-dataset measurement.
-2. Continue acquisition/measurement of the highest-priority production shortlist.
-3. Add measured real sources to WORLD / TEXTURE / EVENT / BODY prototype paths.
-4. Produce 30 s / 2 min / 5 min real-source listening renders.
-5. Compare archetype identity and repetition metrics.
-6. Only then freeze public control architecture and start the VST3 wrapper / GUI.
+1. Continue acquisition/measurement of the highest-priority production shortlist.
+2. Add measured real sources to WORLD / TEXTURE / EVENT / BODY prototype paths.
+3. Produce 30 s / 2 min / 5 min real-source listening renders.
+4. Compare archetype identity and repetition metrics.
+5. Only then freeze public control architecture and start the VST3 wrapper / GUI.
