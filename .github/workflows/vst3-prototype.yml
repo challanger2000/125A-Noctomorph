@@ -70,9 +70,44 @@ jobs:
             sleep 12
           }
 
-          get_asset "https://bigsoundbank.com/UPLOAD/wav/0504.wav" "external-assets/texture_postvibration.wav"
-          get_asset "https://bigsoundbank.com/UPLOAD/wav/1537.wav" "external-assets/texture_wirestress.wav"
-          get_asset "https://bigsoundbank.com/UPLOAD/wav/3409.wav" "external-assets/world_cavechamber.wav"
+          acquire_audio() {
+            local id="$1"
+            local out="$2"
+            local tmp="$out.tmp"
+            rm -f "$tmp" "$out"
+            for url in \
+              "https://bigsoundbank.com/UPLOAD/wav/${id}.wav" \
+              "https://bigsoundbank.com/UPLOAD/WAV/${id}.wav" \
+              "https://bigsoundbank.com/UPLOAD/flac/${id}.flac" \
+              "https://bigsoundbank.com/UPLOAD/ogg/${id}.ogg" \
+              "https://bigsoundbank.com/UPLOAD/mp3/${id}.mp3"
+            do
+              echo "Trying $url"
+              rm -f "$tmp"
+              if curl -A "125A-Noctomorph/0.2 (research build; github.com/challanger2000)" -L --fail --connect-timeout 20 --max-time 240 "$url" -o "$tmp"; then
+                if python - "$tmp" <<'PY'
+import soundfile as sf, sys
+try:
+    i=sf.info(sys.argv[1])
+    assert i.frames > 0 and i.samplerate > 0
+    print("audio-ok", i.format, i.samplerate, i.channels, i.frames)
+except Exception as e:
+    print("not-audio:", e, file=sys.stderr)
+    raise SystemExit(1)
+PY
+                then
+                  mv "$tmp" "$out"
+                  return 0
+                fi
+              fi
+            done
+            echo "No valid audio found for BigSoundBank $id" >&2
+            return 1
+          }
+
+          acquire_audio 0504 "external-assets/texture_postvibration.wav"
+          acquire_audio 1537 "external-assets/texture_wirestress.wav"
+          acquire_audio 3409 "external-assets/world_cavechamber.wav"
 
       - name: Prepare deterministic v0.2 scene bank
         run: |
