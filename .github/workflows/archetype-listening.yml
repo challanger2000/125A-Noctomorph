@@ -16,10 +16,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  # Cross-archetype real-source + measured-space comparison.
   render:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -30,24 +29,23 @@ jobs:
       - name: Install analysis dependencies
         run: python -m pip install -r tools/requirements-audio.txt
 
-      - name: Download cleared raw sources and measured spaces
+      - name: Download controlled raw sources and measured spaces
         run: |
           mkdir -p external/archetypes raw renders measurements/archetypes
-          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Howling%20wind.ogg" -o external/archetypes/ruins-world.ogg
-          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Automaticpackingstation.ogg" -o external/archetypes/industrial-texture.ogg
-          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" -o external/archetypes/industrial-world.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" -o external/archetypes/world.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Automaticpackingstation.ogg" -o external/archetypes/texture.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Paperpulprecyclingmill.ogg" -o external/archetypes/body.ogg
           curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/200437%20bigben12345%20petersglocke.oga" -o external/archetypes/event.oga
           curl -L --fail --retry 3 "https://webfiles.york.ac.uk/OPENAIR/IRs/maes-howe/b-format/mh3_000_bformat_48k.wav" -o external/archetypes/maes-howe.wav
           curl -L --fail --retry 3 "https://webfiles.york.ac.uk/OPENAIR/IRs/hamilton-mausoleum/b-format/hm2_000_bformat_48k.wav" -o external/archetypes/hamilton.wav
-
-      - name: Measure new raw source
-        run: python tools/analyze_audio.py external/archetypes/ruins-world.ogg --json measurements/archetypes/ruins-world-source.json
+          curl -L --fail --retry 3 "https://webfiles.york.ac.uk/OPENAIR/IRs/r1-nuclear-reactor-hall/examples/r1_omni_48k.wav" -o external/archetypes/r1.wav
+          curl -L --fail --retry 3 "https://webfiles.york.ac.uk/OPENAIR/IRs/terrys-factory-warehouse/mono/terrys_warehouse_omni.wav" -o external/archetypes/terry.wav
 
       - name: Prepare source buffers
         run: |
-          python tools/prepare_audio_raw.py external/archetypes/ruins-world.ogg raw/ruins-world.raw --peak 0.36
-          python tools/prepare_audio_raw.py external/archetypes/industrial-world.ogg raw/industrial-world.raw --peak 0.40
-          python tools/prepare_audio_raw.py external/archetypes/industrial-texture.ogg raw/texture.raw --peak 0.30
+          python tools/prepare_audio_raw.py external/archetypes/world.ogg raw/world.raw --peak 0.40
+          python tools/prepare_audio_raw.py external/archetypes/texture.ogg raw/texture.raw --peak 0.30
+          python tools/prepare_audio_raw.py external/archetypes/body.ogg raw/body.raw --peak 0.30
           python tools/prepare_audio_raw.py external/archetypes/event.oga raw/event.raw --peak 0.32
 
       - name: Configure and build
@@ -55,30 +53,32 @@ jobs:
           cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
           cmake --build build --parallel 2
 
-      - name: Render dry engine archetypes
+      - name: Render six dry engine archetypes
         run: |
-          ./build/noctomorph_real_source_render raw/ruins-world.raw raw/texture.raw raw/event.raw 120 renders/ruins-engine.wav ruins
-          ./build/noctomorph_real_source_render raw/industrial-world.raw raw/texture.raw raw/event.raw 120 renders/nocturne-engine.wav nocturne
-          ./build/noctomorph_real_source_render raw/industrial-world.raw raw/texture.raw raw/event.raw 120 renders/abyss-engine.wav abyss
+          for profile in industrial ruins nocturne abyss wasteland void; do
+            ./build/noctomorph_real_source_render raw/world.raw raw/texture.raw raw/body.raw raw/event.raw 120 "renders/${profile}-engine.wav" "${profile}"
+          done
 
-      - name: Apply measured rooms
+      - name: Apply measured spaces
         run: |
-          python tools/apply_ir.py renders/ruins-engine.wav external/archetypes/maes-howe.wav renders/ruins-maes-howe.wav --wet 0.62 --tail-seconds 5 --bformat-stereo
-          python tools/apply_ir.py renders/nocturne-engine.wav external/archetypes/hamilton.wav renders/nocturne-hamilton.wav --wet 0.70 --tail-seconds 15 --bformat-stereo
-          python tools/apply_ir.py renders/abyss-engine.wav external/archetypes/hamilton.wav renders/abyss-hamilton.wav --wet 0.48 --tail-seconds 15 --bformat-stereo
+          python tools/apply_ir.py renders/industrial-engine.wav external/archetypes/r1.wav renders/industrial-final.wav --wet 0.42 --tail-seconds 8
+          python tools/apply_ir.py renders/ruins-engine.wav external/archetypes/maes-howe.wav renders/ruins-final.wav --wet 0.62 --tail-seconds 5 --bformat-stereo
+          python tools/apply_ir.py renders/nocturne-engine.wav external/archetypes/hamilton.wav renders/nocturne-final.wav --wet 0.68 --tail-seconds 15 --bformat-stereo
+          python tools/apply_ir.py renders/abyss-engine.wav external/archetypes/hamilton.wav renders/abyss-final.wav --wet 0.52 --tail-seconds 15 --bformat-stereo
+          python tools/apply_ir.py renders/wasteland-engine.wav external/archetypes/terry.wav renders/wasteland-final.wav --wet 0.38 --tail-seconds 20
+          python tools/apply_ir.py renders/void-engine.wav external/archetypes/hamilton.wav renders/void-final.wav --wet 0.78 --tail-seconds 15 --bformat-stereo
 
-      - name: Measure archetypes
+      - name: Measure six archetypes
         run: |
-          python tools/analyze_audio.py renders/ruins-maes-howe.wav --json measurements/archetypes/ruins.json
-          python tools/analyze_audio.py renders/nocturne-hamilton.wav --json measurements/archetypes/nocturne.json
-          python tools/analyze_audio.py renders/abyss-hamilton.wav --json measurements/archetypes/abyss.json
+          for profile in industrial ruins nocturne abyss wasteland void; do
+            python tools/analyze_audio.py "renders/${profile}-final.wav" --json "measurements/archetypes/${profile}.json"
+          done
 
       - name: Upload listening pack
         uses: actions/upload-artifact@v4
         with:
           name: noctomorph-archetype-listening-pack
           path: |
-            renders/*-maes-howe.wav
-            renders/*-hamilton.wav
+            renders/*-final.wav
             measurements/archetypes/*.json
           if-no-files-found: error
