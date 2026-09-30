@@ -118,10 +118,20 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42", "expansion45", "expansion48", "expansion51", "expansion54"), default="all")
+    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42", "expansion45", "expansion48", "expansion51", "expansion54", "expansion57"), default="all")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     d = args.input_dir
+
+    if args.mode == "expansion57":
+        # Verified 54-source bank is restored first; add one resonant BODY and two contrasting metal EVENTS.
+        write(args.out, "body_steelchisel.wav", d/"body_steelchisel.ogg",
+              start=0, duration=12, channels=1, peak=.14, speed=.40, hp=55, lp=3400)
+        write(args.out, "event_metaldrop.wav", d/"event_metaldrop.ogg",
+              start=0, duration=1.8, channels=1, peak=.18, speed=.58, hp=45, lp=3000)
+        write(args.out, "event_thinmetal.wav", d/"event_thinmetal.ogg",
+              start=0, duration=1.1, channels=1, peak=.15, speed=.78, hp=320, lp=7200)
+        return 0
 
     if args.mode == "expansion54":
         # Verified 51-source bank is restored first; derive three new pressure/micro-event sources.
