@@ -35,11 +35,11 @@ jobs:
             out="$2"
             found=""
             for url in \
-              "https://bigsoundbank.com/UPLOAD/wav/\${id}.wav" \
-              "https://bigsoundbank.com/UPLOAD/WAV/\${id}.wav" \
-              "https://bigsoundbank.com/UPLOAD/flac/\${id}.flac" \
-              "https://bigsoundbank.com/UPLOAD/ogg/\${id}.ogg" \
-              "https://bigsoundbank.com/UPLOAD/mp3/\${id}.mp3"
+              "https://bigsoundbank.com/UPLOAD/wav/${id}.wav" \
+              "https://bigsoundbank.com/UPLOAD/WAV/${id}.wav" \
+              "https://bigsoundbank.com/UPLOAD/flac/${id}.flac" \
+              "https://bigsoundbank.com/UPLOAD/ogg/${id}.ogg" \
+              "https://bigsoundbank.com/UPLOAD/mp3/${id}.mp3"
             do
               echo "Trying $url"
               if curl -L --fail --retry 2 --connect-timeout 10 "$url" -o "$out.tmp"; then
@@ -82,7 +82,7 @@ jobs:
               *.url.txt) continue ;;
             esac
             base="$(basename "$f")"
-            python tools/analyze_audio.py "$f" --json "measurements/bigsoundbank/\${base}.json"
+            python tools/analyze_audio.py "$f" --json "measurements/bigsoundbank/${base}.json"
           done
 
       - name: Upload measurements only
