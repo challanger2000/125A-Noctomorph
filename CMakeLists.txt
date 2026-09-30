@@ -56,7 +56,7 @@ set(NOCTOMORPH_GENERATED_ASSET_DIR "" CACHE PATH
 if(NOCTOMORPH_BUILD_VST3)
     include(FetchContent)
 
-    set(SMTG_ENABLE_VSTGUI_SUPPORT OFF CACHE BOOL "" FORCE)
+    set(SMTG_ENABLE_VSTGUI_SUPPORT ON CACHE BOOL "" FORCE)
     set(SMTG_ENABLE_VST3_PLUGIN_EXAMPLES OFF CACHE BOOL "" FORCE)
     set(SMTG_ENABLE_VST3_HOSTING_EXAMPLES OFF CACHE BOOL "" FORCE)
 
@@ -65,6 +65,8 @@ if(NOCTOMORPH_BUILD_VST3)
         GIT_REPOSITORY https://github.com/steinbergmedia/vst3sdk.git
         GIT_TAG 3cdf9ca5d1f5b1b21e0a86832aa4abe55607bd96
         GIT_SHALLOW FALSE
+        GIT_SUBMODULES vstgui4
+        GIT_SUBMODULES_RECURSE TRUE
     )
     FetchContent_MakeAvailable(vst3sdk)
     smtg_enable_vst3_sdk()
@@ -80,6 +82,9 @@ if(NOCTOMORPH_BUILD_VST3)
         source/PrototypeAssetBank.cpp
         source/controller.h
         source/controller.cpp
+        source/editor.cpp
+        source/DemoGui.h
+        source/DemoGui.cpp
         source/entry.cpp
         include/NoctomorphCore.h
         src/NoctomorphCore.cpp
@@ -111,7 +116,11 @@ if(NOCTOMORPH_BUILD_VST3)
         )
     endif()
 
-    target_link_libraries(Noctomorph PRIVATE sdk)
+    target_link_libraries(Noctomorph PRIVATE sdk vstgui_support)
+
+    smtg_target_add_plugin_resources(Noctomorph RESOURCES
+        "resource/noctomorph-demo.uidesc"
+    )
     target_compile_features(Noctomorph PRIVATE cxx_std_17)
     smtg_target_configure_version_file(Noctomorph)
 
