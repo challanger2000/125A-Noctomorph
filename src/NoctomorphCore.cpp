@@ -664,7 +664,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
 
         const float excitationNoise =
             syntheticExciter +
-            (bodyExciterVoice_.active ? 0.32f * realExciter : 0.0f);
+            (bodyExciterVoice_.active ? 0.010f * realExciter : 0.0f);
 
         float bodyL = 0.0f;
         float bodyR = 0.0f;
