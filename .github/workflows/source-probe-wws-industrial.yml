@@ -1,0 +1,54 @@
+name: Noctomorph Work-With-Sounds Industrial Probe
+
+on:
+  push:
+    branches:
+      - dev/prototype-v0.1
+    paths:
+      - ".github/workflows/source-probe-wws-industrial.yml"
+      - "tools/analyze_audio.py"
+      - "tools/requirements-audio.txt"
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install analysis dependencies
+        run: python -m pip install -r tools/requirements-audio.txt
+
+      - name: Download CC BY 4.0 industrial originals
+        run: |
+          mkdir -p external/wws measurements/wws
+
+          curl -L --fail --retry 3 \
+            "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Automaticpackingstation.ogg" \
+            -o external/wws/WWS-AUTOMATIC-PACKING.ogg
+
+          curl -L --fail --retry 3 \
+            "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Paperpulprecyclingmill.ogg" \
+            -o external/wws/WWS-PULP-RECYCLING.ogg
+
+          curl -L --fail --retry 3 \
+            "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" \
+            -o external/wws/WWS-PAPER-MACHINE-PM4.ogg
+
+      - name: Measure industrial originals
+        run: |
+          python tools/analyze_audio.py external/wws/WWS-AUTOMATIC-PACKING.ogg --json measurements/wws/WWS-AUTOMATIC-PACKING.json
+          python tools/analyze_audio.py external/wws/WWS-PULP-RECYCLING.ogg --json measurements/wws/WWS-PULP-RECYCLING.json
+          python tools/analyze_audio.py external/wws/WWS-PAPER-MACHINE-PM4.ogg --json measurements/wws/WWS-PAPER-MACHINE-PM4.json
+
+      - name: Upload measurements only
+        uses: actions/upload-artifact@v4
+        with:
+          name: noctomorph-wws-industrial-measurements
+          path: measurements/wws/*.json
+          if-no-files-found: error
