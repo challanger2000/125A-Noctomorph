@@ -1,0 +1,32 @@
+{
+  "channels": 1,
+  "container_format": "WAV",
+  "crest_factor": 76.01594448217838,
+  "dc_offset": 8.716372977479908e-09,
+  "dominant_peaks_hz": [167.724609375,194.091796875,302.490234375,346.435546875,390.380859375,405.76171875,479.736328125,544.921875,698.73046875,931.640625,1748.291015625,1895.5078125],
+  "duration_seconds": 22.669333333333334,
+  "energy_f10_hz": 287.109375,
+  "energy_f50_hz": 1135.986328125,
+  "energy_f90_hz": 2858.642578125,
+  "event_density_per_second": 0.0,
+  "finite_samples_only": true,
+  "frames": 1088128,
+  "high_energy_ratio_gt8khz": 0.001114792091206297,
+  "impulse_response": {
+    "decay_to_minus10_seconds": 1.0036458333333333,
+    "decay_to_minus20_seconds": 2.5120625,
+    "decay_to_minus30_seconds": 4.996541666666666,
+    "decay_to_minus60_seconds": 20.50575,
+    "direct_arrival_sample": 3622,
+    "direct_arrival_seconds": 0.07545833333333334,
+    "early_0_80ms_to_late_energy_db": -2.0482882978665646
+  },
+  "low_energy_ratio_lt120hz": 0.015424647356692007,
+  "peak_dbfs": -10.673964016298925,
+  "rms_dbfs": -48.292057934112734,
+  "sample_rate": 48000,
+  "sha256": "2c0f61619e8a66ffa526f6b27bf76773e5896fe43d7408c413abf3a6f7b42cf0",
+  "silence_ratio_below_minus90dbfs": 0.215207218268439,
+  "spectral_centroid_hz": 1428.3867319629749,
+  "subtype": "PCM_24"
+}
