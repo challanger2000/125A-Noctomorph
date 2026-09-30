@@ -70,6 +70,9 @@ private:
         TextureStoneGrind,
         EventGravel,
         BodyGlassRing,
+        TextureFeedback,
+        TextureOrganicRattle,
+        EventHollowClatter,
         Count
     };
 

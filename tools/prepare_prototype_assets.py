@@ -118,10 +118,20 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42"), default="all")
+    ap.add_argument("--mode", choices=("all", "expansion31", "expansion34", "expansion36", "expansion39", "expansion42", "expansion45"), default="all")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     d = args.input_dir
+
+    if args.mode == "expansion45":
+        # Verified 42-source bank is restored first; derive only three new source classes.
+        write(args.out, "texture_feedback.wav", d/"texture_feedback.ogg",
+              start=0, duration=15, peak=.13, speed=.48, hp=180, lp=4200)
+        write(args.out, "texture_organicrattle.wav", d/"texture_organicrattle.ogg",
+              start=1, duration=12, peak=.12, speed=.42, hp=220, lp=5600)
+        write(args.out, "event_hollowclatter.wav", d/"event_hollowclatter.ogg",
+              start=0, duration=4.0, channels=1, peak=.16, speed=.58, hp=120, lp=4200)
+        return 0
 
     if args.mode == "expansion42":
         # Verified 39-source bank is restored first; derive only three mineral/resonant assets.

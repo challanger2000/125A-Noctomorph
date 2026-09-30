@@ -209,6 +209,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureRain);
             addTexture(TextureRustle);
             addTexture(TextureFlowWater);
+            addTexture(TextureFeedback);
             addWorld(WorldWaves);
             addBody(BodyGlass);
             addBody(BodyWhirly);
@@ -231,6 +232,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureFlowWater);
             addTexture(TextureWoodCreak);
             addTexture(TextureStoneGrind);
+            addTexture(TextureOrganicRattle);
             addBody(BodyGlass);
             addBody(BodyGlassRing);
             addBody(BodyGong);
@@ -242,6 +244,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addEvent(EventFlint);
             addEvent(EventWoodKnock);
             addEvent(EventGravel);
+            addEvent(EventHollowClatter);
             addEvent(EventThud);
             break;
 
@@ -299,6 +302,8 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureFlowWater);
             addTexture(TextureRubber);
             addTexture(TextureStoneGrind);
+            addTexture(TextureFeedback);
+            addTexture(TextureOrganicRattle);
             addWorld(WorldWaves);
             addBody(BodyGong);
             addBody(BodyGlass);
@@ -309,6 +314,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addEvent(EventMetalThump);
             addEvent(EventFlint);
             addEvent(EventGravel);
+            addEvent(EventHollowClatter);
             addEvent(EventCabinet);
             break;
 
@@ -326,6 +332,8 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureWoodCreak);
             addTexture(TextureRubber);
             addTexture(TextureStoneGrind);
+            addTexture(TextureFeedback);
+            addTexture(TextureOrganicRattle);
             addBody(BodyGlass);
             addBody(BodyGlassRing);
             addBody(BodyWhirly);

@@ -47,6 +47,9 @@ ASSETS = [
     ("texture_stonegrind.wav", 39, False, 1.0),
     ("event_gravel.wav", 40, False, 1.0),
     ("body_glassring.wav", 41, False, 0.20),
+    ("texture_feedback.wav", 42, False, 1.0),
+    ("texture_organicrattle.wav", 43, False, 1.0),
+    ("event_hollowclatter.wav", 44, False, 1.0),
 ]
 
 
