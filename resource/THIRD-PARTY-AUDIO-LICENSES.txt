@@ -1,57 +1,123 @@
 125A Noctomorph — Third-Party Audio Sources
-Prototype asset bank, 2026-09-30
+Scene-bank prototype v0.2, 2026-09-30
 
-The following source recordings are embedded in transformed/derived form.
+The following source recordings are embedded only in transformed/derived form.
+No endorsement by any source creator or licensor is implied.
+
+WORK WITH SOUNDS / CC BY 4.0
+License: https://creativecommons.org/licenses/by/4.0/
+All three recordings below were supplied to Wikimedia Commons through the
+Work With Sounds / Wikimedia Sverige cooperation project with VRT-confirmed
+permission. Required attribution and modification disclosure are preserved.
 
 1. WWS PaperMachinePM4.ogg
-   Creator / attribution: Work With Sounds / Torsten Nilsson
-   Source page:
-   https://commons.wikimedia.org/wiki/File:WWS_PaperMachinePM4.ogg
-   License: Creative Commons Attribution 4.0 International (CC BY 4.0)
-   License:
-   https://creativecommons.org/licenses/by/4.0/
-   Changes for Noctomorph:
-   selected excerpt, stereo channel normalization, resampled to 48 kHz where
-   required, short edge fades, peak normalization, converted to PCM16 WAV and
-   embedded as WORLD raw material.
+   Source: https://commons.wikimedia.org/wiki/File:WWS_PaperMachinePM4.ogg
+   Creator: Work With Sounds / Torsten Nilsson
+   Use: INDUSTRIAL WORLD bed
+   Changes: excerpt selection, resampling, filtering, speed transformation,
+   fades, normalization, PCM16 conversion.
 
-2. WWS Automaticpackingstation.ogg
-   Creator / attribution: Work With Sounds / Torsten Nilsson
-   Source page:
-   https://commons.wikimedia.org/wiki/File:WWS_Automaticpackingstation.ogg
-   License: Creative Commons Attribution 4.0 International (CC BY 4.0)
-   License:
-   https://creativecommons.org/licenses/by/4.0/
-   Changes for Noctomorph:
-   selected excerpt, stereo channel normalization, resampled to 48 kHz where
-   required, short edge fades, peak normalization, converted to PCM16 WAV and
-   embedded as TEXTURE raw material.
+2. WWS Eccentricpress.ogg
+   Source: https://commons.wikimedia.org/wiki/File:WWS_Eccentricpress.ogg
+   Creator: Work With Sounds / Konrad Gutkowski / Julian Blaschke
+   Use: INDUSTRIAL WORLD bed
+   Changes: excerpt selection, resampling, low-pass filtering, time/pitch
+   transformation, fades, normalization, PCM16 conversion.
 
-3. Ticking glass.ogg
-   Creator: Marble Toast
-   Source page:
-   https://commons.wikimedia.org/wiki/File:Ticking_glass.ogg
-   License: CC0 1.0 Universal
-   Changes:
-   selected excerpt, mono conversion, 48 kHz preparation, fades, peak
-   normalization and PCM16 conversion for BODY excitation.
+3. WWS Fencemakingmachine.ogg
+   Source: https://commons.wikimedia.org/wiki/File:WWS_Fencemakingmachine.ogg
+   Creator: Work With Sounds / Torsten Nilsson
+   Use: INDUSTRIAL / WASTELAND WORLD bed
+   Changes: excerpt selection, resampling, band limiting, speed transformation,
+   fades, normalization, PCM16 conversion.
 
-4. Gong or bell vibrant (short).ogg
-   Source lineage: PDSounds / Stephan
-   Source page:
-   https://commons.wikimedia.org/wiki/File:Gong_or_bell_vibrant_(short).ogg
-   License: CC0 1.0 Universal
-   Changes:
-   mono conversion, 48 kHz preparation, fades, peak normalization and PCM16
-   conversion for deep BODY excitation.
+4. WWS Automaticpackingstation.ogg
+   Source: https://commons.wikimedia.org/wiki/File:WWS_Automaticpackingstation.ogg
+   Creator: Work With Sounds / Torsten Nilsson
+   Use: INDUSTRIAL TEXTURE bed
+   Changes: excerpt selection, resampling, filtering, fades, normalization,
+   PCM16 conversion.
 
-5. 200437 bigben12345 petersglocke.oga
-   Creator: BIGBEN12345
-   Source page:
-   https://commons.wikimedia.org/wiki/File:200437_bigben12345_petersglocke.oga
-   License: CC0 1.0 Universal
-   Changes:
-   selected excerpt, stereo preparation, 48 kHz preparation, fades, peak
-   normalization and PCM16 conversion for sparse EVENT use.
+5. WWS Sawbladesharpeningmachine.ogg
+   Source: https://commons.wikimedia.org/wiki/File:WWS_Sawbladesharpeningmachine.ogg
+   Creator: Work With Sounds / Konrad Gutkowski
+   Use: INDUSTRIAL / WASTELAND TEXTURE
+   Changes: excerpt selection, resampling, band-pass filtering, time/pitch
+   transformation, fades, normalization, PCM16 conversion.
 
-No endorsement by any source creator or licensor is implied.
+PUBLIC DOMAIN / CC0
+
+6. Scrubbing with small metal bristled brush.ogg
+   Source: https://commons.wikimedia.org/wiki/File:Scrubbing_with_small_metal_bristled_brush.ogg
+   Creator: stephan / PDSounds
+   License: Public Domain
+   Use: physical friction TEXTURE
+   Changes: resampling, band-pass filtering, slowing, fades, normalization.
+
+7. Howling wind.ogg
+   Source: https://commons.wikimedia.org/wiki/File:Howling_wind.ogg
+   Creator: Tvabutzku1234
+   License: CC0 1.0
+   Use: RUINS / WASTELAND / NOCTURNE raw WORLD material
+   Changes: excerpt selection, resampling, filtering, strong slowing, fades,
+   normalization. It is not intended to function as a literal weather loop.
+
+8. Ambient Noise.ogg
+   Source: https://commons.wikimedia.org/wiki/File:Ambient_Noise.ogg
+   Creator: L. Ginzkey / FWG
+   Reuse: free-use permission confirmed through Wikimedia VRT; see source page.
+   Use: VOID / ABYSS pressure-world raw material
+   Changes: excerpt selection, resampling, strong slowing, low-pass filtering,
+   fades, normalization.
+
+9. Russian Orthodox Christmas Church singing 1.ogg
+   Source: https://commons.wikimedia.org/wiki/File:Russian_Orthodox_Christmas_Church_singing_1.ogg
+   Source lineage: public-domain/CC0 Wikimedia recording
+   License: CC0 1.0
+   Use: abstract NOCTURNE / RUINS / VOID spectral texture only
+   Changes: excerpt selection, reversal, ~0.36x time/pitch transformation,
+   band-pass filtering, low level, fades, normalization. It is not intended to
+   remain recognizable as a performance.
+
+10. Ticking glass.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Ticking_glass.ogg
+    Creator: Marble Toast
+    License: CC0 1.0
+    Use: BODY excitation only
+    Changes: mono conversion, slowing, filtering, fades, normalization.
+
+11. Gong or bell vibrant (short).ogg
+    Source: https://commons.wikimedia.org/wiki/File:Gong_or_bell_vibrant_(short).ogg
+    Source lineage: PDSounds / Stephan
+    License: CC0 / Public Domain
+    Use: deep BODY excitation only; not direct default playback
+    Changes: mono conversion, strong slowing, low-pass filtering, attenuation,
+    fades, normalization.
+
+12. Open metallic door.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Open_metallic_door.ogg
+    Creator: hc / PDSounds
+    License: Public Domain
+    Use: sparse structural EVENT
+    Changes: resampling, slowing, filtering, fades, normalization.
+
+13. Metal cabinet door jarring.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Metal_cabinet_door_jarring.ogg
+    Creator: stephan / PDSounds
+    License: Public Domain
+    Use: sparse structural EVENT
+    Changes: resampling, slowing, filtering, fades, normalization.
+
+14. Dull thud.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Dull_thud.ogg
+    Creator: gregoryweir / PDSounds
+    License: Public Domain
+    Use: sparse low structural EVENT
+    Changes: mono conversion, slowing, low-pass filtering, normalization.
+
+15. 200437 bigben12345 petersglocke.oga
+    Source: https://commons.wikimedia.org/wiki/File:200437_bigben12345_petersglocke.oga
+    Creator: BIGBEN12345
+    License: CC0 1.0
+    Use: rare optional NOCTURNE EVENT only; EVENTS=0 disables it
+    Changes: excerpt selection, slowing, filtering, fades, normalization.
