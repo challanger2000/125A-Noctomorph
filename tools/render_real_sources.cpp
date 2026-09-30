@@ -123,6 +123,14 @@ int main(int argc,char** argv){
         p.tension=.48f; p.evolve=.72f; p.events=.18f; p.space=.42f; p.output=.48f;
     }
 
+    // Calibrate source excitation, not the modal-bank output.
+    // Deep gong-like exciters inject far more low modal energy than
+    // broadband transient exciters such as glass.
+    if (profile == "abyss" || profile == "void")
+        bc.excitationGain = 0.075f;
+    else
+        bc.excitationGain = 1.0f;
+
     engine->setParameters(p);
     engine->setArchetype(archetype);
     engine->setWorldClip(&wc);
