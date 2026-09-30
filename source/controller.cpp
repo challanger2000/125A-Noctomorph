@@ -104,15 +104,15 @@ VSTGUI::CView* Controller::createCustomView(
             rect, editor, id, label, defaultValue);
     };
 
-    if (auto* v = knob("Foundation", kFoundation, "FOUNDATION", 0.50f)) return v;
-    if (auto* v = knob("World",      kWorld,      "WORLD",      0.35f)) return v;
-    if (auto* v = knob("Texture",    kTexture,    "TEXTURE",    0.25f)) return v;
-    if (auto* v = knob("Body",       kBody,       "BODY",       0.35f)) return v;
-    if (auto* v = knob("Space",      kSpace,      "SPACE",      0.35f)) return v;
-    if (auto* v = knob("Tension",    kTension,    "TENSION",    0.25f)) return v;
-    if (auto* v = knob("Motion",     kMotion,     "MOTION",     0.35f)) return v;
-    if (auto* v = knob("Evolve",     kEvolve,     "EVOLVE",     0.35f)) return v;
-    if (auto* v = knob("Events",     kEvents,     "EVENTS",     0.18f)) return v;
+    if (auto* v = knob("Foundation", kFoundation, "FOUNDATION", 0.30f)) return v;
+    if (auto* v = knob("World",      kWorld,      "WORLD",      0.42f)) return v;
+    if (auto* v = knob("Texture",    kTexture,    "TEXTURE",    0.34f)) return v;
+    if (auto* v = knob("Body",       kBody,       "BODY",       0.30f)) return v;
+    if (auto* v = knob("Space",      kSpace,      "SPACE",      0.45f)) return v;
+    if (auto* v = knob("Tension",    kTension,    "TENSION",    0.32f)) return v;
+    if (auto* v = knob("Motion",     kMotion,     "MOTION",     0.45f)) return v;
+    if (auto* v = knob("Evolve",     kEvolve,     "EVOLVE",     0.45f)) return v;
+    if (auto* v = knob("Events",     kEvents,     "EVENTS",     0.00f)) return v;
     if (auto* v = knob("Output",     kOutput,     "OUTPUT",     0.50f)) return v;
 
     return nullptr;
