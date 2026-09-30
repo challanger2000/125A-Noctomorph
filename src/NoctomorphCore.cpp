@@ -732,6 +732,11 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         1.0 - std::exp(-1.0 / (std::max(0.001f, attackSeconds) * sampleRate_)));
     const float releaseCoeff = static_cast<float>(
         1.0 - std::exp(-1.0 / (std::max(0.05f, releaseSeconds) * sampleRate_)));
+    const float sceneFadeSeconds =
+        90.0f - 70.0f * parameters_.evolve;
+    const float sceneFadeCoeff = static_cast<float>(
+        1.0 - std::exp(-1.0 / (
+            std::max(5.0f, sceneFadeSeconds) * sampleRate_)));
 
     const float baseHz = midiToHz(midiNote_);
     static constexpr std::array<std::array<float, 4>, 6> kFoundationRatios {{
@@ -815,12 +820,6 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             dryL += tonalGain * sumL;
             dryR += tonalGain * sumR;
         }
-
-        const float sceneFadeSeconds =
-            90.0f - 70.0f * parameters_.evolve;
-        const float sceneFadeCoeff = static_cast<float>(
-            1.0 - std::exp(-1.0 / (
-                std::max(5.0f, sceneFadeSeconds) * sampleRate_)));
 
         float worldL = 0.0f;
         float worldR = 0.0f;
