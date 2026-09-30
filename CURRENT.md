@@ -112,10 +112,25 @@ The repository keeps:
 
 Release embedding is a separate deliberate step after legal and audio QA.
 
+## Real-source integration milestone
+
+First real-source INDUSTRIAL scene: **PASS as engineering prototype**.
+
+Measured current 5-minute output:
+- peak -1.51 dBFS;
+- spectral centroid 441 Hz;
+- energy below 120 Hz 63.7 %;
+- stereo correlation 0.599;
+- 11 sparse engine events in 5 min.
+
+Source-only control proves the real material itself is broad (centroid 1.46 kHz, stereo correlation 0.201). This led to permanent WORLD/TEXTURE gain calibration and sparse-event timing changes in the core.
+
+See `docs/REAL-SOURCE-RENDER-QA.md`.
+
 ## Next gates
 
-1. Continue acquisition/measurement of the highest-priority production shortlist.
-2. Add measured real sources to WORLD / TEXTURE / EVENT / BODY prototype paths.
-3. Produce 30 s / 2 min / 5 min real-source listening renders.
-4. Compare archetype identity and repetition metrics.
+1. Expand measured production pools beyond the first INDUSTRIAL scene.
+2. Build equivalent real-source scenes for RUINS / NOCTURNE / ABYSS / WASTELAND / VOID.
+3. Add measured real exciters to IMPOSSIBLE BODY rather than only stream playback.
+4. Test 30 s / 2 min / 5 min identity and repetition per archetype.
 5. Only then freeze public control architecture and start the VST3 wrapper / GUI.

@@ -120,3 +120,70 @@ Interpretation:
 - strong candidate for upper-range SPACE / NOCTURNE / RUINS states;
 - the B-format channels make later spatial decoding preferable to naive mono collapse.
 
+
+## Work With Sounds industrial sources
+
+### WWS-PAPER-MACHINE-PM4
+
+Status: **MEASURED — STRONG WORLD CANDIDATE**
+
+- 74.732 s, stereo, 44.1 kHz OGG
+- SHA-256: `61fd91201114269fb22aca490fe99eed2bec4c65a9b9baadfca10b57fc0cec92`
+- spectral centroid: 1.773 kHz
+- 10/50/90 % energy: 143 / 451 / 7160 Hz
+- stereo correlation: 0.186
+- event density: 0.268/s
+
+Role decision: primary WORLD / WORLD_BODY candidate. Its low stereo correlation and broad spectrum make it especially valuable for large evolving scenes.
+
+### WWS-AUTOMATIC-PACKING
+
+Status: **MEASURED — STRONG TEXTURE CANDIDATE**
+
+- 154.256 s, stereo, 44.1 kHz OGG
+- SHA-256: `d0e6437cd03e6501113cd82d75d6c232c2865b7d2877154aef4a52a6a6ec5f26`
+- spectral centroid: 4.716 kHz
+- 10/50/90 % energy: 138 / 1179 / 13885 Hz
+- stereo correlation: 0.764
+- event density: 0.512/s
+
+Role decision: TEXTURE / mechanical-event bed. Its stronger high-frequency content complements darker machine bodies.
+
+### WWS-PULP-RECYCLING
+
+Status: **MEASURED — CONTINUOUS WORLD ALTERNATE**
+
+- 91.089 s, stereo, 44.1 kHz OGG
+- SHA-256: `de6bd4488d72560b01c5ec6e08dff23ad89af26bdf50486ff950d81ab9dedefd`
+- spectral centroid: 2.635 kHz
+- 10/50/90 % energy: 258 / 1509 / 7187 Hz
+- stereo correlation: 0.654
+- event density: 0.033/s
+
+Role decision: continuous industrial WORLD alternative with fewer obvious discrete events.
+
+## Wikimedia cathedral bells
+
+### WC-BELL-001 — Petersglocke
+
+Status: **MEASURED — SPARSE MODAL EVENT**
+
+- 60.013 s, stereo OGG, 44.1 kHz
+- SHA-256: `363b94143b7aa4dd1822b9a757e4b4df4962a9c400ee593af6650e5cd07dfa25`
+- spectral centroid: 330 Hz
+- 10/50/90 % energy: 153 / 252 / 659 Hz
+- stereo correlation: 0.833
+
+Role decision: modal/event source only. It must remain sparse and transformed enough that Noctomorph does not become a literal cathedral-bell player.
+
+### WC-BELL-002 — Kapitelsglocke
+
+Status: **MEASURED — ALTERNATE MODAL EVENT**
+
+- 38.374 s, stereo WAV, 44.1 kHz / 16-bit
+- SHA-256: `0e3717f26f4abe010da469900c35b755d24cfae3cad95e5ac1de62c57068005d`
+- spectral centroid: 501 Hz
+- 10/50/90 % energy: 326 / 393 / 837 Hz
+- stereo correlation: 1.0
+
+Role decision: alternate modal event / resonance-analysis source; mono-like stereo image means spatialization must come from the engine.
