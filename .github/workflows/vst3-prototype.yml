@@ -12,9 +12,85 @@ on:
       - "src/**"
   workflow_dispatch:
 
+concurrency:
+  group: noctomorph-vst3-prototype-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  # v0.2 cinematic scene-bank gate: 15 sources, pools, demo GUI, host contract.
+  prepare-assets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install asset preparation dependencies
+        run: python -m pip install -r tools/requirements-audio.txt
+
+      - name: Download cleared production-source candidates
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p external-assets prepared-assets
+
+          get_asset() {
+            local url="$1"
+            local out="$2"
+            echo "Downloading $out"
+            local ok=0
+            for attempt in 1 2 3 4 5 6 7 8; do
+              if curl -A "125A-Noctomorph/0.2 (research build; github.com/challanger2000)" \
+                -L --fail --connect-timeout 20 --max-time 240 \
+                "$url" -o "$out"; then
+                ok=1
+                break
+              fi
+              rm -f "$out"
+              sleep $((attempt * 6))
+            done
+            if [ "$ok" -ne 1 ] || [ ! -s "$out" ]; then
+              echo "Asset download failed: $url" >&2
+              exit 1
+            fi
+            sleep 3
+          }
+
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" "external-assets/world_paper.ogg"
+          get_asset "https://upload.wikimedia.org/wikipedia/commons/1/18/WWS_Eccentricpress.ogg" "external-assets/world_eccentric.ogg"
+          get_asset "https://upload.wikimedia.org/wikipedia/commons/3/31/WWS_Fencemakingmachine.ogg" "external-assets/world_fence.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Automaticpackingstation.ogg" "external-assets/texture_packing.ogg"
+          get_asset "https://upload.wikimedia.org/wikipedia/commons/d/d5/WWS_Sawbladesharpeningmachine.ogg" "external-assets/texture_saw.ogg"
+          get_asset "https://upload.wikimedia.org/wikipedia/commons/9/96/Scrubbing_with_small_metal_bristled_brush.ogg" "external-assets/texture_brush.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Howling%20wind.ogg" "external-assets/world_wind.ogg"
+          get_asset "https://upload.wikimedia.org/wikipedia/commons/e/ea/Ambient_Noise.ogg" "external-assets/world_ambient.ogg"
+          get_asset "https://upload.wikimedia.org/wikipedia/commons/f/f2/Russian_Orthodox_Christmas_Church_singing_1.ogg" "external-assets/texture_choir.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ticking%20glass.ogg" "external-assets/body_glass.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gong%20or%20bell%20vibrant%20(short).ogg" "external-assets/body_gong.ogg"
+          get_asset "https://upload.wikimedia.org/wikipedia/commons/0/04/Open_metallic_door.ogg" "external-assets/event_metaldoor.ogg"
+          get_asset "https://upload.wikimedia.org/wikipedia/commons/2/23/Metal_cabinet_door_jarring.ogg" "external-assets/event_cabinet.ogg"
+          get_asset "https://upload.wikimedia.org/wikipedia/commons/5/5b/Dull_thud.ogg" "external-assets/event_thud.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/200437%20bigben12345%20petersglocke.oga" "external-assets/event_peters.oga"
+
+      - name: Prepare deterministic v0.2 scene bank
+        run: |
+          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets
+          find prepared-assets -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
+          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 15
+
+      - name: Upload prepared scene bank
+        uses: actions/upload-artifact@v4
+        with:
+          name: noctomorph-prepared-scene-bank
+          path: prepared-assets/*.wav
+          if-no-files-found: error
+          retention-days: 1
+
   windows-vst3:
+    needs: prepare-assets
     runs-on: windows-2025
     timeout-minutes: 25
 
@@ -25,44 +101,16 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install asset preparation dependencies
-        shell: pwsh
-        run: python -m pip install -r tools/requirements-audio.txt
+      - name: Download prepared scene bank
+        uses: actions/download-artifact@v4
+        with:
+          name: noctomorph-prepared-scene-bank
+          path: prepared-assets
 
-      - name: Download cleared production-source candidates
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path external-assets, prepared-assets, generated-assets | Out-Null
-
-          function Get-NoctomorphAsset([string]$Url, [string]$Out) {
-            Write-Host "Downloading $Out"
-            & curl.exe -A "125A-Noctomorph/0.2 (research build; github.com/challanger2000)" -L --fail --retry 6 --retry-all-errors --retry-delay 6 --connect-timeout 20 --max-time 240 $Url -o $Out
-            if ($LASTEXITCODE -ne 0 -or -not (Test-Path $Out)) {
-              Write-Error "Asset download failed: $Url"
-              exit 1
-            }
-            Start-Sleep -Seconds 3
-          }
-
-          Get-NoctomorphAsset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" "external-assets/world_paper.ogg"
-          Get-NoctomorphAsset "https://upload.wikimedia.org/wikipedia/commons/1/18/WWS_Eccentricpress.ogg" "external-assets/world_eccentric.ogg"
-          Get-NoctomorphAsset "https://upload.wikimedia.org/wikipedia/commons/3/31/WWS_Fencemakingmachine.ogg" "external-assets/world_fence.ogg"
-          Get-NoctomorphAsset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Automaticpackingstation.ogg" "external-assets/texture_packing.ogg"
-          Get-NoctomorphAsset "https://upload.wikimedia.org/wikipedia/commons/d/d5/WWS_Sawbladesharpeningmachine.ogg" "external-assets/texture_saw.ogg"
-          Get-NoctomorphAsset "https://upload.wikimedia.org/wikipedia/commons/9/96/Scrubbing_with_small_metal_bristled_brush.ogg" "external-assets/texture_brush.ogg"
-          Get-NoctomorphAsset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Howling%20wind.ogg" "external-assets/world_wind.ogg"
-          Get-NoctomorphAsset "https://upload.wikimedia.org/wikipedia/commons/e/ea/Ambient_Noise.ogg" "external-assets/world_ambient.ogg"
-          Get-NoctomorphAsset "https://upload.wikimedia.org/wikipedia/commons/f/f2/Russian_Orthodox_Christmas_Church_singing_1.ogg" "external-assets/texture_choir.ogg"
-          Get-NoctomorphAsset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ticking%20glass.ogg" "external-assets/body_glass.ogg"
-          Get-NoctomorphAsset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gong%20or%20bell%20vibrant%20(short).ogg" "external-assets/body_gong.ogg"
-          Get-NoctomorphAsset "https://upload.wikimedia.org/wikipedia/commons/0/04/Open_metallic_door.ogg" "external-assets/event_metaldoor.ogg"
-          Get-NoctomorphAsset "https://upload.wikimedia.org/wikipedia/commons/2/23/Metal_cabinet_door_jarring.ogg" "external-assets/event_cabinet.ogg"
-          Get-NoctomorphAsset "https://upload.wikimedia.org/wikipedia/commons/5/5b/Dull_thud.ogg" "external-assets/event_thud.ogg"
-          Get-NoctomorphAsset "https://commons.wikimedia.org/wiki/Special:Redirect/file/200437%20bigben12345%20petersglocke.oga" "external-assets/event_peters.oga"
-      - name: Prepare deterministic embedded asset subset
+      - name: Generate Windows embedded resources
         shell: pwsh
         run: |
-          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets
+          New-Item -ItemType Directory -Force -Path generated-assets | Out-Null
           python tools/generate_noctomorph_resources.py prepared-assets generated-assets
           Get-ChildItem prepared-assets
           Get-ChildItem generated-assets
