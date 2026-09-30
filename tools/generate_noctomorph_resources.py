@@ -62,6 +62,9 @@ ASSETS = [
     ("body_steelchisel.wav", 54, False, 0.20),
     ("event_metaldrop.wav", 55, False, 1.0),
     ("event_thinmetal.wav", 56, False, 1.0),
+    ("world_reactorhall.wav", 57, False, 1.0),
+    ("world_warehousehall.wav", 58, False, 1.0),
+    ("world_mausoleum.wav", 59, False, 1.0),
 ]
 
 
