@@ -34,12 +34,12 @@ RenderResult render(
     double seconds,
     bool releaseHalfway = false) {
 
-    noctomorph::Engine e;
-    e.prepare(sampleRate);
-    e.reset(seed);
-    e.setParameters(p);
-    e.setArchetype(noctomorph::Archetype::Nocturne);
-    e.noteOn(36, 0.9f);
+    auto e = std::make_unique<noctomorph::Engine>();
+    e->prepare(sampleRate);
+    e->reset(seed);
+    e->setParameters(p);
+    e->setArchetype(noctomorph::Archetype::Nocturne);
+    e->noteOn(36, 0.9f);
 
     const std::size_t frames = static_cast<std::size_t>(seconds * sampleRate);
     RenderResult result;
