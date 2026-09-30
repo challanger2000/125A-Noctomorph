@@ -118,9 +118,27 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--input-dir", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--mode", choices=("all", "expansion31"), default="all")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     d = args.input_dir
+
+    if args.mode == "expansion31":
+        # The verified 25-source prepared bank is restored by CI first.
+        # Only derive the six new 31-source expansion assets here.
+        write(args.out, "world_stationtunnel.wav", d/"world_stationtunnel.ogg",
+              start=18, duration=42, peak=.24, speed=.62, hp=45, lp=5200)
+        write(args.out, "world_metro.wav", d/"world_metro.ogg",
+              start=8, duration=34, peak=.24, speed=.66, hp=50, lp=5800)
+        write(args.out, "world_trainplatform.wav", d/"world_trainplatform.ogg",
+              start=28, duration=38, peak=.22, speed=.58, hp=45, lp=5200)
+        write(args.out, "texture_waterpressure.wav", d/"texture_waterpressure.ogg",
+              start=36, duration=30, peak=.18, speed=.52, hp=70, lp=4200)
+        write(args.out, "texture_rain.wav", d/"texture_rain.ogg",
+              start=5, duration=36, peak=.17, speed=.70, hp=120, lp=6500)
+        write(args.out, "body_whirly.wav", d/"body_whirly.ogg",
+              start=0, duration=7, channels=1, peak=.16, speed=.44, hp=90, lp=3600)
+        return 0
 
     # Long WORLD beds: deliberately different physical identities.
     write(args.out, "world_paper.wav", d/"world_paper.ogg",

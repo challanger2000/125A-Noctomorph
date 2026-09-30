@@ -10,6 +10,8 @@ on:
       - "source/**"
       - "include/**"
       - "src/**"
+      - "tools/**"
+      - "resource/**"
   workflow_dispatch:
 
 concurrency:
@@ -24,6 +26,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Restore verified 25-source baseline
+        uses: actions/download-artifact@v4
+        with:
+          name: noctomorph-prepared-scene-bank
+          path: prepared-assets
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          run-id: 36727309129
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -31,7 +42,7 @@ jobs:
       - name: Install asset preparation dependencies
         run: python -m pip install -r tools/requirements-audio.txt
 
-      - name: Download cleared production-source candidates
+      - name: Download 31-source expansion candidates
         shell: bash
         run: |
           set -euo pipefail
@@ -50,48 +61,15 @@ jobs:
                 break
               fi
               rm -f "$out"
-              # Back off hard on 429/temporary CDN failures.
               sleep $((attempt * 20))
             done
             if [ "$ok" -ne 1 ] || [ ! -s "$out" ]; then
               echo "Asset download failed: $url" >&2
               exit 1
             fi
-            # Wikimedia aggressively rate-limits shared CI runner IPs. Keep
-            # acquisition deliberately slow; Actions time is cheaper than
-            # repeated failed full runs and this path is not realtime-critical.
             sleep 12
           }
 
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20PaperMachinePM4.ogg" "external-assets/world_paper.ogg"
-          get_asset "https://upload.wikimedia.org/wikipedia/commons/1/18/WWS_Eccentricpress.ogg" "external-assets/world_eccentric.ogg"
-          get_asset "https://upload.wikimedia.org/wikipedia/commons/3/31/WWS_Fencemakingmachine.ogg" "external-assets/world_fence.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Automaticpackingstation.ogg" "external-assets/texture_packing.ogg"
-          get_asset "https://upload.wikimedia.org/wikipedia/commons/d/d5/WWS_Sawbladesharpeningmachine.ogg" "external-assets/texture_saw.ogg"
-          get_asset "https://upload.wikimedia.org/wikipedia/commons/9/96/Scrubbing_with_small_metal_bristled_brush.ogg" "external-assets/texture_brush.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Howling%20wind.ogg" "external-assets/world_wind.ogg"
-          get_asset "https://upload.wikimedia.org/wikipedia/commons/e/ea/Ambient_Noise.ogg" "external-assets/world_ambient.ogg"
-          get_asset "https://upload.wikimedia.org/wikipedia/commons/f/f2/Russian_Orthodox_Christmas_Church_singing_1.ogg" "external-assets/texture_choir.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ticking%20glass.ogg" "external-assets/body_glass.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gong%20or%20bell%20vibrant%20(short).ogg" "external-assets/body_gong.ogg"
-          get_asset "https://upload.wikimedia.org/wikipedia/commons/0/04/Open_metallic_door.ogg" "external-assets/event_metaldoor.ogg"
-          get_asset "https://upload.wikimedia.org/wikipedia/commons/2/23/Metal_cabinet_door_jarring.ogg" "external-assets/event_cabinet.ogg"
-          get_asset "https://upload.wikimedia.org/wikipedia/commons/5/5b/Dull_thud.ogg" "external-assets/event_thud.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/200437%20bigben12345%20petersglocke.oga" "external-assets/event_peters.oga"
-
-          # Production-bank expansion: physically different source families.
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Steamwindingengineconnectingrod.ogg" "external-assets/world_steamrod.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Pneumaticpump.ogg" "external-assets/world_pneumatic.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Waterintakepumpingstation.ogg" "external-assets/world_waterpump.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Horizontalmillingmachinebeltdrive.ogg" "external-assets/texture_millbelt.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20SteelworkCoiler.ogg" "external-assets/texture_steelcoiler.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Chisel.1st.ogg" "external-assets/texture_chisel.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Planingmachine.ogg" "external-assets/texture_planer.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Door%20handle%20creaking.ogg" "external-assets/event_handlecreak.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Squeaky%20door%20hinge.ogg" "external-assets/event_hinge.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Metal%20drop%20thump.ogg" "external-assets/event_metalthump.ogg"
-
-          # Non-industrial expansion: architecture, underground, water, weather.
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20TheStationTunnelOfTheTampereStation.ogg" "external-assets/world_stationtunnel.ogg"
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Metro.ogg" "external-assets/world_metro.ogg"
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20TrainStoppingAtTheTrainStation.ogg" "external-assets/world_trainplatform.ogg"
@@ -101,7 +79,7 @@ jobs:
 
       - name: Prepare deterministic v0.2 scene bank
         run: |
-          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets
+          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion31
           find prepared-assets -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
           test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 31
 
