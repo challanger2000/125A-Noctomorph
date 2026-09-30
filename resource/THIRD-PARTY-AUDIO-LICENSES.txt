@@ -199,3 +199,52 @@ PUBLIC DOMAIN / CC0
     Use: INDUSTRIAL / WASTELAND / ABYSS sparse EVENT
     Changes: resampling, slowing, low-pass filtering, fades, normalization,
     PCM16 conversion.
+
+
+26. WWS TheStationTunnelOfTheTampereStation.ogg
+    Source: https://commons.wikimedia.org/wiki/File:WWS_TheStationTunnelOfTheTampereStation.ogg
+    Creator: Work With Sounds / Werstas
+    License: CC BY 4.0
+    Use: VOID / RUINS / ABYSS / NOCTURNE WORLD material
+    Changes: excerpt selection, resampling, slowing, band limiting, fades,
+    normalization, PCM16 conversion.
+
+27. WWS Metro.ogg
+    Source: https://commons.wikimedia.org/wiki/File:WWS_Metro.ogg
+    Creator: Work With Sounds / La Fonderie
+    License: CC BY 4.0
+    Use: RUINS / ABYSS underground WORLD material
+    Changes: excerpt selection, resampling, slowing, band limiting, fades,
+    normalization, PCM16 conversion.
+
+28. WWS TrainStoppingAtTheTrainStation.ogg
+    Source: https://commons.wikimedia.org/wiki/File:WWS_TrainStoppingAtTheTrainStation.ogg
+    Creator: Work With Sounds / Werstas
+    License: CC BY 4.0
+    Use: WASTELAND / NOCTURNE platform-space WORLD material
+    Changes: excerpt selection, resampling, slowing, band limiting, fades,
+    normalization, PCM16 conversion.
+
+29. Shower Sound Ambience.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Shower_Sound_Ambience.ogg
+    Creator: Wilfredor
+    License: CC0 1.0
+    Use: RUINS / ABYSS / NOCTURNE pressure-water TEXTURE material
+    Changes: excerpt selection, resampling, strong slowing, band limiting,
+    fades, normalization, PCM16 conversion.
+
+30. Rain (1).ogg
+    Source: https://commons.wikimedia.org/wiki/File:Rain_(1).ogg
+    Creator: ezwa / PDSounds
+    License: Public Domain
+    Use: VOID / RUINS / WASTELAND / ABYSS TEXTURE material
+    Changes: excerpt selection, resampling, slowing, band limiting, fades,
+    normalization, PCM16 conversion.
+
+31. Whirlytube-sample.ogg
+    Source: https://commons.wikimedia.org/wiki/File:Whirlytube-sample.ogg
+    Creator: Chridd
+    License: CC0 1.0
+    Use: BODY excitation only; never direct scene playback
+    Changes: mono conversion, slowing, filtering, attenuation, fades,
+    normalization, PCM16 conversion.

@@ -91,11 +91,19 @@ jobs:
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Squeaky%20door%20hinge.ogg" "external-assets/event_hinge.ogg"
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Metal%20drop%20thump.ogg" "external-assets/event_metalthump.ogg"
 
+          # Non-industrial expansion: architecture, underground, water, weather.
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20TheStationTunnelOfTheTampereStation.ogg" "external-assets/world_stationtunnel.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20Metro.ogg" "external-assets/world_metro.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/WWS%20TrainStoppingAtTheTrainStation.ogg" "external-assets/world_trainplatform.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Shower%20Sound%20Ambience.ogg" "external-assets/texture_waterpressure.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Rain%20(1).ogg" "external-assets/texture_rain.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Whirlytube-sample.ogg" "external-assets/body_whirly.ogg"
+
       - name: Prepare deterministic v0.2 scene bank
         run: |
           python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets
           find prepared-assets -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
-          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 25
+          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 31
 
       - name: Upload prepared scene bank
         uses: actions/upload-artifact@v4

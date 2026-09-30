@@ -202,10 +202,13 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addWorld(WorldAmbient);
             addWorld(WorldWind);
             addWorld(WorldWaterPump);
+            addWorld(WorldStationTunnel);
             addTexture(TextureChoir);
             addTexture(TextureBrush);
             addTexture(TextureChisel);
+            addTexture(TextureRain);
             addBody(BodyGlass);
+            addBody(BodyWhirly);
             addEvent(EventThud);
             break;
 
@@ -213,11 +216,16 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addWorld(WorldWind);
             addWorld(WorldAmbient);
             addWorld(WorldWaterPump);
+            addWorld(WorldStationTunnel);
+            addWorld(WorldMetro);
             addTexture(TextureBrush);
             addTexture(TextureChoir);
             addTexture(TextureChisel);
+            addTexture(TextureWaterPressure);
+            addTexture(TextureRain);
             addBody(BodyGlass);
             addBody(BodyGong);
+            addBody(BodyWhirly);
             addEvent(EventMetalDoor);
             addEvent(EventCabinet);
             addEvent(EventHandleCreak);
@@ -251,10 +259,12 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addWorld(WorldFence);
             addWorld(WorldAmbient);
             addWorld(WorldPneumaticPump);
+            addWorld(WorldTrainPlatform);
             addTexture(TextureSaw);
             addTexture(TextureBrush);
             addTexture(TextureSteelCoiler);
             addTexture(TexturePlaner);
+            addTexture(TextureRain);
             addBody(BodyGlass);
             addEvent(EventCabinet);
             addEvent(EventMetalThump);
@@ -265,11 +275,16 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addWorld(WorldAmbient);
             addWorld(WorldSteamRod);
             addWorld(WorldWaterPump);
+            addWorld(WorldStationTunnel);
+            addWorld(WorldMetro);
             addTexture(TextureChoir);
             addTexture(TextureBrush);
             addTexture(TextureChisel);
+            addTexture(TextureWaterPressure);
+            addTexture(TextureRain);
             addBody(BodyGong);
             addBody(BodyGlass);
+            addBody(BodyWhirly);
             addEvent(EventThud);
             addEvent(EventMetalThump);
             addEvent(EventCabinet);
@@ -279,9 +294,13 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
         default:
             addWorld(WorldWind);
             addWorld(WorldAmbient);
+            addWorld(WorldStationTunnel);
+            addWorld(WorldTrainPlatform);
             addTexture(TextureChoir);
             addTexture(TextureBrush);
+            addTexture(TextureWaterPressure);
             addBody(BodyGlass);
+            addBody(BodyWhirly);
             addEvent(EventMetalDoor);
             addEvent(EventCabinet);
             addEvent(EventHandleCreak);

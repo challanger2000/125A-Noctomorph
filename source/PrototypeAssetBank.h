@@ -53,6 +53,12 @@ private:
         EventHandleCreak,
         EventHinge,
         EventMetalThump,
+        WorldStationTunnel,
+        WorldMetro,
+        WorldTrainPlatform,
+        TextureWaterPressure,
+        TextureRain,
+        BodyWhirly,
         Count
     };
 

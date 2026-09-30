@@ -30,6 +30,12 @@ ASSETS = [
     ("event_handlecreak.wav", 22, False, 1.0),
     ("event_hinge.wav", 23, False, 1.0),
     ("event_metalthump.wav", 24, False, 1.0),
+    ("world_stationtunnel.wav", 25, False, 1.0),
+    ("world_metro.wav", 26, False, 1.0),
+    ("world_trainplatform.wav", 27, False, 1.0),
+    ("texture_waterpressure.wav", 28, False, 1.0),
+    ("texture_rain.wav", 29, False, 1.0),
+    ("body_whirly.wav", 30, False, 0.35),
 ]
 
 
