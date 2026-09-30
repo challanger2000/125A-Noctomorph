@@ -1,0 +1,39 @@
+name: Noctomorph Body Exciter Source Probe
+
+on:
+  push:
+    branches: [dev/prototype-v0.1]
+    paths:
+      - ".github/workflows/source-probe-body-exciters.yml"
+      - "tools/analyze_audio.py"
+      - "tools/requirements-audio.txt"
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install analysis dependencies
+        run: python -m pip install -r tools/requirements-audio.txt
+      - name: Download CC0 resonant-body candidates
+        run: |
+          mkdir -p external/body measurements/body
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gong%20or%20bell%20vibrant%20(short).ogg" -o external/body/gong-short.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Meditation%20Gong.ogg" -o external/body/meditation-gong.ogg
+          curl -L --fail --retry 3 "https://commons.wikimedia.org/wiki/Special:Redirect/file/Ticking%20glass.ogg" -o external/body/ticking-glass.ogg
+      - name: Measure candidates
+        run: |
+          python tools/analyze_audio.py external/body/gong-short.ogg --json measurements/body/GONG-SHORT.json
+          python tools/analyze_audio.py external/body/meditation-gong.ogg --json measurements/body/MEDITATION-GONG.json
+          python tools/analyze_audio.py external/body/ticking-glass.ogg --json measurements/body/TICKING-GLASS.json
+      - name: Upload measurements
+        uses: actions/upload-artifact@v4
+        with:
+          name: noctomorph-body-exciter-measurements
+          path: measurements/body/*.json
+          if-no-files-found: error
