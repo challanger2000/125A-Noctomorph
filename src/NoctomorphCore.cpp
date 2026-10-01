@@ -529,9 +529,12 @@ void Engine::ensureLongStreams() noexcept {
         if (voice.active || worldPoolCount_ == 0)
             continue;
 
-        const std::size_t startIndex = std::min<std::size_t>(
-            static_cast<std::size_t>(rng_.uniform01() * worldPoolCount_),
-            worldPoolCount_ - 1);
+        const std::size_t startIndex =
+            archetype_ == Archetype::Industrial && eventCount_ == 0
+                ? std::min<std::size_t>(voiceIndex, worldPoolCount_ - 1)
+                : std::min<std::size_t>(
+                    static_cast<std::size_t>(rng_.uniform01() * worldPoolCount_),
+                    worldPoolCount_ - 1);
 
         const Clip* clip = nullptr;
         for (std::size_t offset = 0; offset < worldPoolCount_; ++offset) {
@@ -576,9 +579,12 @@ void Engine::ensureLongStreams() noexcept {
         if (voice.active || texturePoolCount_ == 0)
             continue;
 
-        const std::size_t startIndex = std::min<std::size_t>(
-            static_cast<std::size_t>(rng_.uniform01() * texturePoolCount_),
-            texturePoolCount_ - 1);
+        const std::size_t startIndex =
+            archetype_ == Archetype::Industrial && eventCount_ == 0
+                ? std::min<std::size_t>(voiceIndex, texturePoolCount_ - 1)
+                : std::min<std::size_t>(
+                    static_cast<std::size_t>(rng_.uniform01() * texturePoolCount_),
+                    texturePoolCount_ - 1);
 
         const Clip* clip = nullptr;
         for (std::size_t offset = 0; offset < texturePoolCount_; ++offset) {
@@ -827,7 +833,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
     static constexpr std::array<std::array<float, 4>, 6> kFoundationRatios {{
         {{0.50f, 1.013f, 2.071f, 3.491f}},  // VOID
         {{0.50f, 1.00f, 1.337f, 2.003f}},  // RUINS
-        {{0.75f, 1.00f, 1.503f, 2.517f}},  // INDUSTRIAL
+        {{0.25f, 0.503f, 0.997f, 1.487f}},  // INDUSTRIAL: sub/machine mass
         {{0.50f, 0.997f, 1.861f, 3.127f}}, // WASTELAND
         {{0.125f,0.25f, 0.503f, 0.709f}},  // ABYSS
         {{0.50f, 1.00f, 1.259f, 1.887f}}   // NOCTURNE
@@ -835,7 +841,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
     static constexpr std::array<std::array<float, 4>, 6> kFoundationWeights {{
         {{0.18f,0.26f,0.42f,0.52f}},
         {{0.18f,0.52f,0.42f,0.20f}},
-        {{0.08f,0.34f,0.72f,0.42f}},
+        {{0.58f,0.34f,0.14f,0.06f}},
         {{0.05f,0.24f,0.48f,0.70f}},
         {{1.00f,0.58f,0.18f,0.08f}},
         {{0.12f,0.42f,0.58f,0.38f}}
@@ -901,7 +907,9 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 sumR += sample * gR;
             }
 
-            const float tonalGain = 0.105f * foundation * envelope_;
+            const float tonalGain =
+                (archetype_ == Archetype::Industrial ? 0.072f : 0.105f) *
+                foundation * envelope_;
             dryL += tonalGain * sumL;
             dryR += tonalGain * sumR;
         }
@@ -921,8 +929,9 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 continue;
 
             const float slotPan =
-                (static_cast<float>(i) - 1.0f) * 0.18f +
-                0.14f * motionPan_;
+                (static_cast<float>(i) - 1.0f) *
+                    (archetype_ == Archetype::Industrial ? 0.30f : 0.18f) +
+                (archetype_ == Archetype::Industrial ? 0.20f : 0.14f) * motionPan_;
             const float g = std::max(0.0f, worldLayerGain_[i]);
             worldL += g * l * (1.0f - slotPan);
             worldR += g * r * (1.0f + slotPan);
@@ -934,8 +943,10 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         }
 
         if (world > 0.0f && envelope_ > 0.0f) {
-            dryL += 0.98f * world * envelope_ * worldL;
-            dryR += 0.98f * world * envelope_ * worldR;
+            const float worldScale =
+                archetype_ == Archetype::Industrial ? 1.16f : 0.98f;
+            dryL += worldScale * world * envelope_ * worldL;
+            dryR += worldScale * world * envelope_ * worldR;
         }
 
         float textureL = 0.0f;
@@ -955,8 +966,9 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
 
             anyTextureActive = true;
             const float slotPan =
-                (1.0f - static_cast<float>(i)) * 0.22f -
-                0.18f * motionPan_;
+                (1.0f - static_cast<float>(i)) *
+                    (archetype_ == Archetype::Industrial ? 0.34f : 0.22f) -
+                (archetype_ == Archetype::Industrial ? 0.24f : 0.18f) * motionPan_;
             const float g = std::max(0.0f, textureLayerGain_[i]);
             textureL += g * l * (1.0f - slotPan);
             textureR += g * r * (1.0f + slotPan);
@@ -986,10 +998,14 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             const float realWeight = anyTextureActive ? 0.88f : 0.0f;
             const float synthWeight = anyTextureActive ? 0.12f : 1.0f;
             const float pan = -0.22f * motionPan_;
+            const float realTextureScale =
+                archetype_ == Archetype::Industrial ? 0.76f : 0.62f;
+            const float noiseScale =
+                archetype_ == Archetype::Industrial ? 0.012f : 0.035f;
             dryL += texture * envelope_ * (1.0f - pan) *
-                (0.62f * realWeight * textureL + 0.035f * synthWeight * darkNoiseL);
+                (realTextureScale * realWeight * textureL + noiseScale * synthWeight * darkNoiseL);
             dryR += texture * envelope_ * (1.0f + pan) *
-                (0.62f * realWeight * textureR + 0.035f * synthWeight * darkNoiseR);
+                (realTextureScale * realWeight * textureR + noiseScale * synthWeight * darkNoiseR);
         }
 
         float eventL = 0.0f, eventR = 0.0f;
