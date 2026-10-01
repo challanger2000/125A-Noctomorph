@@ -123,6 +123,16 @@ def main() -> int:
     args.out.mkdir(parents=True, exist_ok=True)
     d = args.input_dir
 
+    if args.mode == "expansion66":
+        # Verified 63-source bank is restored first; add three physically distinct sources.
+        write(args.out, "texture_howlingwind.wav", d/"texture_howlingwind.ogg",
+              start=18, duration=48, peak=.12, speed=.46, hp=55, lp=3400)
+        write(args.out, "event_crackfield.wav", d/"event_crackfield.ogg",
+              start=5, duration=24, channels=1, peak=.16, speed=.52, hp=90, lp=4600)
+        write(args.out, "body_chiselbase.wav", d/"body_chiselbase.ogg",
+              start=4, duration=24, channels=1, peak=.13, speed=.38, hp=45, lp=3000)
+        return 0
+
     if args.mode == "expansion63":
         # Verified 60-source bank is restored first; add long-form structural/underground motion.
         write(args.out, "texture_postvibration.wav", d/"texture_postvibration.wav",
