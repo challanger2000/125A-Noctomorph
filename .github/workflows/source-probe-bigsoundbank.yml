@@ -52,13 +52,16 @@ jobs:
           acquire 0504 external/bigsoundbank/BSB-0504
           acquire 1537 external/bigsoundbank/BSB-1537
           acquire 3409 external/bigsoundbank/BSB-3409
+          acquire 2147 external/bigsoundbank/BSB-2147
+          acquire 2214 external/bigsoundbank/BSB-2214
+          acquire 2457 external/bigsoundbank/BSB-2457
 
       - name: Normalize acquired filenames by detected container
         shell: python
         run: |
           import os, soundfile as sf, shutil
           root="external/bigsoundbank"
-          for base in ["BSB-0504","BSB-1537","BSB-3409"]:
+          for base in ["BSB-0504","BSB-1537","BSB-3409","BSB-2147","BSB-2214","BSB-2457"]:
               path=os.path.join(root,base)
               info=sf.info(path)
               ext={ "WAV":".wav", "FLAC":".flac", "OGG":".ogg", "MPEG":".mp3" }.get(info.format, ".audio")
@@ -70,7 +73,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for f in external/bigsoundbank/BSB-0504.* external/bigsoundbank/BSB-1537.* external/bigsoundbank/BSB-3409.*; do
+          for f in external/bigsoundbank/BSB-0504.* external/bigsoundbank/BSB-1537.* external/bigsoundbank/BSB-3409.* external/bigsoundbank/BSB-2147.* external/bigsoundbank/BSB-2214.* external/bigsoundbank/BSB-2457.*; do
             case "$f" in
               *.url.txt) continue ;;
             esac
