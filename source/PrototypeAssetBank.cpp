@@ -301,8 +301,11 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureSteelCoiler);
             addTexture(TexturePlaner);
             addTexture(TextureRain);
+            addTexture(TextureHowlingWind);
             addBody(BodyGlass);
+            addBody(BodyChiselBase);
             addEvent(EventCabinet);
+            addEvent(EventCrackField);
             addEvent(EventMetalThump);
             addEvent(EventMetalDrop);
             addEvent(EventThud);
@@ -340,7 +343,9 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addBody(BodyGlassRing);
             addBody(BodyChapterBell);
             addBody(BodySteelChisel);
+            addBody(BodyChiselBase);
             addEvent(EventThud);
+            addEvent(EventCrackField);
             addEvent(EventMetalThump);
             addEvent(EventFlint);
             addEvent(EventGravel);
@@ -372,6 +377,7 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addWorld(WorldThunderRain);
             addWorld(WorldHydraulicFall);
             addTexture(TexturePressureHiss);
+            addTexture(TextureHowlingWind);
             addBody(BodyGlass);
             addBody(BodyGlassRing);
             addBody(BodyChapterBell);
