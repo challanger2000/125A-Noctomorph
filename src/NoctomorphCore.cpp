@@ -932,7 +932,24 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 (static_cast<float>(i) - 1.0f) *
                     (archetype_ == Archetype::Industrial ? 0.30f : 0.18f) +
                 (archetype_ == Archetype::Industrial ? 0.20f : 0.14f) * motionPan_;
-            const float g = std::max(0.0f, worldLayerGain_[i]);
+            float lifecycleGain = 1.0f;
+            if (archetype_ == Archetype::Industrial && worldVoices_[i].clip) {
+                // Fade each non-looping source into/out of the persistent
+                // three-voice bed. The other two voices carry the room while
+                // one source changes, so replacement never appears as a cut.
+                const double fadeFrames =
+                    std::max(1.0, 2.5 * worldVoices_[i].clip->sampleRate);
+                const double pos = worldVoices_[i].position;
+                const double remaining =
+                    static_cast<double>(worldVoices_[i].clip->frames - 1) - pos;
+                lifecycleGain = static_cast<float>(std::clamp(
+                    std::min(pos / fadeFrames, remaining / fadeFrames),
+                    0.0, 1.0));
+                lifecycleGain =
+                    lifecycleGain * lifecycleGain * (3.0f - 2.0f * lifecycleGain);
+            }
+            const float g =
+                std::max(0.0f, worldLayerGain_[i]) * lifecycleGain;
             worldL += g * l * (1.0f - slotPan);
             worldR += g * r * (1.0f + slotPan);
             worldGainSum += g;
@@ -969,7 +986,21 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 (1.0f - static_cast<float>(i)) *
                     (archetype_ == Archetype::Industrial ? 0.34f : 0.22f) -
                 (archetype_ == Archetype::Industrial ? 0.24f : 0.18f) * motionPan_;
-            const float g = std::max(0.0f, textureLayerGain_[i]);
+            float lifecycleGain = 1.0f;
+            if (archetype_ == Archetype::Industrial && textureVoices_[i].clip) {
+                const double fadeFrames =
+                    std::max(1.0, 1.8 * textureVoices_[i].clip->sampleRate);
+                const double pos = textureVoices_[i].position;
+                const double remaining =
+                    static_cast<double>(textureVoices_[i].clip->frames - 1) - pos;
+                lifecycleGain = static_cast<float>(std::clamp(
+                    std::min(pos / fadeFrames, remaining / fadeFrames),
+                    0.0, 1.0));
+                lifecycleGain =
+                    lifecycleGain * lifecycleGain * (3.0f - 2.0f * lifecycleGain);
+            }
+            const float g =
+                std::max(0.0f, textureLayerGain_[i]) * lifecycleGain;
             textureL += g * l * (1.0f - slotPan);
             textureR += g * r * (1.0f + slotPan);
             textureGainSum += g;
