@@ -85,17 +85,7 @@ jobs:
               echo "Trying $url"
               rm -f "$tmp"
               if curl -A "125A-Noctomorph/0.2 (research build; github.com/challanger2000)" -L --fail --connect-timeout 20 --max-time 240 "$url" -o "$tmp"; then
-                if python - "$tmp" <<'PY'
-import soundfile as sf, sys
-try:
-    i=sf.info(sys.argv[1])
-    assert i.frames > 0 and i.samplerate > 0
-    print("audio-ok", i.format, i.samplerate, i.channels, i.frames)
-except Exception as e:
-    print("not-audio:", e, file=sys.stderr)
-    raise SystemExit(1)
-PY
-                then
+                if python -c 'import soundfile as sf,sys; i=sf.info(sys.argv[1]); assert i.frames>0 and i.samplerate>0; print("audio-ok",i.format,i.samplerate,i.channels,i.frames)' "$tmp"; then
                   mv "$tmp" "$out"
                   return 0
                 fi
