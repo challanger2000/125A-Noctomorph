@@ -277,6 +277,7 @@ void Engine::reset(std::uint64_t seedValue) noexcept {
     chaosY_ = 0.03 * rng_.bipolar();
     chaosZ_ = 0.03 * rng_.bipolar();
     controlCountdown_ = 0;
+    structureCountdown_ = 0;
 
     for (auto& r : resonators_)
         r.reset();
@@ -666,11 +667,15 @@ void Engine::updateControlState() noexcept {
     textureLayerTarget_[1] = 0.14f + 0.70f * clamp01(0.5f + 0.5f * cz);
     textureLayerTarget_[2] = 0.08f + 0.62f * clamp01(0.5f - 0.5f * cx);
 
-    // Reconfigure infrequently: resonant structures slowly deform with the
-    // deterministic macro-state.
-    configureBody();
-    if (archetype_ == Archetype::Nocturne)
-        configurePresence();
+    // Resonant coefficients are expensive (exp/cos) and the structure evolves
+    // on a cinematic time scale. Update them far below the 64-sample macro
+    // modulation rate; fast pan/drift motion remains unchanged.
+    if (--structureCountdown_ <= 0) {
+        configureBody();
+        if (archetype_ == Archetype::Nocturne)
+            configurePresence();
+        structureCountdown_ = kStructureControlPeriods;
+    }
 
     if (parameters_.events <= 0.0f) {
         eventCountdown_ = static_cast<int>(sampleRate_);
