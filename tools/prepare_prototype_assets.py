@@ -127,8 +127,8 @@ def main() -> int:
         # Verified 63-source bank is restored first; add three physically distinct sources.
         write(args.out, "texture_howlingwind.wav", d/"texture_howlingwind.ogg",
               start=18, duration=48, peak=.12, speed=.46, hp=55, lp=3400)
-        write(args.out, "event_crackfield.wav", d/"event_crackfield.ogg",
-              start=5, duration=24, channels=1, peak=.16, speed=.52, hp=90, lp=4600)
+        write(args.out, "event_crackfield.wav", args.out/"event_thinmetal.wav",
+              start=0, duration=1.0, channels=1, peak=.14, speed=.44, hp=70, lp=3600)
         write(args.out, "body_chiselbase.wav", d/"body_chiselbase.ogg",
               start=4, duration=24, channels=1, peak=.13, speed=.38, hp=45, lp=3000)
         return 0
