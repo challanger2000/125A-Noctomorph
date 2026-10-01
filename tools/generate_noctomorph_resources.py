@@ -68,6 +68,9 @@ ASSETS = [
     ("texture_postvibration.wav", 60, False, 1.0),
     ("texture_wirestress.wav", 61, False, 1.0),
     ("world_cavechamber.wav", 62, False, 1.0),
+    ("texture_howlingwind.wav", 63, False, 1.0),
+    ("event_crackfield.wav", 64, False, 1.0),
+    ("body_chiselbase.wav", 65, False, 0.18),
 ]
 
 
