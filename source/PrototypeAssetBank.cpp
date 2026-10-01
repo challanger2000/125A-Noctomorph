@@ -277,9 +277,9 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             addTexture(TextureMillBelt);
             addTexture(TextureSteelCoiler);
             addTexture(TexturePlaner);
-            addBody(BodyGlass);
-            addBody(BodyGong);
+            // INDUSTRIAL deliberately avoids glass/gong exciters: they read as bells.
             addBody(BodySteelChisel);
+            addBody(BodyChiselBase);
             addEvent(EventMetalDoor);
             addEvent(EventCabinet);
             addEvent(EventHandleCreak);
