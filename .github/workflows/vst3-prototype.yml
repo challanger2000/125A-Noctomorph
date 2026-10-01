@@ -99,11 +99,16 @@ jobs:
           acquire_audio 1537 "external-assets/texture_wirestress.wav"
           acquire_audio 3409 "external-assets/world_cavechamber.wav"
 
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Howling_wind.ogg" "external-assets/texture_howlingwind.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Bones_breaking_wood_fire_ice_crackling.ogg" "external-assets/event_crackfield.ogg"
+          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Chisel.1st.ogg" "external-assets/body_chiselbase.ogg"
+          python -c 'import soundfile as sf,sys; [print(p, sf.info(p)) for p in sys.argv[1:]]' external-assets/texture_howlingwind.ogg external-assets/event_crackfield.ogg external-assets/body_chiselbase.ogg
+
       - name: Prepare deterministic v0.2 scene bank
         run: |
-          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion63
+          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion66
           find prepared-assets -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
-          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 63
+          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 66
 
       - name: Upload prepared scene bank
         uses: actions/upload-artifact@v4
