@@ -2,6 +2,11 @@ name: Noctomorph BigSoundBank Source Probe
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - dev/prototype-v0.1
+    paths:
+      - .github/workflows/source-probe-bigsoundbank.yml
 
 jobs:
   probe:
