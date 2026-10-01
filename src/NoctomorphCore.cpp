@@ -404,7 +404,10 @@ void Engine::noteOn(int midiNote, float velocity) noexcept {
         ensureLongStreams();
         // Note-On starts the scene itself, not a recognizable recorded hit.
         // Real BODY exciters are reserved for explicit EVENTS.
-        bodyExcitation_ += 0.05f + 0.16f * velocity_;
+        // INDUSTRIAL must open as a continuous environment, never as a struck
+        // modal object. Other archetypes keep the legacy prototype excitation.
+        if (archetype_ != Archetype::Industrial)
+            bodyExcitation_ += 0.05f + 0.16f * velocity_;
     }
 }
 
@@ -801,7 +804,10 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
     const float tension = parameters_.tension;
 
     const float attackSeconds = 0.035f;
-    const float releaseSeconds = 2.5f + 4.5f * parameters_.space;
+    const float releaseSeconds =
+        archetype_ == Archetype::Industrial
+            ? (0.55f + 0.75f * parameters_.space)
+            : (2.5f + 4.5f * parameters_.space);
     const float attackCoeff = static_cast<float>(
         1.0 - std::exp(-1.0 / (std::max(0.001f, attackSeconds) * sampleRate_)));
     const float releaseCoeff = static_cast<float>(
@@ -1029,10 +1035,17 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         const float realExciter =
             softClip(2.25f * (realExciterMono - bodyExciterLowpass_));
 
+        const float industrialContinuousExciter =
+            archetype_ == Archetype::Industrial && gate_
+                ? 0.010f * envelope_ *
+                    (0.35f * noiseStateL_ + 0.35f * noiseStateR_ +
+                     0.30f * rng_.bipolar())
+                : 0.0f;
         const float syntheticExciter =
             bodyExcitation_ *
             (0.18f + 0.82f * std::fabs(rng_.bipolar())) *
-            rng_.bipolar();
+            rng_.bipolar() +
+            industrialContinuousExciter;
 
         const float excitationGain =
             bodyExciterVoice_.clip
