@@ -295,6 +295,8 @@ void Engine::reset(std::uint64_t seedValue) noexcept {
     worldLayerTarget_ = worldLayerGain_;
     textureLayerGain_ = {0.58f, 0.30f, 0.12f};
     textureLayerTarget_ = textureLayerGain_;
+    worldSceneInitialised_ = false;
+    textureSceneInitialised_ = false;
     eventVoice_.reset();
     bodyExciterVoice_.reset();
     bodyExciterLowpass_ = 0.0f;
@@ -342,6 +344,7 @@ void Engine::setWorldPool(
         voice.reset();
     worldLayerGain_ = {0.72f, 0.24f, 0.08f};
     worldLayerTarget_ = worldLayerGain_;
+    worldSceneInitialised_ = false;
 }
 
 void Engine::setTexturePool(
@@ -354,6 +357,7 @@ void Engine::setTexturePool(
         voice.reset();
     textureLayerGain_ = {0.58f, 0.30f, 0.12f};
     textureLayerTarget_ = textureLayerGain_;
+    textureSceneInitialised_ = false;
 }
 
 void Engine::setEventPool(
@@ -425,34 +429,58 @@ void Engine::configureBody() noexcept {
         0.50f, 0.76f, 1.00f, 1.41f, 1.73f, 2.03f,
         2.51f, 2.97f, 3.66f, 4.37f, 5.11f, 6.23f
     };
+    static constexpr std::array<double, 12> industrialFrequencies {
+        43.0, 61.0, 89.0, 127.0, 173.0, 239.0,
+        317.0, 421.0, 557.0, 733.0, 967.0, 1279.0
+    };
 
     for (std::size_t i = 0; i < resonators_.size(); ++i) {
         const float parity = (i & 1u) ? -1.0f : 1.0f;
-        const float archetypeWarp =
-            1.0f + 0.0075f * archetype * parity + 0.010f * static_cast<float>(i % 3);
-        const float tensionWarp =
-            1.0f + tension * (0.018f + 0.009f * static_cast<float>(i)) * parity;
-        const double frequency =
-            static_cast<double>(root) *
-            static_cast<double>(baseRatios[i] * archetypeWarp * tensionWarp);
+        double frequency = 0.0;
+        double decay = 0.0;
+        float gain = 0.0f;
 
-        const double decay =
-            0.32 +
-            (0.12 + 0.11 * static_cast<double>(i)) *
-            (0.65 + 2.7 * parameters_.body);
-
-        float lowModeScale = 1.0f;
-        if (i == 0)
-            lowModeScale = (archetype_ == Archetype::Abyss || archetype_ == Archetype::Void) ? 0.55f : 0.24f;
-        else if (i == 1)
-            lowModeScale = (archetype_ == Archetype::Abyss || archetype_ == Archetype::Void) ? 0.72f : 0.42f;
-        else if (i == 2)
-            lowModeScale = 0.82f;
-
-        const float gain =
-            lowModeScale *
-            (0.090f / (1.0f + 0.16f * static_cast<float>(i))) *
-            (0.25f + 0.75f * parameters_.body);
+        if (archetype_ == Archetype::Industrial) {
+            const double tensionWarp =
+                1.0 + static_cast<double>(tension) *
+                    (0.012 + 0.0025 * static_cast<double>(i)) * parity;
+            frequency = industrialFrequencies[i] * tensionWarp;
+            decay =
+                0.10 + 0.018 * static_cast<double>(i) +
+                0.22 * static_cast<double>(parameters_.body);
+            gain =
+                (0.055f / (1.0f + 0.20f * static_cast<float>(i))) *
+                (0.22f + 0.78f * parameters_.body);
+        } else {
+            const float archetypeWarp =
+                1.0f + 0.0075f * archetype * parity +
+                0.010f * static_cast<float>(i % 3);
+            const float tensionWarp =
+                1.0f + tension *
+                    (0.018f + 0.009f * static_cast<float>(i)) * parity;
+            frequency =
+                static_cast<double>(root) *
+                static_cast<double>(baseRatios[i] * archetypeWarp * tensionWarp);
+            decay =
+                0.32 +
+                (0.12 + 0.11 * static_cast<double>(i)) *
+                (0.65 + 2.7 * parameters_.body);
+            float lowModeScale = 1.0f;
+            if (i == 0)
+                lowModeScale =
+                    (archetype_ == Archetype::Abyss ||
+                     archetype_ == Archetype::Void) ? 0.55f : 0.24f;
+            else if (i == 1)
+                lowModeScale =
+                    (archetype_ == Archetype::Abyss ||
+                     archetype_ == Archetype::Void) ? 0.72f : 0.42f;
+            else if (i == 2)
+                lowModeScale = 0.82f;
+            gain =
+                lowModeScale *
+                (0.090f / (1.0f + 0.16f * static_cast<float>(i))) *
+                (0.25f + 0.75f * parameters_.body);
+        }
 
         const float pan = std::clamp(
             -0.82f + 1.64f * static_cast<float>(i) /
@@ -530,7 +558,7 @@ void Engine::ensureLongStreams() noexcept {
             continue;
 
         const std::size_t startIndex =
-            archetype_ == Archetype::Industrial && eventCount_ == 0
+            archetype_ == Archetype::Industrial && !worldSceneInitialised_
                 ? std::min<std::size_t>(voiceIndex, worldPoolCount_ - 1)
                 : std::min<std::size_t>(
                     static_cast<std::size_t>(rng_.uniform01() * worldPoolCount_),
@@ -572,6 +600,9 @@ void Engine::ensureLongStreams() noexcept {
         voice.start(clip, rate, start);
     }
 
+    if (worldPoolCount_ > 0)
+        worldSceneInitialised_ = true;
+
     for (std::size_t voiceIndex = 0;
          voiceIndex < textureVoices_.size();
          ++voiceIndex) {
@@ -580,7 +611,7 @@ void Engine::ensureLongStreams() noexcept {
             continue;
 
         const std::size_t startIndex =
-            archetype_ == Archetype::Industrial && eventCount_ == 0
+            archetype_ == Archetype::Industrial && !textureSceneInitialised_
                 ? std::min<std::size_t>(voiceIndex, texturePoolCount_ - 1)
                 : std::min<std::size_t>(
                     static_cast<std::size_t>(rng_.uniform01() * texturePoolCount_),
@@ -621,6 +652,9 @@ void Engine::ensureLongStreams() noexcept {
                 : 0.0;
         voice.start(clip, rate, start);
     }
+    if (texturePoolCount_ > 0)
+        textureSceneInitialised_ = true;
+
 }
 
 void Engine::updateControlState() noexcept {

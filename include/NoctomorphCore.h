@@ -182,6 +182,8 @@ private:
     std::array<float, kWorldVoiceCount> worldLayerTarget_ {};
     std::array<float, kTextureVoiceCount> textureLayerGain_ {};
     std::array<float, kTextureVoiceCount> textureLayerTarget_ {};
+    bool worldSceneInitialised_ = false;
+    bool textureSceneInitialised_ = false;
 
     StreamVoice eventVoice_ {};
     StreamVoice bodyExciterVoice_ {};
