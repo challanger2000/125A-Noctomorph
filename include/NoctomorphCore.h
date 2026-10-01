@@ -148,7 +148,9 @@ private:
     double chaosY_ = 0.0;
     double chaosZ_ = 0.0;
     int controlCountdown_ = 0;
+    int structureCountdown_ = 0;
     static constexpr int kControlPeriod = 64;
+    static constexpr int kStructureControlPeriods = 96;
 
     std::array<Resonator, 12> resonators_ {};
     std::array<Resonator, 4> presenceResonators_ {};
