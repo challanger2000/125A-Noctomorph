@@ -783,7 +783,15 @@ void Engine::processSpace(float dryL, float dryR, float& outL, float& outR) noex
         0.5f * ( d[0] - d[1] - d[2] + d[3])
     };
 
-    const float feedback = 0.64f + 0.30f * wet;
+    // INDUSTRIAL needs a large room while held, but must not turn into a
+    // self-sustaining metallic drone after Note-Off. Reduce the feedback loop
+    // during release; the existing delay energy still decays naturally.
+    const float heldFeedback = 0.64f + 0.30f * wet;
+    const float releaseFeedback =
+        archetype_ == Archetype::Industrial
+            ? (0.48f + 0.22f * wet)
+            : heldFeedback;
+    const float feedback = gate_ ? heldFeedback : releaseFeedback;
     const float damping = 0.18f + 0.62f * wet;
     for (std::size_t i = 0; i < delays_.size(); ++i) {
         reverbDamping_[i] +=
