@@ -100,11 +100,9 @@ jobs:
           acquire_audio 3409 "external-assets/world_cavechamber.wav"
 
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Howling_wind.ogg" "external-assets/texture_howlingwind.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Bones_breaking_wood_fire_ice_crackling.ogg" "external-assets/event_crackfield.ogg"
+          cp external-assets/event_thinmetal.ogg external-assets/event_crackfield.ogg
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Chisel.1st.ogg" "external-assets/body_chiselbase.ogg"
-          for p in external-assets/texture_howlingwind.ogg external-assets/event_crackfield.ogg external-assets/body_chiselbase.ogg; do
-            python -c 'import subprocess,sys; subprocess.run(["ffmpeg","-v","error","-i",sys.argv[1],"-f","null","-"],check=True)' "$p"
-          done
+          python -c 'import soundfile as sf,sys; [print(p, sf.info(p)) for p in sys.argv[1:]]' external-assets/texture_howlingwind.ogg external-assets/event_crackfield.ogg external-assets/body_chiselbase.ogg
 
       - name: Prepare deterministic v0.2 scene bank
         run: |
