@@ -945,13 +945,12 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 // Fade each non-looping source into/out of the persistent
                 // three-voice bed. The other two voices carry the room while
                 // one source changes, so replacement never appears as a cut.
-                const double fadeFrames =
-                    std::max(1.0, 2.5 * worldVoices_[i].clip->sampleRate);
+                const double invFadeFrames =\n                    1.0 / std::max(1.0, 2.5 * worldVoices_[i].clip->sampleRate);
                 const double pos = worldVoices_[i].position;
                 const double remaining =
                     static_cast<double>(worldVoices_[i].clip->frames - 1) - pos;
                 lifecycleGain = static_cast<float>(std::clamp(
-                    std::min(pos / fadeFrames, remaining / fadeFrames),
+                    std::min(pos, remaining) * invFadeFrames,
                     0.0, 1.0));
                 lifecycleGain =
                     lifecycleGain * lifecycleGain * (3.0f - 2.0f * lifecycleGain);
@@ -996,13 +995,12 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 (archetype_ == Archetype::Industrial ? 0.24f : 0.18f) * motionPan_;
             float lifecycleGain = 1.0f;
             if (archetype_ == Archetype::Industrial && textureVoices_[i].clip) {
-                const double fadeFrames =
-                    std::max(1.0, 1.8 * textureVoices_[i].clip->sampleRate);
+                const double invFadeFrames =\n                    1.0 / std::max(1.0, 1.8 * textureVoices_[i].clip->sampleRate);
                 const double pos = textureVoices_[i].position;
                 const double remaining =
                     static_cast<double>(textureVoices_[i].clip->frames - 1) - pos;
                 lifecycleGain = static_cast<float>(std::clamp(
-                    std::min(pos / fadeFrames, remaining / fadeFrames),
+                    std::min(pos, remaining) * invFadeFrames,
                     0.0, 1.0));
                 lifecycleGain =
                     lifecycleGain * lifecycleGain * (3.0f - 2.0f * lifecycleGain);
