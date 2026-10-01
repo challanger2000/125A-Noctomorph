@@ -105,6 +105,8 @@ jobs:
 
       - name: Prepare deterministic v0.2 scene bank
         run: |
+          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion63
+          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 63
           python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion66
           find prepared-assets -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
           test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 66
