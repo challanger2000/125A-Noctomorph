@@ -102,7 +102,10 @@ jobs:
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Howling_wind.ogg" "external-assets/texture_howlingwind.ogg"
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Bones_breaking_wood_fire_ice_crackling.ogg" "external-assets/event_crackfield.ogg"
           get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Chisel.1st.ogg" "external-assets/body_chiselbase.ogg"
-          python -c 'import soundfile as sf,sys; [print(p, sf.info(p)) for p in sys.argv[1:]]' external-assets/texture_howlingwind.ogg external-assets/event_crackfield.ogg external-assets/body_chiselbase.ogg
+          for p in external-assets/texture_howlingwind.ogg external-assets/event_crackfield.ogg external-assets/body_chiselbase.ogg; do
+            ffprobe -v error -select_streams a:0 -show_entries stream=codec_name,sample_rate,channels,duration -of default=noprint_wrappers=1 "$p"
+            ffmpeg -v error -i "$p" -f null -
+          done
 
       - name: Prepare deterministic v0.2 scene bank
         run: |
