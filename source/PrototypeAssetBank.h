@@ -93,6 +93,9 @@ private:
         TexturePostVibration,
         TextureWireStress,
         WorldCaveChamber,
+        TextureHowlingWind,
+        EventCrackField,
+        BodyChiselBase,
         Count
     };
 
