@@ -264,19 +264,23 @@ PrototypeAssetBank::ScenePool PrototypeAssetBank::sceneFor(
             break;
 
         case noctomorph::Archetype::Industrial:
-            addWorld(WorldPaper);
-            addWorld(WorldEccentric);
-            addWorld(WorldFence);
-            addWorld(WorldSteamRod);
-            addWorld(WorldPneumaticPump);
-            addWorld(WorldReactorHall);
+            // INDUSTRIAL is built from scale first: large halls and continuous
+            // machinery occupy the first deterministic selection slots.
             addWorld(WorldWarehouseHall);
-            addTexture(TexturePacking);
-            addTexture(TextureSaw);
-            addTexture(TextureBrush);
+            addWorld(WorldReactorHall);
+            addWorld(WorldPneumaticPump);
+            addWorld(WorldSteamRod);
+            addWorld(WorldEccentric);
+            // Small/recognisable foreground sources remain reservoir variation.
+            addWorld(WorldFence);
+            addWorld(WorldPaper);
+            // Continuous machinery first; individual tools are secondary detail.
             addTexture(TextureMillBelt);
             addTexture(TextureSteelCoiler);
+            addTexture(TexturePacking);
             addTexture(TexturePlaner);
+            addTexture(TextureSaw);
+            addTexture(TextureBrush);
             // INDUSTRIAL deliberately avoids glass/gong exciters: they read as bells.
             addBody(BodySteelChisel);
             addBody(BodyChiselBase);
