@@ -26,89 +26,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Restore verified 60-source baseline
+      - name: Restore verified 66-source scene bank
         uses: actions/download-artifact@v4
         with:
           name: noctomorph-prepared-scene-bank
           path: prepared-assets
           github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: ${{ github.repository }}
-          run-id: 36791989360
+          run-id: 36920023709
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install asset preparation dependencies
-        run: python -m pip install -r tools/requirements-audio.txt
-
-      - name: Download 63-source expansion candidates
+      - name: Verify restored scene bank
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p external-assets prepared-assets
-
-          get_asset() {
-            local url="$1"
-            local out="$2"
-            echo "Downloading $out"
-            local ok=0
-            for attempt in 1 2 3 4 5 6; do
-              if curl -A "125A-Noctomorph/0.2 (research build; github.com/challanger2000)" \
-                -L --fail --connect-timeout 20 --max-time 240 \
-                "$url" -o "$out"; then
-                ok=1
-                break
-              fi
-              rm -f "$out"
-              sleep $((attempt * 20))
-            done
-            if [ "$ok" -ne 1 ] || [ ! -s "$out" ]; then
-              echo "Asset download failed: $url" >&2
-              exit 1
-            fi
-            sleep 12
-          }
-
-          acquire_audio() {
-            local id="$1"
-            local out="$2"
-            local tmp="$out.tmp"
-            rm -f "$tmp" "$out"
-            for url in \
-              "https://bigsoundbank.com/UPLOAD/wav/${id}.wav" \
-              "https://bigsoundbank.com/UPLOAD/WAV/${id}.wav" \
-              "https://bigsoundbank.com/UPLOAD/flac/${id}.flac" \
-              "https://bigsoundbank.com/UPLOAD/ogg/${id}.ogg" \
-              "https://bigsoundbank.com/UPLOAD/mp3/${id}.mp3"
-            do
-              echo "Trying $url"
-              rm -f "$tmp"
-              if curl -A "125A-Noctomorph/0.2 (research build; github.com/challanger2000)" -L --fail --connect-timeout 20 --max-time 240 "$url" -o "$tmp"; then
-                if python -c 'import soundfile as sf,sys; i=sf.info(sys.argv[1]); assert i.frames>0 and i.samplerate>0; print("audio-ok",i.format,i.samplerate,i.channels,i.frames)' "$tmp"; then
-                  mv "$tmp" "$out"
-                  return 0
-                fi
-              fi
-            done
-            echo "No valid audio found for BigSoundBank $id" >&2
-            return 1
-          }
-
-          acquire_audio 0504 "external-assets/texture_postvibration.wav"
-          acquire_audio 1537 "external-assets/texture_wirestress.wav"
-          acquire_audio 3409 "external-assets/world_cavechamber.wav"
-
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Howling_wind.ogg" "external-assets/texture_howlingwind.ogg"
-          get_asset "https://commons.wikimedia.org/wiki/Special:Redirect/file/Chisel.1st.ogg" "external-assets/body_chiselbase.ogg"
-          python -c 'import soundfile as sf,sys; [print(p, sf.info(p)) for p in sys.argv[1:]]' external-assets/texture_howlingwind.ogg external-assets/body_chiselbase.ogg
-
-      - name: Prepare deterministic v0.2 scene bank
-        run: |
-          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion63
-          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 63
-          python tools/prepare_prototype_assets.py --input-dir external-assets --out prepared-assets --mode expansion66
-          find prepared-assets -maxdepth 1 -type f -printf '%f %s bytes\n' | sort
+          find prepared-assets -maxdepth 1 -type f -name '*.wav' -printf '%f %s bytes\n' | sort
           test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 66
 
       - name: Upload prepared scene bank
