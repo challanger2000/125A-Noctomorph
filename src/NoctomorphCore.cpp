@@ -272,6 +272,8 @@ void Engine::reset(std::uint64_t seedValue) noexcept {
     textureHpState_ = 0.0f;
     industrialSubEnvelope_ = 0.0f;
     industrialSubPhase_ = 0.0;
+    industrialSceneTime_ = 0.0;
+    industrialSceneIntensity_ = 0.0f;
     motionPan_ = 0.0f;
     motionSpectral_ = 0.0f;
 
@@ -413,6 +415,10 @@ void Engine::noteOn(int midiNote, float velocity) noexcept {
     midiNote_ = std::clamp(midiNote, 0, 127);
     velocity_ = clamp01(velocity);
     gate_ = velocity_ > 0.0f;
+    if (gate_) {
+        industrialSceneTime_ = 0.0;
+        industrialSceneIntensity_ = 0.0f;
+    }
 
     // Retrigger the acoustic world without resetting macro evolution.
     if (gate_) {
@@ -993,6 +999,26 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         if (gate_)
             ensureLongStreams();
 
+        if (archetype_ == Archetype::Industrial && gate_) {
+            industrialSceneTime_ += 1.0 / sampleRate_;
+            const double cycle = std::fmod(
+                industrialSceneTime_ * (0.020 + 0.018 * parameters_.evolve),
+                1.0);
+            const double arc =
+                0.5 - 0.5 * std::cos(kTwoPi * cycle);
+            const float targetIntensity =
+                0.30f + 0.70f * static_cast<float>(arc);
+            const float sceneCoeff = static_cast<float>(
+                1.0 - std::exp(-1.0 / (1.8 * sampleRate_)));
+            industrialSceneIntensity_ +=
+                sceneCoeff * (targetIntensity - industrialSceneIntensity_);
+        } else if (!gate_) {
+            const float sceneReleaseCoeff = static_cast<float>(
+                1.0 - std::exp(-1.0 / (0.45 * sampleRate_)));
+            industrialSceneIntensity_ +=
+                sceneReleaseCoeff * (0.0f - industrialSceneIntensity_);
+        }
+
         float dryL = 0.0f;
         float dryR = 0.0f;
 
@@ -1087,7 +1113,9 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
 
         if (world > 0.0f && envelope_ > 0.0f) {
             const float worldScale =
-                archetype_ == Archetype::Industrial ? 1.08f : 0.98f;
+                archetype_ == Archetype::Industrial
+                    ? (0.94f + 0.24f * industrialSceneIntensity_)
+                    : 0.98f;
             dryL += worldScale * world * envelope_ * worldL;
             dryR += worldScale * world * envelope_ * worldR;
         }
@@ -1107,7 +1135,8 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 industrialSubPhase_ -= kTwoPi;
 
             const float subGain =
-                0.085f * foundation * world * envelope_ *
+                (0.060f + 0.045f * industrialSceneIntensity_) *
+                foundation * world * envelope_ *
                 std::sqrt(std::max(0.0f, industrialSubEnvelope_));
             const float subSample =
                 subGain * static_cast<float>(std::sin(industrialSubPhase_));
@@ -1186,7 +1215,9 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             const float synthWeight = anyTextureActive ? 0.12f : 1.0f;
             const float pan = -0.22f * motionPan_;
             const float realTextureScale =
-                archetype_ == Archetype::Industrial ? 0.72f : 0.62f;
+                archetype_ == Archetype::Industrial
+                    ? (0.58f + 0.28f * industrialSceneIntensity_)
+                    : 0.62f;
             const float noiseScale =
                 archetype_ == Archetype::Industrial ? 0.012f : 0.035f;
             dryL += texture * envelope_ * (1.0f - pan) *
