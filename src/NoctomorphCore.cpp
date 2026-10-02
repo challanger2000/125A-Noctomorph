@@ -351,7 +351,8 @@ void Engine::reset(std::uint64_t seedValue) noexcept {
     bodyExciterLowpass_ = 0.0f;
 
     eventCount_ = 0;
-    eventCountdown_ = static_cast<int>(sampleRate_ * (2.0 + 3.0 * rng_.uniform01()));
+    eventCountdown_ = static_cast<int>(sampleRate_);
+    industrialEventSchedulePrimed_ = false;
 
     for (auto& d : delays_)
         d.reset();
@@ -460,6 +461,8 @@ void Engine::noteOn(int midiNote, float velocity) noexcept {
     if (gate_) {
         industrialSceneTime_ = 0.0;
         industrialSceneIntensity_ = 0.0f;
+        if (archetype_ == Archetype::Industrial)
+            industrialEventSchedulePrimed_ = false;
     }
 
     // Retrigger the acoustic world without resetting macro evolution.
@@ -856,6 +859,17 @@ void Engine::updateControlState() noexcept {
 
     if (parameters_.events <= 0.0f) {
         eventCountdown_ = static_cast<int>(sampleRate_);
+        if (archetype_ == Archetype::Industrial)
+            industrialEventSchedulePrimed_ = false;
+    } else if (archetype_ == Archetype::Industrial &&
+               !industrialEventSchedulePrimed_) {
+        const float eventAmount = clamp01(parameters_.events);
+        const double firstGapSeconds =
+            (3.5 + 22.0 * static_cast<double>((1.0f - eventAmount) * (1.0f - eventAmount))) *
+            (0.82 + 0.36 * rng_.uniform01());
+        eventCountdown_ = std::max(
+            1, static_cast<int>(firstGapSeconds * sampleRate_));
+        industrialEventSchedulePrimed_ = true;
     } else if (eventCountdown_ <= 0) {
         triggerEvent();
     }
@@ -915,11 +929,16 @@ void Engine::triggerEvent() noexcept {
     const double evolveAcceleration =
         1.0 - 0.25 * static_cast<double>(parameters_.evolve * eventAmount);
 
+    const double sceneFactor =
+        archetype_ == Archetype::Industrial
+            ? (1.22 - 0.42 * static_cast<double>(industrialSceneIntensity_))
+            : 1.0;
     const double gapSeconds =
         std::clamp(
             archetypeFactor *
                 baseGapSeconds *
                 evolveAcceleration *
+                sceneFactor *
                 (0.65 + 0.70 * rng_.uniform01()),
             0.75,
             70.0);

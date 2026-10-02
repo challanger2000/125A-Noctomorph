@@ -211,6 +211,7 @@ private:
 
     std::uint64_t eventCount_ = 0;
     int eventCountdown_ = 0;
+    bool industrialEventSchedulePrimed_ = false;
 
     std::array<DelayLine, 4> delays_ {};
     std::array<float, 4> reverbDamping_ {};
