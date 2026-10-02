@@ -410,6 +410,10 @@ void Engine::setTexturePool(
     for (auto& voice : textureNextVoices_) voice.reset();
     textureCrossfade_.fill(0.0f);
     industrialMaterialBed_.reset();
+    industrialMaterialBedNext_.reset();
+    industrialMaterialCrossfade_ = 0.0f;
+    industrialMaterialSwitchTime_ = 0.0;
+    industrialMaterialIndex_ = 0;
     textureLayerGain_ = {0.58f, 0.30f, 0.12f};
     textureLayerTarget_ = textureLayerGain_;
     textureSceneInitialised_ = false;
@@ -786,12 +790,27 @@ void Engine::ensureLongStreams() noexcept {
         }
     }
 
-    if (archetype_ == Archetype::Industrial && !industrialMaterialBed_.active && texturePoolCount_ > 0) {
-        const std::size_t index = std::min<std::size_t>(1u, texturePoolCount_ - 1);
-        const Clip* clip = texturePool_[index];
-        if (clip) {
-            const double start = clip->frames > 1024 ? 0.08 * static_cast<double>(clip->frames - 2) : 0.0;
-            industrialMaterialBed_.start(clip, 4.0 + 4.0 * parameters_.evolve, start);
+    if (archetype_ == Archetype::Industrial && texturePoolCount_ > 0) {
+        if (!industrialMaterialBed_.active) {
+            industrialMaterialIndex_ = std::min<std::size_t>(1u, texturePoolCount_ - 1);
+            const Clip* clip = texturePool_[industrialMaterialIndex_];
+            if (clip) {
+                const double start = clip->frames > 1024 ? 0.08 * static_cast<double>(clip->frames - 2) : 0.0;
+                industrialMaterialBed_.start(clip, 4.0 + 4.0 * parameters_.evolve, start);
+                industrialMaterialSwitchTime_ = industrialSceneTime_ + 18.0 + 18.0 * (1.0 - parameters_.evolve);
+            }
+        } else if (!industrialMaterialBedNext_.active &&
+                   industrialSceneTime_ >= industrialMaterialSwitchTime_ &&
+                   texturePoolCount_ > 1) {
+            industrialMaterialIndex_ = (industrialMaterialIndex_ + 2u) % texturePoolCount_;
+            const Clip* clip = texturePool_[industrialMaterialIndex_];
+            if (clip) {
+                const double start = clip->frames > 1024
+                    ? (0.04 + 0.12 * rng_.uniform01()) * static_cast<double>(clip->frames - 2)
+                    : 0.0;
+                industrialMaterialBedNext_.start(clip, 4.0 + 4.0 * parameters_.evolve, start);
+                industrialMaterialCrossfade_ = 0.0f;
+            }
         }
     }
 
@@ -1215,8 +1234,29 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         }
 
         float materialBedL = 0.0f, materialBedR = 0.0f;
-        if (archetype_ == Archetype::Industrial && gate_)
+        if (archetype_ == Archetype::Industrial && gate_) {
             industrialMaterialBed_.process(sampleRate_, materialBedL, materialBedR);
+            if (industrialMaterialBedNext_.active) {
+                float nextL = 0.0f, nextR = 0.0f;
+                industrialMaterialBedNext_.process(sampleRate_, nextL, nextR);
+                industrialMaterialCrossfade_ = std::min(
+                    1.0f,
+                    industrialMaterialCrossfade_ +
+                        static_cast<float>(1.0 / std::max(1.0, 6.0 * sampleRate_)));
+                const float x = industrialMaterialCrossfade_;
+                const float a = std::sqrt(std::max(0.0f, 1.0f - x));
+                const float b = std::sqrt(x);
+                materialBedL = a * materialBedL + b * nextL;
+                materialBedR = a * materialBedR + b * nextR;
+                if (x >= 1.0f) {
+                    industrialMaterialBed_ = industrialMaterialBedNext_;
+                    industrialMaterialBedNext_.reset();
+                    industrialMaterialCrossfade_ = 0.0f;
+                    industrialMaterialSwitchTime_ =
+                        industrialSceneTime_ + 18.0 + 18.0 * (1.0 - parameters_.evolve);
+                }
+            }
+        }
 
         float textureL = 0.0f;
         float textureR = 0.0f;

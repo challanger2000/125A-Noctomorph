@@ -196,6 +196,10 @@ private:
     std::array<StreamVoice, kWorldVoiceCount> worldNextVoices_ {};
     std::array<StreamVoice, kTextureVoiceCount> textureNextVoices_ {};
     MaterialBedVoice industrialMaterialBed_ {};
+    MaterialBedVoice industrialMaterialBedNext_ {};
+    float industrialMaterialCrossfade_ = 0.0f;
+    double industrialMaterialSwitchTime_ = 0.0;
+    std::size_t industrialMaterialIndex_ = 0;
     std::array<float, kWorldVoiceCount> worldCrossfade_ {};
     std::array<float, kTextureVoiceCount> textureCrossfade_ {};
     std::array<float, kWorldVoiceCount> worldLayerGain_ {};
