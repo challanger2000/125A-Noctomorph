@@ -165,6 +165,47 @@ void Engine::StreamVoice::process(float& left, float& right) noexcept {
     }
 }
 
+void Engine::MaterialBedVoice::reset() noexcept {
+    clip = nullptr; transport = 0.0; grainPhase = 0.0; stretch = 6.0; active = false;
+}
+void Engine::MaterialBedVoice::start(const Clip* source, double stretchFactor, double startPosition) noexcept {
+    clip = source;
+    if (!clip || !clip->left || clip->frames < 512) { reset(); return; }
+    stretch = std::clamp(stretchFactor, 4.0, 8.0);
+    transport = std::clamp(startPosition, 0.0, static_cast<double>(clip->frames - 2));
+    grainPhase = 0.0; active = true;
+}
+void Engine::MaterialBedVoice::process(double outputSampleRate, float& left, float& right) noexcept {
+    left = right = 0.0f;
+    if (!active || !clip || !clip->left || clip->frames < 512) return;
+    const double sourceStep = clip->sampleRate / std::max(1.0, outputSampleRate);
+    const double grainFrames = std::max(256.0, 0.18 * clip->sampleRate);
+    const double hop = 0.5 * grainFrames;
+    const double endGuard = 2.0 * grainFrames + hop + 2.0;
+    if (transport + endGuard >= static_cast<double>(clip->frames)) transport = 0.0;
+    const auto read = [&](const float* data, double p) noexcept {
+        if (!data) return 0.0f;
+        p = std::clamp(p, 0.0, static_cast<double>(clip->frames - 1));
+        const auto i0 = static_cast<std::size_t>(p);
+        const auto i1 = std::min(i0 + 1, clip->frames - 1);
+        const float f = static_cast<float>(p - static_cast<double>(i0));
+        return data[i0] + f * (data[i1] - data[i0]);
+    };
+    const auto grain = [&](double phase, double offset, const float* data) noexcept {
+        const double p = phase - std::floor(phase);
+        const float w = static_cast<float>(0.5 - 0.5 * std::cos(kTwoPi * p));
+        return w * read(data, transport + offset + p * grainFrames);
+    };
+    const double phaseB = grainPhase + 0.5;
+    const float* rightData = clip->right ? clip->right : clip->left;
+    constexpr float norm = 0.72f;
+    left = norm * (grain(grainPhase, 0.0, clip->left) + grain(phaseB, hop, clip->left));
+    right = norm * (grain(grainPhase, 0.0, rightData) + grain(phaseB, hop, rightData));
+    grainPhase += sourceStep / grainFrames;
+    if (grainPhase >= 1.0) grainPhase -= 1.0;
+    transport += sourceStep / stretch;
+}
+
 void Engine::Resonator::reset() noexcept {
     z1L = z2L = z1R = z2R = 0.0f;
 }
@@ -367,6 +408,7 @@ void Engine::setTexturePool(
         voice.reset();
     for (auto& voice : textureNextVoices_) voice.reset();
     textureCrossfade_.fill(0.0f);
+    industrialMaterialBed_.reset();
     textureLayerGain_ = {0.58f, 0.30f, 0.12f};
     textureLayerTarget_ = textureLayerGain_;
     textureSceneInitialised_ = false;
@@ -738,6 +780,15 @@ void Engine::ensureLongStreams() noexcept {
                 : 0.0;
             next.start(clip, rate, start);
             textureCrossfade_[i] = 0.0f;
+        }
+    }
+
+    if (archetype_ == Archetype::Industrial && !industrialMaterialBed_.active && texturePoolCount_ > 0) {
+        const std::size_t index = std::min<std::size_t>(1u, texturePoolCount_ - 1);
+        const Clip* clip = texturePool_[index];
+        if (clip) {
+            const double start = clip->frames > 1024 ? 0.08 * static_cast<double>(clip->frames - 2) : 0.0;
+            industrialMaterialBed_.start(clip, 4.0 + 4.0 * parameters_.evolve, start);
         }
     }
 
@@ -1144,6 +1195,10 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             dryR += subSample;
         }
 
+        float materialBedL = 0.0f, materialBedR = 0.0f;
+        if (archetype_ == Archetype::Industrial && gate_)
+            industrialMaterialBed_.process(sampleRate_, materialBedL, materialBedR);
+
         float textureL = 0.0f;
         float textureR = 0.0f;
         float textureGainSum = 0.0f;
@@ -1224,6 +1279,9 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 (realTextureScale * realWeight * textureL + noiseScale * synthWeight * darkNoiseL);
             dryR += texture * envelope_ * (1.0f + pan) *
                 (realTextureScale * realWeight * textureR + noiseScale * synthWeight * darkNoiseR);
+            const float materialGain = 0.055f * (0.45f + 0.55f * industrialSceneIntensity_);
+            dryL += texture * envelope_ * materialGain * materialBedL;
+            dryR += texture * envelope_ * materialGain * materialBedR;
         }
 
         float eventL = 0.0f, eventR = 0.0f;

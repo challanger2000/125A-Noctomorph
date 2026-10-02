@@ -85,6 +85,17 @@ private:
         void process(float& left, float& right) noexcept;
     };
 
+    struct MaterialBedVoice {
+        const Clip* clip = nullptr;
+        double transport = 0.0;
+        double grainPhase = 0.0;
+        double stretch = 6.0;
+        bool active = false;
+        void reset() noexcept;
+        void start(const Clip* source, double stretchFactor, double startPosition = 0.0) noexcept;
+        void process(double outputSampleRate, float& left, float& right) noexcept;
+    };
+
     struct Resonator {
         float b0 = 0.0f;
         float a1 = 0.0f;
@@ -184,6 +195,7 @@ private:
     std::array<StreamVoice, kTextureVoiceCount> textureVoices_ {};
     std::array<StreamVoice, kWorldVoiceCount> worldNextVoices_ {};
     std::array<StreamVoice, kTextureVoiceCount> textureNextVoices_ {};
+    MaterialBedVoice industrialMaterialBed_ {};
     std::array<float, kWorldVoiceCount> worldCrossfade_ {};
     std::array<float, kTextureVoiceCount> textureCrossfade_ {};
     std::array<float, kWorldVoiceCount> worldLayerGain_ {};
