@@ -900,7 +900,10 @@ void Engine::triggerEvent() noexcept {
 
     ++eventCount_;
 
+    const float forceScale =
+        archetype_ == Archetype::Industrial ? 0.46f : 1.0f;
     const float force =
+        forceScale *
         (0.15f + 0.70f * parameters_.events) *
         (0.55f + 0.45f * rng_.uniform01());
 
@@ -942,7 +945,7 @@ void Engine::triggerEvent() noexcept {
     // EVENTS must scale from genuinely sparse to dense.
     // Low settings are cinematic punctuation, not a constant random ticker.
     const double baseGapSeconds =
-        2.0 +
+        (archetype_ == Archetype::Industrial ? 4.2 : 2.0) +
         40.0 * static_cast<double>((1.0f - eventAmount) * (1.0f - eventAmount));
 
     const double evolveAcceleration =
@@ -1338,7 +1341,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 (realTextureScale * realWeight * textureL + noiseScale * synthWeight * darkNoiseL);
             dryR += texture * envelope_ * (1.0f + pan) *
                 (realTextureScale * realWeight * textureR + noiseScale * synthWeight * darkNoiseR);
-            const float materialGain = 0.055f * (0.45f + 0.55f * industrialSceneIntensity_);
+            const float materialGain = 0.095f * (0.45f + 0.55f * industrialSceneIntensity_);
             dryL += texture * envelope_ * materialGain * materialBedL;
             dryR += texture * envelope_ * materialGain * materialBedR;
         }
@@ -1346,8 +1349,10 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         float eventL = 0.0f, eventR = 0.0f;
         eventVoice_.process(eventL, eventR);
         if (eventVoice_.active) {
-            dryL += 0.32f * envelope_ * eventL;
-            dryR += 0.32f * envelope_ * eventR;
+            const float eventGain =
+                archetype_ == Archetype::Industrial ? 0.14f : 0.32f;
+            dryL += eventGain * envelope_ * eventL;
+            dryR += eventGain * envelope_ * eventR;
         }
 
         // NOCTURNE PRESENCE: an abstract quasi-vocal field made only from
