@@ -1028,7 +1028,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             }
 
             const float tonalGain =
-                (archetype_ == Archetype::Industrial ? 0.072f : 0.105f) *
+                (archetype_ == Archetype::Industrial ? 0.088f : 0.105f) *
                 foundation * envelope_;
             dryL += tonalGain * sumL;
             dryR += tonalGain * sumR;
@@ -1075,13 +1075,17 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             worldGainSum += g;
         }
         if (worldGainSum > 1.0f) {
-            worldL /= worldGainSum;
-            worldR /= worldGainSum;
+            const float divisor =
+                archetype_ == Archetype::Industrial
+                    ? (1.0f + 0.38f * (worldGainSum - 1.0f))
+                    : worldGainSum;
+            worldL /= divisor;
+            worldR /= divisor;
         }
 
         if (world > 0.0f && envelope_ > 0.0f) {
             const float worldScale =
-                archetype_ == Archetype::Industrial ? 1.16f : 0.98f;
+                archetype_ == Archetype::Industrial ? 1.08f : 0.98f;
             dryL += worldScale * world * envelope_ * worldL;
             dryR += worldScale * world * envelope_ * worldR;
         }
@@ -1129,8 +1133,12 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             textureGainSum += g;
         }
         if (textureGainSum > 1.0f) {
-            textureL /= textureGainSum;
-            textureR /= textureGainSum;
+            const float divisor =
+                archetype_ == Archetype::Industrial
+                    ? (1.0f + 0.48f * (textureGainSum - 1.0f))
+                    : textureGainSum;
+            textureL /= divisor;
+            textureR /= divisor;
         }
 
         // Synthetic fallback texture: filtered noise, intentionally subordinate
@@ -1153,7 +1161,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             const float synthWeight = anyTextureActive ? 0.12f : 1.0f;
             const float pan = -0.22f * motionPan_;
             const float realTextureScale =
-                archetype_ == Archetype::Industrial ? 0.76f : 0.62f;
+                archetype_ == Archetype::Industrial ? 0.72f : 0.62f;
             const float noiseScale =
                 archetype_ == Archetype::Industrial ? 0.012f : 0.035f;
             dryL += texture * envelope_ * (1.0f - pan) *
