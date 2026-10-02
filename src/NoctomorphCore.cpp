@@ -270,6 +270,8 @@ void Engine::reset(std::uint64_t seedValue) noexcept {
     noiseStateL_ = 0.0f;
     noiseStateR_ = 0.0f;
     textureHpState_ = 0.0f;
+    industrialSubEnvelope_ = 0.0f;
+    industrialSubPhase_ = 0.0;
     motionPan_ = 0.0f;
     motionSpectral_ = 0.0f;
 
@@ -1088,6 +1090,29 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 archetype_ == Archetype::Industrial ? 1.08f : 0.98f;
             dryL += worldScale * world * envelope_ * worldL;
             dryR += worldScale * world * envelope_ * worldR;
+        }
+
+        if (archetype_ == Archetype::Industrial && envelope_ > 0.0f) {
+            const float worldEnergy =
+                std::min(1.0f, 2.4f * std::fabs(0.5f * (worldL + worldR)));
+            const float subEnvCoeff = static_cast<float>(
+                1.0 - std::exp(-1.0 / (0.32 * sampleRate_)));
+            industrialSubEnvelope_ +=
+                subEnvCoeff * (worldEnergy - industrialSubEnvelope_);
+
+            const double subHz =
+                std::clamp(static_cast<double>(baseHz) * 0.25, 28.0, 46.0);
+            industrialSubPhase_ += kTwoPi * subHz / sampleRate_;
+            if (industrialSubPhase_ >= kTwoPi)
+                industrialSubPhase_ -= kTwoPi;
+
+            const float subGain =
+                0.085f * foundation * world * envelope_ *
+                std::sqrt(std::max(0.0f, industrialSubEnvelope_));
+            const float subSample =
+                subGain * static_cast<float>(std::sin(industrialSubPhase_));
+            dryL += subSample;
+            dryR += subSample;
         }
 
         float textureL = 0.0f;
