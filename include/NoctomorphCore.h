@@ -142,6 +142,8 @@ private:
     float textureHpState_ = 0.0f;
     float industrialSubEnvelope_ = 0.0f;
     double industrialSubPhase_ = 0.0;
+    double industrialSceneTime_ = 0.0;
+    float industrialSceneIntensity_ = 0.0f;
     float motionPan_ = 0.0f;
     float motionSpectral_ = 0.0f;
 
