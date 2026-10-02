@@ -178,6 +178,10 @@ private:
 
     std::array<StreamVoice, kWorldVoiceCount> worldVoices_ {};
     std::array<StreamVoice, kTextureVoiceCount> textureVoices_ {};
+    std::array<StreamVoice, kWorldVoiceCount> worldNextVoices_ {};
+    std::array<StreamVoice, kTextureVoiceCount> textureNextVoices_ {};
+    std::array<float, kWorldVoiceCount> worldCrossfade_ {};
+    std::array<float, kTextureVoiceCount> textureCrossfade_ {};
     std::array<float, kWorldVoiceCount> worldLayerGain_ {};
     std::array<float, kWorldVoiceCount> worldLayerTarget_ {};
     std::array<float, kTextureVoiceCount> textureLayerGain_ {};

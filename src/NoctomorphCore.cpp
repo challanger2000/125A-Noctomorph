@@ -291,6 +291,10 @@ void Engine::reset(std::uint64_t seedValue) noexcept {
         voice.reset();
     for (auto& voice : textureVoices_)
         voice.reset();
+    for (auto& voice : worldNextVoices_) voice.reset();
+    for (auto& voice : textureNextVoices_) voice.reset();
+    worldCrossfade_.fill(0.0f);
+    textureCrossfade_.fill(0.0f);
     worldLayerGain_ = {0.72f, 0.24f, 0.08f};
     worldLayerTarget_ = worldLayerGain_;
     textureLayerGain_ = {0.58f, 0.30f, 0.12f};
@@ -342,6 +346,8 @@ void Engine::setWorldPool(
         worldPool_[i] = clips ? clips[i] : nullptr;
     for (auto& voice : worldVoices_)
         voice.reset();
+    for (auto& voice : worldNextVoices_) voice.reset();
+    worldCrossfade_.fill(0.0f);
     worldLayerGain_ = {0.72f, 0.24f, 0.08f};
     worldLayerTarget_ = worldLayerGain_;
     worldSceneInitialised_ = false;
@@ -355,6 +361,8 @@ void Engine::setTexturePool(
         texturePool_[i] = clips ? clips[i] : nullptr;
     for (auto& voice : textureVoices_)
         voice.reset();
+    for (auto& voice : textureNextVoices_) voice.reset();
+    textureCrossfade_.fill(0.0f);
     textureLayerGain_ = {0.58f, 0.30f, 0.12f};
     textureLayerTarget_ = textureLayerGain_;
     textureSceneInitialised_ = false;
@@ -595,13 +603,48 @@ void Engine::ensureLongStreams() noexcept {
                 (-0.14 + 0.28 * rng_.uniform01()));
         const double start =
             clip->frames > 8
-                ? rng_.uniform01() * static_cast<double>(clip->frames - 2)
+                ? rng_.uniform01() * 0.35 * static_cast<double>(clip->frames - 2)
                 : 0.0;
         voice.start(clip, rate, start);
     }
 
     if (worldPoolCount_ > 0)
         worldSceneInitialised_ = true;
+
+    if (archetype_ == Archetype::Industrial) {
+        constexpr double kFadeSeconds = 2.5;
+        for (std::size_t i = 0; i < worldVoices_.size(); ++i) {
+            auto& current = worldVoices_[i];
+            auto& next = worldNextVoices_[i];
+            if (!current.active || !current.clip || next.active)
+                continue;
+            const double remaining =
+                static_cast<double>(current.clip->frames - 1) - current.position;
+            const double triggerFrames =
+                kFadeSeconds * sampleRate_ * std::max(0.01, std::abs(current.rate));
+            if (remaining > triggerFrames)
+                continue;
+            const Clip* clip = nullptr;
+            const std::size_t startIndex = std::min<std::size_t>(
+                static_cast<std::size_t>(rng_.uniform01() * worldPoolCount_),
+                worldPoolCount_ - 1);
+            for (std::size_t offset = 0; offset < worldPoolCount_; ++offset) {
+                const Clip* candidate = worldPool_[(startIndex + offset) % worldPoolCount_];
+                if (candidate && candidate != current.clip) { clip = candidate; break; }
+            }
+            if (!clip) clip = current.clip;
+            const double sourceRatio = clip->sampleRate / sampleRate_;
+            const double slotSpread = 1.0 + 0.035 * static_cast<double>(i);
+            const double rate = sourceRatio * static_cast<double>(traits.worldRate) *
+                slotSpread * (1.0 + static_cast<double>(parameters_.motion) *
+                (-0.14 + 0.28 * rng_.uniform01()));
+            const double start = clip->frames > 8
+                ? rng_.uniform01() * 0.20 * static_cast<double>(clip->frames - 2)
+                : 0.0;
+            next.start(clip, rate, start);
+            worldCrossfade_[i] = 0.0f;
+        }
+    }
 
     for (std::size_t voiceIndex = 0;
          voiceIndex < textureVoices_.size();
@@ -648,12 +691,47 @@ void Engine::ensureLongStreams() noexcept {
                 (-0.32 + 0.64 * rng_.uniform01()));
         const double start =
             clip->frames > 8
-                ? rng_.uniform01() * static_cast<double>(clip->frames - 2)
+                ? rng_.uniform01() * 0.35 * static_cast<double>(clip->frames - 2)
                 : 0.0;
         voice.start(clip, rate, start);
     }
     if (texturePoolCount_ > 0)
         textureSceneInitialised_ = true;
+
+    if (archetype_ == Archetype::Industrial) {
+        constexpr double kFadeSeconds = 1.8;
+        for (std::size_t i = 0; i < textureVoices_.size(); ++i) {
+            auto& current = textureVoices_[i];
+            auto& next = textureNextVoices_[i];
+            if (!current.active || !current.clip || next.active)
+                continue;
+            const double remaining =
+                static_cast<double>(current.clip->frames - 1) - current.position;
+            const double triggerFrames =
+                kFadeSeconds * sampleRate_ * std::max(0.01, std::abs(current.rate));
+            if (remaining > triggerFrames)
+                continue;
+            const Clip* clip = nullptr;
+            const std::size_t startIndex = std::min<std::size_t>(
+                static_cast<std::size_t>(rng_.uniform01() * texturePoolCount_),
+                texturePoolCount_ - 1);
+            for (std::size_t offset = 0; offset < texturePoolCount_; ++offset) {
+                const Clip* candidate = texturePool_[(startIndex + offset) % texturePoolCount_];
+                if (candidate && candidate != current.clip) { clip = candidate; break; }
+            }
+            if (!clip) clip = current.clip;
+            const double sourceRatio = clip->sampleRate / sampleRate_;
+            const double slotSpread = 1.0 - 0.045 * static_cast<double>(i);
+            const double rate = sourceRatio * static_cast<double>(traits.textureRate) *
+                slotSpread * (1.0 + static_cast<double>(parameters_.motion) *
+                (-0.32 + 0.64 * rng_.uniform01()));
+            const double start = clip->frames > 8
+                ? rng_.uniform01() * 0.20 * static_cast<double>(clip->frames - 2)
+                : 0.0;
+            next.start(clip, rate, start);
+            textureCrossfade_[i] = 0.0f;
+        }
+    }
 
 }
 
@@ -967,6 +1045,23 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             float l = 0.0f;
             float r = 0.0f;
             worldVoices_[i].process(l, r);
+            if (archetype_ == Archetype::Industrial && worldNextVoices_[i].active) {
+                float nextL = 0.0f, nextR = 0.0f;
+                worldNextVoices_[i].process(nextL, nextR);
+                worldCrossfade_[i] = std::min(
+                    1.0f, worldCrossfade_[i] +
+                    static_cast<float>(1.0 / std::max(1.0, 2.5 * sampleRate_)));
+                const float x = worldCrossfade_[i];
+                const float a = std::sqrt(std::max(0.0f, 1.0f - x));
+                const float b = std::sqrt(x);
+                l = a * l + b * nextL;
+                r = a * r + b * nextR;
+                if (x >= 1.0f || !worldVoices_[i].active) {
+                    worldVoices_[i] = worldNextVoices_[i];
+                    worldNextVoices_[i].reset();
+                    worldCrossfade_[i] = 0.0f;
+                }
+            }
             if (!worldVoices_[i].active)
                 continue;
 
@@ -974,24 +1069,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 (static_cast<float>(i) - 1.0f) *
                     (archetype_ == Archetype::Industrial ? 0.30f : 0.18f) +
                 (archetype_ == Archetype::Industrial ? 0.20f : 0.14f) * motionPan_;
-            float lifecycleGain = 1.0f;
-            if (archetype_ == Archetype::Industrial && worldVoices_[i].clip) {
-                // Fade each non-looping source into/out of the persistent
-                // three-voice bed. The other two voices carry the room while
-                // one source changes, so replacement never appears as a cut.
-                const double invFadeFrames =
-                    1.0 / std::max(1.0, 2.5 * worldVoices_[i].clip->sampleRate);
-                const double pos = worldVoices_[i].position;
-                const double remaining =
-                    static_cast<double>(worldVoices_[i].clip->frames - 1) - pos;
-                lifecycleGain = static_cast<float>(std::clamp(
-                    std::min(pos, remaining) * invFadeFrames,
-                    0.0, 1.0));
-                lifecycleGain =
-                    lifecycleGain * lifecycleGain * (3.0f - 2.0f * lifecycleGain);
-            }
-            const float g =
-                std::max(0.0f, worldLayerGain_[i]) * lifecycleGain;
+            const float g = std::max(0.0f, worldLayerGain_[i]);
             worldL += g * l * (1.0f - slotPan);
             worldR += g * r * (1.0f + slotPan);
             worldGainSum += g;
@@ -1020,6 +1098,23 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             float l = 0.0f;
             float r = 0.0f;
             textureVoices_[i].process(l, r);
+            if (archetype_ == Archetype::Industrial && textureNextVoices_[i].active) {
+                float nextL = 0.0f, nextR = 0.0f;
+                textureNextVoices_[i].process(nextL, nextR);
+                textureCrossfade_[i] = std::min(
+                    1.0f, textureCrossfade_[i] +
+                    static_cast<float>(1.0 / std::max(1.0, 1.8 * sampleRate_)));
+                const float x = textureCrossfade_[i];
+                const float a = std::sqrt(std::max(0.0f, 1.0f - x));
+                const float b = std::sqrt(x);
+                l = a * l + b * nextL;
+                r = a * r + b * nextR;
+                if (x >= 1.0f || !textureVoices_[i].active) {
+                    textureVoices_[i] = textureNextVoices_[i];
+                    textureNextVoices_[i].reset();
+                    textureCrossfade_[i] = 0.0f;
+                }
+            }
             if (!textureVoices_[i].active)
                 continue;
 
@@ -1028,21 +1123,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 (1.0f - static_cast<float>(i)) *
                     (archetype_ == Archetype::Industrial ? 0.34f : 0.22f) -
                 (archetype_ == Archetype::Industrial ? 0.24f : 0.18f) * motionPan_;
-            float lifecycleGain = 1.0f;
-            if (archetype_ == Archetype::Industrial && textureVoices_[i].clip) {
-                const double invFadeFrames =
-                    1.0 / std::max(1.0, 1.8 * textureVoices_[i].clip->sampleRate);
-                const double pos = textureVoices_[i].position;
-                const double remaining =
-                    static_cast<double>(textureVoices_[i].clip->frames - 1) - pos;
-                lifecycleGain = static_cast<float>(std::clamp(
-                    std::min(pos, remaining) * invFadeFrames,
-                    0.0, 1.0));
-                lifecycleGain =
-                    lifecycleGain * lifecycleGain * (3.0f - 2.0f * lifecycleGain);
-            }
-            const float g =
-                std::max(0.0f, textureLayerGain_[i]) * lifecycleGain;
+            const float g = std::max(0.0f, textureLayerGain_[i]);
             textureL += g * l * (1.0f - slotPan);
             textureR += g * r * (1.0f + slotPan);
             textureGainSum += g;
