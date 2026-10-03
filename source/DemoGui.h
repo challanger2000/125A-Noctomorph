@@ -40,18 +40,17 @@ private:
     std::string label_;
 };
 
-class DemoArchetypeSelector final : public VSTGUI::CControl {
+class DemoRandomButton final : public VSTGUI::CControl {
 public:
-    DemoArchetypeSelector(
+    DemoRandomButton(
         const VSTGUI::CRect& size,
         VSTGUI::IControlListener* listener,
         int32_t tag,
         float defaultValue);
-    DemoArchetypeSelector(const DemoArchetypeSelector& other);
+    DemoRandomButton(const DemoRandomButton& other);
     VSTGUI::CBaseObject* newCopy() const override {
-        return new DemoArchetypeSelector(*this);
+        return new DemoRandomButton(*this);
     }
-
     void draw(VSTGUI::CDrawContext* context) override;
     VSTGUI::CMouseEventResult onMouseDown(
         VSTGUI::CPoint& where,
