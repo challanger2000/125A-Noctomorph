@@ -42,8 +42,6 @@ tresult PLUGIN_API Controller::setComponentState(IBStream* state) {
         return kResultFalse;
 
     setParamNormalized(
-        kArchetype, std::clamp<double>(values[0], 0.0, 1.0));
-    setParamNormalized(
         kFoundation, std::clamp<double>(values[1], 0.0, 1.0));
 
     return kResultOk;
@@ -68,17 +66,6 @@ VSTGUI::CView* Controller::createCustomView(
     if (std::strcmp(name, "Faceplate") == 0)
         return new DemoFaceplate(rect);
 
-    auto knob = [&](const char* viewName,
-                    ParamID id,
-                    const char* label,
-                    float defaultValue) -> VSTGUI::CView* {
-        if (std::strcmp(name, viewName) != 0)
-            return nullptr;
-        return new DemoKnob(
-            rect, editor, id, label, defaultValue);
-    };
-
-    if (auto* v = knob("Intensity", kFoundation, "INTENSITY", 0.50f)) return v;
 
     return nullptr;
 }
