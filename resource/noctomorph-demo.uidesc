@@ -1,37 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vstgui-ui-description version="1">
   <colors>
-    <color name="Background" rgba="#090B0DFF"/>
+    <color name="Background" rgba="#FFFFFFFF"/>
   </colors>
   <template name="view" class="CViewContainer"
-            origin="0,0" size="1120,620"
+            origin="0,0" size="340,340"
             transparent="false" background-color="Background">
     <view class="CView" custom-view-name="Faceplate"
-          origin="0,0" size="1120,620" mouse-enabled="false"/>
-
-    <view class="CView" custom-view-name="Archetype"
-          origin="90,92" size="940,48"/>
-
-    <view class="CView" custom-view-name="Foundation"
-          origin="52,194" size="160,158"/>
-    <view class="CView" custom-view-name="World"
-          origin="266,194" size="160,158"/>
-    <view class="CView" custom-view-name="Texture"
-          origin="480,194" size="160,158"/>
-    <view class="CView" custom-view-name="Body"
-          origin="694,194" size="160,158"/>
-    <view class="CView" custom-view-name="Space"
-          origin="908,194" size="160,158"/>
-
-    <view class="CView" custom-view-name="Tension"
-          origin="52,389" size="160,158"/>
-    <view class="CView" custom-view-name="Motion"
-          origin="266,389" size="160,158"/>
-    <view class="CView" custom-view-name="Evolve"
-          origin="480,389" size="160,158"/>
-    <view class="CView" custom-view-name="Events"
-          origin="694,389" size="160,158"/>
-    <view class="CView" custom-view-name="Output"
-          origin="908,389" size="160,158"/>
+          origin="0,0" size="340,340" mouse-enabled="false"/>
+    <view class="CView" custom-view-name="Intensity"
+          origin="90,82" size="160,158"/>
+    <view class="CView" custom-view-name="Random"
+          origin="105,266" size="130,42"/>
   </template>
 </vstgui-ui-description>
