@@ -96,9 +96,12 @@ int run(const std::string& path){
         if(!writeState(controllerState,kMagic,kVersion,controllerValues) ||
            controller->setComponentState(&controllerState)!=kResultTrue)
             return 5;
-        // Random/DNA is retained only for state compatibility and is no
-        // longer exposed by the one-knob controller.
-        if(controller->getParameterObject(kIds[0]) != nullptr) return 6;
+        // Random/DNA is retained only in component state for backward
+        // compatibility. The one-knob controller exposes only INTENSITY.
+        if(controller->getParameterCount()!=1) return 6;
+        ParameterInfo info{};
+        if(controller->getParameterInfo(0,info)!=kResultTrue ||
+           info.id!=kIds[1]) return 6;
         const double intensityActual=controller->getParamNormalized(kIds[1]);
         if(!nearly(intensityActual,controllerValues[1])) return 6;
         controller->terminate();
