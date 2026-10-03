@@ -386,6 +386,12 @@ void Engine::setArchetype(Archetype archetype) noexcept {
     configurePresence();
 }
 
+void Engine::setDroneFamily(int family) noexcept {
+    droneFamily_ = std::clamp(family, 0, 7);
+    configureBody();
+    configurePresence();
+}
+
 void Engine::setWorldPool(
     const Clip* const* clips, std::size_t count) noexcept {
     worldPool_.fill(nullptr);
