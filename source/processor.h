@@ -49,6 +49,9 @@ private:
     Steinberg::int32 activeNoteId_ = -1;
     Steinberg::int16 activePitch_ = -1;
     bool transportWasPlaying_ = false;
+    float randomControl_ = 0.173f;
+    float intensity_ = 0.50f;
+    std::uint64_t droneSeed_ = 0x125A4E4F43544452ULL;
 };
 
 } // namespace Noctomorph
