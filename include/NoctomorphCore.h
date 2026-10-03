@@ -151,6 +151,8 @@ private:
     float noiseStateL_ = 0.0f;
     float noiseStateR_ = 0.0f;
     float textureHpState_ = 0.0f;
+    float industrialRumbleL_ = 0.0f;
+    float industrialRumbleR_ = 0.0f;
     float industrialSubEnvelope_ = 0.0f;
     double industrialSubPhase_ = 0.0;
     double industrialSceneTime_ = 0.0;
