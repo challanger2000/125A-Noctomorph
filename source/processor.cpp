@@ -397,29 +397,17 @@ tresult PLUGIN_API Processor::process(ProcessData& data) {
 tresult PLUGIN_API Processor::setState(IBStream* state) {
     if (!state)
         return kResultFalse;
-
     IBStreamer stream(state, kLittleEndian);
     float values[kStateValueCount] {};
     if (!readState(stream, values))
         return kResultFalse;
-
     randomControl_ = values[0];
     intensity_ = values[1];
     droneSeed_ = 0x125A4E4F43540000ULL ^
-        (static_cast<std::uint64_t>(randomControl_ * 4294967295.0f) * 0x9E3779B97F4A7C15ULL);
+        (static_cast<std::uint64_t>(randomControl_ * 4294967295.0f) *
+         0x9E3779B97F4A7C15ULL);
     archetype_ = noctomorph::Archetype::Industrial;
     applyAssetProfile();
-    parameters_.foundation = values[1];
-    parameters_.world = values[2];
-    parameters_.texture = values[3];
-    parameters_.body = values[4];
-    parameters_.tension = values[5];
-    parameters_.evolve = values[6];
-    parameters_.events = values[7];
-    parameters_.space = values[8];
-    parameters_.output = values[9];
-    parameters_.motion = values[10];
-
     updateEngineParameters();
     return kResultOk;
 }
@@ -427,22 +415,8 @@ tresult PLUGIN_API Processor::setState(IBStream* state) {
 tresult PLUGIN_API Processor::getState(IBStream* state) {
     if (!state)
         return kResultFalse;
-
     IBStreamer stream(state, kLittleEndian);
-    const float values[kStateValueCount] = {
-        randomControl_,
-        intensity_,
-        parameters_.world,
-        parameters_.texture,
-        parameters_.body,
-        parameters_.tension,
-        parameters_.evolve,
-        parameters_.events,
-        parameters_.space,
-        parameters_.output,
-        parameters_.motion
-    };
-
+    const float values[kStateValueCount] = {randomControl_, intensity_};
     return writeState(stream, values) ? kResultOk : kResultFalse;
 }
 
