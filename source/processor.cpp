@@ -157,20 +157,55 @@ void Processor::applyParameter(ParamID id, float normalized) noexcept {
 void Processor::updateEngineParameters() noexcept {
     const float i = std::clamp(intensity_, 0.0f, 1.0f);
     const float dna = std::clamp(randomControl_, 0.0f, 1.0f);
-    const float d1 = 0.5f + 0.5f * std::sin(17.0f + dna * 47.0f);
-    const float d2 = 0.5f + 0.5f * std::sin(5.0f + dna * 79.0f);
-    const float d3 = 0.5f + 0.5f * std::cos(11.0f + dna * 61.0f);
-    parameters_.foundation = 0.16f + 0.28f * d1 + 0.28f * i;
-    parameters_.world = 0.22f + 0.28f * d2 + 0.30f * i;
-    parameters_.texture = 0.16f + 0.34f * d3 + 0.42f * i;
-    parameters_.body = 0.06f + 0.18f * (1.0f - d2) + 0.22f * i;
-    parameters_.tension = std::clamp(
-        0.12f + 0.38f * d3 + 0.40f * i, 0.0f, 1.0f);
-    parameters_.motion = 0.08f + 0.30f * d2 + 0.38f * i;
-    parameters_.evolve = 0.18f + 0.30f * d1 + 0.44f * i;
+
+    // RANDOM selects one of eight deliberately separated drone families.
+    // The fractional part still varies each family without collapsing the
+    // audible differences between them.
+    const float scaled = std::min(dna * 8.0f, 7.999f);
+    const int family = static_cast<int>(scaled);
+    const float morph = scaled - static_cast<float>(family);
+
+    static constexpr float kFoundation[8] = {
+        0.82f, 0.30f, 0.55f, 0.18f, 0.70f, 0.24f, 0.46f, 0.62f
+    };
+    static constexpr float kWorld[8] = {
+        0.64f, 0.84f, 0.36f, 0.52f, 0.28f, 0.72f, 0.44f, 0.58f
+    };
+    static constexpr float kTexture[8] = {
+        0.20f, 0.48f, 0.86f, 0.72f, 0.38f, 0.92f, 0.60f, 0.32f
+    };
+    static constexpr float kBody[8] = {
+        0.16f, 0.42f, 0.24f, 0.68f, 0.52f, 0.18f, 0.76f, 0.34f
+    };
+    static constexpr float kTension[8] = {
+        0.18f, 0.66f, 0.42f, 0.82f, 0.30f, 0.74f, 0.54f, 0.94f
+    };
+    static constexpr float kMotion[8] = {
+        0.12f, 0.54f, 0.86f, 0.28f, 0.72f, 0.94f, 0.40f, 0.64f
+    };
+    static constexpr float kEvolve[8] = {
+        0.28f, 0.72f, 0.48f, 0.88f, 0.36f, 0.62f, 0.96f, 0.54f
+    };
+    static constexpr float kSpace[8] = {
+        0.08f, 0.22f, 0.14f, 0.34f, 0.18f, 0.10f, 0.28f, 0.20f
+    };
+
+    const float micro = (morph - 0.5f) * 0.12f;
+    // INTENSITY is timbral density/aggression, not a volume fader.
+    parameters_.foundation = std::clamp(kFoundation[family] + 0.10f * i, 0.0f, 1.0f);
+    parameters_.world = std::clamp(kWorld[family] + 0.08f * i, 0.0f, 1.0f);
+    parameters_.texture = std::clamp(kTexture[family] + 0.42f * i + micro, 0.0f, 1.0f);
+    parameters_.body = std::clamp(kBody[family] + 0.30f * i, 0.0f, 1.0f);
+    parameters_.tension = std::clamp(kTension[family] + 0.34f * i + micro, 0.0f, 1.0f);
+    parameters_.motion = std::clamp(kMotion[family] + 0.36f * i, 0.0f, 1.0f);
+    parameters_.evolve = std::clamp(kEvolve[family] + 0.28f * i, 0.0f, 1.0f);
     parameters_.events = 0.0f;
-    parameters_.space = 0.06f + 0.12f * d3 + 0.16f * i;
-    parameters_.output = 0.62f;
+    parameters_.space = std::clamp(kSpace[family] + 0.14f * i, 0.0f, 0.55f);
+
+    // Compensate the additional layer density. The top end should sound
+    // harder and denser, not simply much louder.
+    parameters_.output = 0.72f - 0.20f * i;
+
     archetype_ = noctomorph::Archetype::Industrial;
     engine_.setParameters(parameters_);
     engine_.setArchetype(archetype_);
