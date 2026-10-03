@@ -206,10 +206,10 @@ void Processor::updateEngineParameters() noexcept {
     // should sit at a useful instrument level while INTENSITY changes timbre
     // much more than loudness.
     static constexpr float kFamilyOutput[8] = {
-        0.94f, 0.86f, 0.90f, 0.82f, 0.88f, 0.80f, 0.84f, 0.82f
+        1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f, 1.00f
     };
     parameters_.output = std::clamp(
-        kFamilyOutput[family] - 0.10f * i, 0.68f, 0.96f);
+        kFamilyOutput[family] - 0.04f * i, 0.90f, 1.00f);
 
     archetype_ = noctomorph::Archetype::Industrial;
     engine_.setParameters(parameters_);
