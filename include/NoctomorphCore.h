@@ -45,6 +45,7 @@ public:
 
     void setParameters(const Parameters& parameters) noexcept;
     void setArchetype(Archetype archetype) noexcept;
+    void setDroneFamily(int family) noexcept;
 
     void setWorldClip(const Clip* clip) noexcept;
     void setTextureClip(const Clip* clip) noexcept;
@@ -137,6 +138,7 @@ private:
     double sampleRate_ = 48000.0;
     Parameters parameters_ {};
     Archetype archetype_ = Archetype::Nocturne;
+    int droneFamily_ = 0;
     Rng rng_ {};
     Rng presenceRng_ {};
 
