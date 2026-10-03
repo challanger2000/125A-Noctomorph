@@ -157,16 +157,19 @@ void Processor::applyParameter(ParamID id, float normalized) noexcept {
 void Processor::updateEngineParameters() noexcept {
     const float i = std::clamp(intensity_, 0.0f, 1.0f);
     const float dna = std::clamp(randomControl_, 0.0f, 1.0f);
-    parameters_.foundation = 0.28f + 0.42f * i;
-    parameters_.world = 0.30f + 0.38f * i;
-    parameters_.texture = 0.22f + 0.62f * i;
-    parameters_.body = 0.10f + 0.30f * i;
+    const float d1 = 0.5f + 0.5f * std::sin(17.0f + dna * 47.0f);
+    const float d2 = 0.5f + 0.5f * std::sin(5.0f + dna * 79.0f);
+    const float d3 = 0.5f + 0.5f * std::cos(11.0f + dna * 61.0f);
+    parameters_.foundation = 0.16f + 0.28f * d1 + 0.28f * i;
+    parameters_.world = 0.22f + 0.28f * d2 + 0.30f * i;
+    parameters_.texture = 0.16f + 0.34f * d3 + 0.42f * i;
+    parameters_.body = 0.06f + 0.18f * (1.0f - d2) + 0.22f * i;
     parameters_.tension = std::clamp(
-        0.18f + 0.54f * i + 0.12f * std::sin(dna * 31.0f), 0.0f, 1.0f);
-    parameters_.motion = 0.12f + 0.56f * i;
-    parameters_.evolve = 0.28f + 0.62f * i;
+        0.12f + 0.38f * d3 + 0.40f * i, 0.0f, 1.0f);
+    parameters_.motion = 0.08f + 0.30f * d2 + 0.38f * i;
+    parameters_.evolve = 0.18f + 0.30f * d1 + 0.44f * i;
     parameters_.events = 0.0f;
-    parameters_.space = 0.10f + 0.22f * i;
+    parameters_.space = 0.06f + 0.12f * d3 + 0.16f * i;
     parameters_.output = 0.62f;
     archetype_ = noctomorph::Archetype::Industrial;
     engine_.setParameters(parameters_);
