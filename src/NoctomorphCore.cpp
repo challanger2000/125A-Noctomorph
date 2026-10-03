@@ -1462,6 +1462,18 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             dryR += body * envelope_ * bodyR;
         }
 
+        const float familyMono = 0.5f * (dryL + dryR);
+        const float familySideL = dryL - familyMono;
+        const float familySideR = dryR - familyMono;
+        if (droneFamily_ == 0) { dryL = 1.75f * familyMono + 0.18f * familySideL; dryR = 1.75f * familyMono + 0.18f * familySideR; }
+        else if (droneFamily_ == 1) { dryL = softClip(2.7f * dryL); dryR = softClip(2.3f * dryR); }
+        else if (droneFamily_ == 2) { dryL = 0.52f * familyMono + 1.55f * familySideL; dryR = 0.52f * familyMono + 1.55f * familySideR; }
+        else if (droneFamily_ == 3) { dryL = softClip(3.4f * dryL); dryR = softClip(3.4f * dryR); }
+        else if (droneFamily_ == 4) { const float pulse = 0.48f + 0.52f * static_cast<float>(0.5 + 0.5 * std::sin(kTwoPi * industrialSceneTime_ * 0.43)); dryL *= 1.55f * pulse; dryR *= 1.55f * pulse; }
+        else if (droneFamily_ == 5) { dryL = 0.68f * familyMono + 1.90f * familySideL; dryR = 0.68f * familyMono + 1.90f * familySideR; }
+        else if (droneFamily_ == 6) { dryL = softClip(4.6f * (0.72f * dryL + 0.28f * familyMono)); dryR = softClip(4.6f * (0.72f * dryR + 0.28f * familyMono)); }
+        else { dryL = 1.28f * familyMono + 0.82f * familySideL; dryR = 1.28f * familyMono + 0.82f * familySideR; }
+
         float spacedL = 0.0f;
         float spacedR = 0.0f;
         processSpace(dryL, dryR, spacedL, spacedR);
