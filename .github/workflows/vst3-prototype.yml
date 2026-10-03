@@ -19,69 +19,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  prepare-assets:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Restore verified 66-source scene bank
-        uses: actions/download-artifact@v4
-        with:
-          name: noctomorph-prepared-scene-bank
-          path: prepared-assets
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          run-id: 36920023709
-
-      - name: Verify restored scene bank
-        shell: bash
-        run: |
-          set -euo pipefail
-          find prepared-assets -maxdepth 1 -type f -name '*.wav' -printf '%f %s bytes\n' | sort
-          test "$(find prepared-assets -maxdepth 1 -type f -name '*.wav' | wc -l)" -eq 66
-
-      - name: Upload prepared scene bank
-        uses: actions/upload-artifact@v4
-        with:
-          name: noctomorph-prepared-scene-bank
-          path: prepared-assets/*.wav
-          if-no-files-found: error
-          retention-days: 1
-
   windows-vst3:
-    needs: prepare-assets
     runs-on: windows-2025
     timeout-minutes: 25
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Download prepared scene bank
-        uses: actions/download-artifact@v4
-        with:
-          name: noctomorph-prepared-scene-bank
-          path: prepared-assets
-
-      - name: Generate Windows embedded resources
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path generated-assets | Out-Null
-          python tools/generate_noctomorph_resources.py prepared-assets generated-assets
-          Get-ChildItem prepared-assets
-          Get-ChildItem generated-assets
-
       - name: Configure VST3 prototype
         shell: pwsh
         run: |
           cmake --version
-          $generated = (Resolve-Path generated-assets).Path
-          cmake -S . -B build-vst3 -G "Visual Studio 18 2026" -A x64 -DNOCTOMORPH_BUILD_VST3=ON "-DNOCTOMORPH_GENERATED_ASSET_DIR=$generated"
+          cmake -S . -B build-vst3 -G "Visual Studio 18 2026" -A x64 -DNOCTOMORPH_BUILD_VST3=ON
 
       - name: Build plugin core tests and validator
         shell: pwsh
@@ -92,19 +41,6 @@ jobs:
         shell: pwsh
         run: |
           ctest --test-dir build-vst3 -C Release -R noctomorph_core_tests --output-on-failure
-
-      - name: Install third-party attribution in bundle
-        shell: pwsh
-        run: |
-          $plugin = Get-ChildItem -Path build-vst3 -Recurse -Directory -Filter "Noctomorph.vst3" | Select-Object -First 1
-          if (-not $plugin) { Write-Error "Noctomorph.vst3 not found"; exit 1 }
-          $resources = Join-Path $plugin.FullName "Contents\Resources"
-          New-Item -ItemType Directory -Force -Path $resources | Out-Null
-          Copy-Item resource/THIRD-PARTY-AUDIO-LICENSES.txt (Join-Path $resources "THIRD-PARTY-AUDIO-LICENSES.txt") -Force
-          if (-not (Test-Path (Join-Path $resources "THIRD-PARTY-AUDIO-LICENSES.txt"))) {
-            Write-Error "Third-party attribution missing from VST3 bundle"
-            exit 1
-          }
 
       - name: Run state recall and process contract probes
         shell: pwsh
