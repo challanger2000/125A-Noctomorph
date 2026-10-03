@@ -68,6 +68,8 @@ tresult PLUGIN_API Processor::setupProcessing(ProcessSetup& setup) {
         return result;
 
     sampleRate_ = setup.sampleRate > 1.0 ? setup.sampleRate : 48000.0;
+    deClickSamplesTotal_ = std::max<Steinberg::int32>(1, static_cast<Steinberg::int32>(std::lround(0.004 * sampleRate_)));
+    deClickSamplesRemaining_ = 0;
     engine_.prepare(sampleRate_);
     resetEngine();
     return kResultOk;
@@ -184,11 +186,15 @@ void Processor::handleNoteOn(const Event& event) noexcept {
         return;
 
     // Monophonic scene instrument: each new note starts the same reproducible
-    // world from its initial state. No time-based randomness is used.
+    // world from its initial state. A 4 ms fade-in removes the discontinuity
+    // caused by the hard deterministic reset on pitch changes.
+    const bool replacingHeldNote = activePitch_ >= 0;
     engine_.reset(droneSeed_);
     engine_.setArchetype(noctomorph::Archetype::Industrial);
     updateEngineParameters();
     engine_.noteOn(event.noteOn.pitch, event.noteOn.velocity);
+    if (replacingHeldNote)
+        deClickSamplesRemaining_ = deClickSamplesTotal_;
 
     activeNoteId_ = event.noteOn.noteId;
     activePitch_ = event.noteOn.pitch;
@@ -376,6 +382,13 @@ tresult PLUGIN_API Processor::process(ProcessData& data) {
         applyEventsAt(sample);
 
         engine_.process(left + sample, right + sample, 1);
+        if (deClickSamplesRemaining_ > 0) {
+            const float fade = 1.0f - static_cast<float>(deClickSamplesRemaining_) /
+                static_cast<float>(deClickSamplesTotal_);
+            left[sample] *= fade;
+            right[sample] *= fade;
+            --deClickSamplesRemaining_;
+        }
         peak = std::max(
             peak, std::max(std::fabs(left[sample]), std::fabs(right[sample])));
     }
