@@ -16,33 +16,6 @@ using namespace Steinberg;
 using namespace Steinberg::Vst;
 
 namespace Noctomorph {
-namespace {
-
-constexpr std::uint64_t kPrototypeSeed = 0x125A4E4F43545653ULL;
-
-int archetypeIndex(float normalized) noexcept {
-    const float v = std::clamp(
-        std::isfinite(normalized) ? normalized : 0.0f, 0.0f, 1.0f);
-    return std::clamp(static_cast<int>(std::floor(v * 6.0f)), 0, 5);
-}
-
-noctomorph::Archetype archetypeFromIndex(int index) noexcept {
-    switch (std::clamp(index, 0, 5)) {
-        case 0: return noctomorph::Archetype::Void;
-        case 1: return noctomorph::Archetype::Ruins;
-        case 2: return noctomorph::Archetype::Industrial;
-        case 3: return noctomorph::Archetype::Wasteland;
-        case 4: return noctomorph::Archetype::Abyss;
-        default: return noctomorph::Archetype::Nocturne;
-    }
-}
-
-float archetypeNormalized(noctomorph::Archetype archetype) noexcept {
-    return static_cast<float>(static_cast<unsigned>(archetype)) / 5.0f;
-}
-
-} // namespace
-
 Processor::Processor() {
     setControllerClass(ControllerUID);
 }
@@ -138,7 +111,6 @@ void Processor::applyParameter(ParamID id, float normalized) noexcept {
             droneSeed_ =
                 0x125A4E4F43540000ULL ^
                 (static_cast<std::uint64_t>(v * 4294967295.0f) * 0x9E3779B97F4A7C15ULL);
-            randomChanged_ = true;
             break;
         case kFoundation:
             intensity_ = v;
@@ -178,7 +150,6 @@ void Processor::updateEngineParameters() noexcept {
     engine_.setParameters(parameters_);
     engine_.setArchetype(archetype_);
     engine_.setDroneFamily(7);
-    randomChanged_ = false;
 }
 
 void Processor::handleNoteOn(const Event& event) noexcept {
