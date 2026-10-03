@@ -136,6 +136,7 @@ void Processor::applyParameter(ParamID id, float normalized) noexcept {
             droneSeed_ =
                 0x125A4E4F43540000ULL ^
                 (static_cast<std::uint64_t>(v * 4294967295.0f) * 0x9E3779B97F4A7C15ULL);
+            randomChanged_ = true;
             break;
         case kFoundation:
             intensity_ = v;
@@ -170,6 +171,16 @@ void Processor::updateEngineParameters() noexcept {
     archetype_ = noctomorph::Archetype::Industrial;
     engine_.setParameters(parameters_);
     engine_.setArchetype(archetype_);
+
+    if (randomChanged_ && activePitch_ >= 0) {
+        const int pitch = activePitch_;
+        engine_.reset(droneSeed_);
+        engine_.setArchetype(noctomorph::Archetype::Industrial);
+        applyAssetProfile();
+        engine_.setParameters(parameters_);
+        engine_.noteOn(pitch, 1.0f);
+    }
+    randomChanged_ = false;
 }
 
 void Processor::handleNoteOn(const Event& event) noexcept {
