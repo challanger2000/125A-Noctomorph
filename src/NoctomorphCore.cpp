@@ -1474,6 +1474,48 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         else if (droneFamily_ == 6) { dryL = softClip(4.6f * (0.72f * dryL + 0.28f * familyMono)); dryR = softClip(4.6f * (0.72f * dryR + 0.28f * familyMono)); }
         else { dryL = 1.28f * familyMono + 0.82f * familySideL; dryR = 1.28f * familyMono + 0.82f * familySideR; }
 
+        // RANDOM selects genuinely different output structures, not only mixes.
+        const float droneMono = 0.5f * (dryL + dryR);
+        const float droneSideL = dryL - droneMono;
+        const float droneSideR = dryR - droneMono;
+        switch (droneFamily_) {
+            case 0:
+                dryL = 1.75f * droneMono + 0.18f * droneSideL;
+                dryR = 1.75f * droneMono + 0.18f * droneSideR;
+                break;
+            case 1:
+                dryL = softClip(2.7f * (0.82f * dryL + 0.18f * droneMono));
+                dryR = softClip(2.3f * (0.82f * dryR + 0.18f * droneMono));
+                break;
+            case 2:
+                dryL = 0.52f * droneMono + 1.55f * droneSideL;
+                dryR = 0.52f * droneMono + 1.55f * droneSideR;
+                break;
+            case 3:
+                dryL = softClip(3.4f * dryL);
+                dryR = softClip(3.4f * dryR);
+                break;
+            case 4: {
+                const float pulse = 0.48f + 0.52f * static_cast<float>(
+                    0.5 + 0.5 * std::sin(kTwoPi * industrialSceneTime_ * 0.43));
+                dryL *= 1.55f * pulse;
+                dryR *= 1.55f * pulse;
+                break;
+            }
+            case 5:
+                dryL = 0.68f * droneMono + 1.90f * droneSideL;
+                dryR = 0.68f * droneMono + 1.90f * droneSideR;
+                break;
+            case 6:
+                dryL = softClip(4.6f * (0.72f * dryL + 0.28f * droneMono));
+                dryR = softClip(4.6f * (0.72f * dryR + 0.28f * droneMono));
+                break;
+            default:
+                dryL = 1.28f * droneMono + 0.82f * droneSideL;
+                dryR = 1.28f * droneMono + 0.82f * droneSideR;
+                break;
+        }
+
         float spacedL = 0.0f;
         float spacedR = 0.0f;
         processSpace(dryL, dryR, spacedL, spacedR);
