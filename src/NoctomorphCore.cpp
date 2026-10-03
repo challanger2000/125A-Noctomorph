@@ -311,6 +311,8 @@ void Engine::reset(std::uint64_t seedValue) noexcept {
     noiseStateL_ = 0.0f;
     noiseStateR_ = 0.0f;
     textureHpState_ = 0.0f;
+    industrialRumbleL_ = 0.0f;
+    industrialRumbleR_ = 0.0f;
     industrialSubEnvelope_ = 0.0f;
     industrialSubPhase_ = 0.0;
     industrialSceneTime_ = 0.0;
@@ -1208,6 +1210,22 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
             worldR /= divisor;
         }
 
+        // Asset-free INDUSTRIAL bed: very slow, decorrelated low-frequency
+        // pressure noise. This is atmosphere, not a recognisable machine.
+        if (archetype_ == Archetype::Industrial && worldGainSum <= 0.0f) {
+            const float rumbleCoeff =
+                0.00020f + 0.00055f * parameters_.motion;
+            industrialRumbleL_ +=
+                rumbleCoeff * (rng_.bipolar() - industrialRumbleL_);
+            industrialRumbleR_ +=
+                rumbleCoeff * (rng_.bipolar() - industrialRumbleR_);
+            const float width = 0.38f + 0.30f * parameters_.evolve;
+            const float mid = 0.5f * (industrialRumbleL_ + industrialRumbleR_);
+            worldL = 0.72f * mid + width * (industrialRumbleL_ - mid);
+            worldR = 0.72f * mid + width * (industrialRumbleR_ - mid);
+            worldGainSum = 1.0f;
+        }
+
         if (world > 0.0f && envelope_ > 0.0f) {
             const float worldScale =
                 archetype_ == Archetype::Industrial
@@ -1219,7 +1237,8 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
 
         if (archetype_ == Archetype::Industrial && envelope_ > 0.0f) {
             const float worldEnergy =
-                std::min(1.0f, 2.4f * std::fabs(0.5f * (worldL + worldR)));
+                std::min(1.0f,
+                    0.18f + 5.0f * std::fabs(0.5f * (worldL + worldR)));
             const float subEnvCoeff = static_cast<float>(
                 1.0 - std::exp(-1.0 / (0.32 * sampleRate_)));
             industrialSubEnvelope_ +=
@@ -1341,7 +1360,11 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                     ? (0.58f + 0.28f * industrialSceneIntensity_)
                     : 0.62f;
             const float noiseScale =
-                archetype_ == Archetype::Industrial ? 0.012f : 0.035f;
+                archetype_ == Archetype::Industrial
+                    ? (anyTextureActive
+                        ? 0.012f
+                        : 0.16f + 0.10f * industrialSceneIntensity_)
+                    : 0.035f;
             dryL += texture * envelope_ * (1.0f - pan) *
                 (realTextureScale * realWeight * textureL + noiseScale * synthWeight * darkNoiseL);
             dryR += texture * envelope_ * (1.0f + pan) *
@@ -1403,7 +1426,7 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
 
         const float industrialContinuousExciter =
             archetype_ == Archetype::Industrial && gate_
-                ? 0.010f * envelope_ *
+                ? 0.018f * envelope_ *
                     (0.35f * noiseStateL_ + 0.35f * noiseStateR_ +
                      0.30f * rng_.bipolar())
                 : 0.0f;
