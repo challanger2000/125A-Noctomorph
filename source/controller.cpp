@@ -46,13 +46,10 @@ tresult PLUGIN_API Controller::setComponentState(IBStream* state) {
     if (!readState(stream, values))
         return kResultFalse;
 
-    const ParamID ids[kStateValueCount] = {
-        kArchetype, kFoundation, kWorld, kTexture, kBody,
-        kTension, kEvolve, kEvents, kSpace, kOutput, kMotion
-    };
-
-    for (int i = 0; i < kStateValueCount; ++i)
-        setParamNormalized(ids[i], std::clamp<double>(values[i], 0.0, 1.0));
+    setParamNormalized(
+        kArchetype, std::clamp<double>(values[0], 0.0, 1.0));
+    setParamNormalized(
+        kFoundation, std::clamp<double>(values[1], 0.0, 1.0));
 
     return kResultOk;
 }
