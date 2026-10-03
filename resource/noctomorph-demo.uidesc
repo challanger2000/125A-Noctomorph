@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vstgui-ui-description version="1">
   <bitmaps>
-    <bitmap name="IntensityKnob" path="Noctomorph_Intensity_Knob_125x125_128.png"/>
+    <bitmap name="IntensityKnob" path="Noctomorph_Intensity_Knob_185x185_128.png"/>
   </bitmaps>
   <colors>
     <color name="Background" rgba="#FFFFFFFF"/>
@@ -13,7 +13,7 @@
           origin="0,0" size="340,340" mouse-enabled="false"/>
     <view class="CAnimKnob" control-tag="3001"
           origin="77.5,78" size="185,185"
-          bitmap="IntensityKnob" height-of-one-image="125"
+          bitmap="IntensityKnob" height-of-one-image="185"
           sub-pixmaps="128" inverse-bitmap="false"/>
   </template>
 </vstgui-ui-description>
