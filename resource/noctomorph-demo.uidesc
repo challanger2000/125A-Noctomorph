@@ -10,7 +10,5 @@
           origin="0,0" size="340,340" mouse-enabled="false"/>
     <view class="CView" custom-view-name="Intensity"
           origin="90,82" size="160,158"/>
-    <view class="CView" custom-view-name="Random"
-          origin="105,266" size="130,42"/>
   </template>
 </vstgui-ui-description>
