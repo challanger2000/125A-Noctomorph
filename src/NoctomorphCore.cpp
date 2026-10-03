@@ -1510,10 +1510,20 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
                 dryL = softClip(4.6f * (0.72f * dryL + 0.28f * droneMono));
                 dryR = softClip(4.6f * (0.72f * dryR + 0.28f * droneMono));
                 break;
-            default:
-                dryL = 1.28f * droneMono + 0.82f * droneSideL;
-                dryR = 1.28f * droneMono + 0.82f * droneSideR;
+            default: {
+                // Fixed Noctomorph voice: centred low mass, broad cold edges,
+                // then restrained nonlinear glue. This is deliberately not a
+                // pad and not an obvious modulation effect.
+                const float threat = parameters_.tension;
+                const float edge = 0.62f + 0.34f * parameters_.texture;
+                const float mass = 1.38f + 0.34f * parameters_.foundation;
+                dryL = mass * droneMono + edge * droneSideL;
+                dryR = mass * droneMono + edge * droneSideR;
+                const float drive = 1.25f + 1.15f * threat;
+                dryL = 0.72f * dryL + 0.28f * softClip(drive * dryL);
+                dryR = 0.72f * dryR + 0.28f * softClip(drive * dryR);
                 break;
+            }
         }
 
         float spacedL = 0.0f;
@@ -1523,7 +1533,9 @@ void Engine::process(float* left, float* right, std::size_t frames) noexcept {
         // OUTPUT: 0 % = silence, 50 % = nominal -6.02 dB trim,
         // 100 % = nominal unity. The default leaves headroom for real-source
         // layers and modal/event summation.
-        const float gain = parameters_.output;
+        // Fixed make-up gain puts the drone at a practical instrument level;
+        // safeOutput remains the final -1 dBFS guard.
+        const float gain = parameters_.output * 2.35f;
         left[n] = safeOutput(spacedL * gain);
         right[n] = safeOutput(spacedR * gain);
 
