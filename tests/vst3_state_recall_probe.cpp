@@ -96,10 +96,11 @@ int run(const std::string& path){
         if(!writeState(controllerState,kMagic,kVersion,controllerValues) ||
            controller->setComponentState(&controllerState)!=kResultTrue)
             return 5;
-        for(size_t i=0;i<kIds.size();++i){
-            const double actual=controller->getParamNormalized(kIds[i]);
-            if(!nearly(actual,controllerValues[i])) return 6;
-        }
+        // Random/DNA is retained only for state compatibility and is no
+        // longer exposed by the one-knob controller.
+        if(controller->getParameterObject(kIds[0]) != nullptr) return 6;
+        const double intensityActual=controller->getParamNormalized(kIds[1]);
+        if(!nearly(intensityActual,controllerValues[1])) return 6;
         controller->terminate();
         controller.reset();
 
