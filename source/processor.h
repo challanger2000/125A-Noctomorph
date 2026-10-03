@@ -52,6 +52,7 @@ private:
     float randomControl_ = 0.173f;
     float intensity_ = 0.50f;
     std::uint64_t droneSeed_ = 0x125A4E4F43544452ULL;
+    bool randomChanged_ = false;
 };
 
 } // namespace Noctomorph
