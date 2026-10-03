@@ -202,9 +202,14 @@ void Processor::updateEngineParameters() noexcept {
     parameters_.events = 0.0f;
     parameters_.space = std::clamp(kSpace[family] + 0.14f * i, 0.0f, 0.55f);
 
-    // Compensate the additional layer density. The top end should sound
-    // harder and denser, not simply much louder.
-    parameters_.output = 0.72f - 0.20f * i;
+    // Family-specific gain staging plus intensity compensation. The drone
+    // should sit at a useful instrument level while INTENSITY changes timbre
+    // much more than loudness.
+    static constexpr float kFamilyOutput[8] = {
+        0.94f, 0.86f, 0.90f, 0.82f, 0.88f, 0.80f, 0.84f, 0.82f
+    };
+    parameters_.output = std::clamp(
+        kFamilyOutput[family] - 0.10f * i, 0.68f, 0.96f);
 
     archetype_ = noctomorph::Archetype::Industrial;
     engine_.setParameters(parameters_);
