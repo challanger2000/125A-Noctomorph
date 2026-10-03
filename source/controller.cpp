@@ -19,11 +19,6 @@ tresult PLUGIN_API Controller::initialize(FUnknown* context) {
     if (result != kResultOk)
         return result;
 
-    auto* random = new RangeParameter(
-        STR16("Random"), kArchetype, nullptr, 0.0, 1000.0, 173.0);
-    random->setPrecision(0);
-    parameters.addParameter(random);
-
     auto addPercent = [&](const TChar* title, ParamID id, double def) {
         auto* parameter = new RangeParameter(
             title, id, STR16("%"), 0.0, 100.0, def * 100.0);
@@ -72,10 +67,6 @@ VSTGUI::CView* Controller::createCustomView(
 
     if (std::strcmp(name, "Faceplate") == 0)
         return new DemoFaceplate(rect);
-
-    if (std::strcmp(name, "Random") == 0)
-        return new DemoRandomButton(
-            rect, editor, kArchetype, 0.173f);
 
     auto knob = [&](const char* viewName,
                     ParamID id,
