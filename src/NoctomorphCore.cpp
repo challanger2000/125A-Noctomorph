@@ -509,7 +509,12 @@ void Engine::configureBody() noexcept {
             const double tensionWarp =
                 1.0 + static_cast<double>(tension) *
                     (0.012 + 0.0025 * static_cast<double>(i)) * parity;
-            frequency = industrialFrequencies[i] * tensionWarp;
+            const double tonalFrequency =
+                static_cast<double>(root) * static_cast<double>(baseRatios[i]);
+            const double tonalBlend = i < 5 ? 0.58 : 0.18;
+            frequency =
+                ((1.0 - tonalBlend) * industrialFrequencies[i] +
+                 tonalBlend * tonalFrequency) * tensionWarp;
             decay =
                 0.10 + 0.018 * static_cast<double>(i) +
                 0.22 * static_cast<double>(parameters_.body);
