@@ -42,7 +42,6 @@ private:
     PrototypeAssetBank assetBank_{};
     bool assetsLoaded_ = false;
     noctomorph::Parameters parameters_{};
-    // StringListParameter defaults to its first entry; keep DSP state identical.
     noctomorph::Archetype archetype_ = noctomorph::Archetype::Void;
 
     double sampleRate_ = 48000.0;
@@ -52,7 +51,6 @@ private:
     float randomControl_ = 0.173f;
     float intensity_ = 0.50f;
     std::uint64_t droneSeed_ = 0x125A4E4F43544452ULL;
-    bool randomChanged_ = false;
     Steinberg::int32 deClickSamplesRemaining_ = 0;
     Steinberg::int32 deClickSamplesTotal_ = 1;
 };
