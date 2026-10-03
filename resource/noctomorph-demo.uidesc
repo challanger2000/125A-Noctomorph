@@ -12,7 +12,7 @@
     <view class="CView" custom-view-name="Faceplate"
           origin="0,0" size="340,340" mouse-enabled="false"/>
     <view class="CAnimKnob" control-tag="3001"
-          origin="107.5,88" size="125,125"
+          origin="77.5,78" size="185,185"
           bitmap="IntensityKnob" height-of-one-image="125"
           sub-pixmaps="128" inverse-bitmap="false"/>
   </template>
