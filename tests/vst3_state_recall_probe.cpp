@@ -9,7 +9,6 @@
 #include <array>
 #include <cmath>
 #include <iostream>
-#include <limits>
 #include <string>
 
 using namespace Steinberg;
@@ -129,14 +128,6 @@ int run(const std::string& path){
         if(!writeState(restoreCustom,kMagic,kVersion,custom) ||
            component->setState(&restoreCustom)!=kResultTrue)
             return 11;
-
-        auto bad=custom; bad[1]=std::numeric_limits<float>::quiet_NaN();
-        MemoryStream invalid;
-        if(!writeState(invalid,kMagic,kVersion,bad)) {
-            // writeState in this standalone probe intentionally writes raw floats;
-            // NaN validation belongs to the component reader.
-            invalid = MemoryStream{};
-        }
 
         if(component->terminate()!=kResultOk) return 16;
         std::cout<<"Noctomorph state/recall contract PASS incl. v2->v3 macro migration\n";
