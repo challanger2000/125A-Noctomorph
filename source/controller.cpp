@@ -19,16 +19,10 @@ tresult PLUGIN_API Controller::initialize(FUnknown* context) {
     if (result != kResultOk)
         return result;
 
-    auto* archetype = new StringListParameter(
-        STR16("Archetype"), kArchetype, nullptr,
-        ParameterInfo::kCanAutomate | ParameterInfo::kIsList);
-    archetype->appendString(STR16("Void"));
-    archetype->appendString(STR16("Ruins"));
-    archetype->appendString(STR16("Industrial"));
-    archetype->appendString(STR16("Wasteland"));
-    archetype->appendString(STR16("Abyss"));
-    archetype->appendString(STR16("Nocturne"));
-    parameters.addParameter(archetype);
+    auto* random = new RangeParameter(
+        STR16("Random"), kArchetype, nullptr, 0.0, 1000.0, 173.0);
+    random->setPrecision(0);
+    parameters.addParameter(random);
 
     auto addPercent = [&](const TChar* title, ParamID id, double def) {
         auto* parameter = new RangeParameter(
@@ -37,16 +31,8 @@ tresult PLUGIN_API Controller::initialize(FUnknown* context) {
         parameters.addParameter(parameter);
     };
 
-    addPercent(STR16("Foundation"), kFoundation, 0.30);
-    addPercent(STR16("World"), kWorld, 0.42);
-    addPercent(STR16("Texture"), kTexture, 0.34);
-    addPercent(STR16("Body"), kBody, 0.30);
-    addPercent(STR16("Tension"), kTension, 0.32);
-    addPercent(STR16("Motion"), kMotion, 0.45);
-    addPercent(STR16("Evolve"), kEvolve, 0.45);
-    addPercent(STR16("Events"), kEvents, 0.00);
-    addPercent(STR16("Space"), kSpace, 0.45);
-    addPercent(STR16("Output"), kOutput, 0.50);
+    addPercent(STR16("Intensity"), kFoundation, 0.50);
+
 
     return kResultOk;
 }
@@ -90,9 +76,9 @@ VSTGUI::CView* Controller::createCustomView(
     if (std::strcmp(name, "Faceplate") == 0)
         return new DemoFaceplate(rect);
 
-    if (std::strcmp(name, "Archetype") == 0)
-        return new DemoArchetypeSelector(
-            rect, editor, kArchetype, 0.0f);
+    if (std::strcmp(name, "Random") == 0)
+        return new DemoRandomButton(
+            rect, editor, kArchetype, 0.173f);
 
     auto knob = [&](const char* viewName,
                     ParamID id,
@@ -104,16 +90,7 @@ VSTGUI::CView* Controller::createCustomView(
             rect, editor, id, label, defaultValue);
     };
 
-    if (auto* v = knob("Foundation", kFoundation, "FOUNDATION", 0.30f)) return v;
-    if (auto* v = knob("World",      kWorld,      "WORLD",      0.42f)) return v;
-    if (auto* v = knob("Texture",    kTexture,    "TEXTURE",    0.34f)) return v;
-    if (auto* v = knob("Body",       kBody,       "BODY",       0.30f)) return v;
-    if (auto* v = knob("Space",      kSpace,      "SPACE",      0.45f)) return v;
-    if (auto* v = knob("Tension",    kTension,    "TENSION",    0.32f)) return v;
-    if (auto* v = knob("Motion",     kMotion,     "MOTION",     0.45f)) return v;
-    if (auto* v = knob("Evolve",     kEvolve,     "EVOLVE",     0.45f)) return v;
-    if (auto* v = knob("Events",     kEvents,     "EVENTS",     0.00f)) return v;
-    if (auto* v = knob("Output",     kOutput,     "OUTPUT",     0.50f)) return v;
+    if (auto* v = knob("Intensity", kFoundation, "INTENSITY", 0.50f)) return v;
 
     return nullptr;
 }
