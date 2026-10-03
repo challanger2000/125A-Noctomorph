@@ -160,6 +160,7 @@ void Processor::updateEngineParameters() noexcept {
     // One fixed industrial drone. INTENSITY evolves density, threat and
     // spectral complexity without changing the underlying identity.
     // Kept intentionally single-voice: there is no user-selectable DNA.
+    // INTENSITY is the complete public sound-shaping surface.
     parameters_.foundation = 0.72f + 0.18f * i;
     parameters_.world = 0.62f + 0.16f * i;
     parameters_.texture = 0.26f + 0.58f * i;
