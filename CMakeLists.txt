@@ -118,6 +118,7 @@ if(NOCTOMORPH_BUILD_VST3)
 
     smtg_target_add_plugin_resources(Noctomorph RESOURCES
         "resource/noctomorph-demo.uidesc"
+        "resource/Noctomorph_Intensity_Knob_125x125_128.png"
     )
     target_compile_features(Noctomorph PRIVATE cxx_std_17)
     smtg_target_configure_version_file(Noctomorph)
