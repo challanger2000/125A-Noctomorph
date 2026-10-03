@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <vstgui-ui-description version="1">
+  <bitmaps>
+    <bitmap name="IntensityKnob" path="Noctomorph_Intensity_Knob_125x125_128.png"/>
+  </bitmaps>
   <colors>
     <color name="Background" rgba="#FFFFFFFF"/>
   </colors>
@@ -8,7 +11,9 @@
             transparent="false" background-color="Background">
     <view class="CView" custom-view-name="Faceplate"
           origin="0,0" size="340,340" mouse-enabled="false"/>
-    <view class="CView" custom-view-name="Intensity"
-          origin="90,82" size="160,158"/>
+    <view class="CAnimKnob" control-tag="3001"
+          origin="107.5,88" size="125,125"
+          bitmap="IntensityKnob" height-of-one-image="125"
+          sub-pixmaps="128" inverse-bitmap="false"/>
   </template>
 </vstgui-ui-description>

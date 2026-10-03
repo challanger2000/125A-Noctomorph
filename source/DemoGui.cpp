@@ -82,6 +82,10 @@ void DemoFaceplate::draw(VSTGUI::CDrawContext* c) {
     c->setFontColor(kMuted);
     c->drawString(VSTGUI::UTF8String("125A  INDUSTRIAL DRONE GENERATOR"),
         VSTGUI::CRect{20, 45, r.right - 20, 63}, VSTGUI::kCenterText);
+    c->setFont(VSTGUI::kNormalFont, 11.0, VSTGUI::kBoldFace);
+    c->setFontColor(kText);
+    c->drawString(VSTGUI::UTF8String("INTENSITY"),
+        VSTGUI::CRect{20, 222, r.right - 20, 242}, VSTGUI::kCenterText);
     setDirty(false);
 }
 
