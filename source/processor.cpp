@@ -214,11 +214,13 @@ void Processor::updateEngineParameters() noexcept {
     archetype_ = noctomorph::Archetype::Industrial;
     engine_.setParameters(parameters_);
     engine_.setArchetype(archetype_);
+    engine_.setDroneFamily(family);
 
     if (randomChanged_ && activePitch_ >= 0) {
         const int pitch = activePitch_;
         engine_.reset(droneSeed_);
         engine_.setArchetype(noctomorph::Archetype::Industrial);
+        engine_.setDroneFamily(family);
         applyAssetProfile();
         engine_.setParameters(parameters_);
         engine_.noteOn(pitch, 1.0f);
