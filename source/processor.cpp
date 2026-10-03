@@ -109,7 +109,7 @@ void Processor::applyAssetProfile() noexcept {
         return;
     }
 
-    const auto scene = assetBank_.sceneFor(archetype_);
+    const auto scene = assetBank_.sceneFor(noctomorph::Archetype::Industrial);
     engine_.setWorldPool(scene.world.data(), scene.worldCount);
     engine_.setTexturePool(scene.texture.data(), scene.textureCount);
     engine_.setBodyExciterPool(scene.body.data(), scene.bodyCount);
@@ -119,7 +119,8 @@ void Processor::resetEngine() noexcept {
     activeNoteId_ = -1;
     activePitch_ = -1;
     transportWasPlaying_ = false;
-    engine_.reset(kPrototypeSeed);
+    engine_.reset(droneSeed_);
+    archetype_ = noctomorph::Archetype::Industrial;
     engine_.setArchetype(archetype_);
     applyAssetProfile();
     updateEngineParameters();
@@ -131,11 +132,14 @@ void Processor::applyParameter(ParamID id, float normalized) noexcept {
 
     switch (id) {
         case kArchetype:
-            archetype_ = archetypeFromIndex(archetypeIndex(v));
-            engine_.setArchetype(archetype_);
-            applyAssetProfile();
+            randomControl_ = v;
+            droneSeed_ =
+                0x125A4E4F43540000ULL ^
+                (static_cast<std::uint64_t>(v * 4294967295.0f) * 0x9E3779B97F4A7C15ULL);
             break;
-        case kFoundation: parameters_.foundation = v; break;
+        case kFoundation:
+            intensity_ = v;
+            break;
         case kWorld:      parameters_.world = v; break;
         case kTexture:    parameters_.texture = v; break;
         case kBody:       parameters_.body = v; break;
@@ -150,6 +154,20 @@ void Processor::applyParameter(ParamID id, float normalized) noexcept {
 }
 
 void Processor::updateEngineParameters() noexcept {
+    const float i = std::clamp(intensity_, 0.0f, 1.0f);
+    const float dna = std::clamp(randomControl_, 0.0f, 1.0f);
+    parameters_.foundation = 0.28f + 0.42f * i;
+    parameters_.world = 0.30f + 0.38f * i;
+    parameters_.texture = 0.22f + 0.62f * i;
+    parameters_.body = 0.10f + 0.30f * i;
+    parameters_.tension = std::clamp(
+        0.18f + 0.54f * i + 0.12f * std::sin(dna * 31.0f), 0.0f, 1.0f);
+    parameters_.motion = 0.12f + 0.56f * i;
+    parameters_.evolve = 0.28f + 0.62f * i;
+    parameters_.events = 0.0f;
+    parameters_.space = 0.10f + 0.22f * i;
+    parameters_.output = 0.62f;
+    archetype_ = noctomorph::Archetype::Industrial;
     engine_.setParameters(parameters_);
     engine_.setArchetype(archetype_);
 }
@@ -160,8 +178,8 @@ void Processor::handleNoteOn(const Event& event) noexcept {
 
     // Monophonic scene instrument: each new note starts the same reproducible
     // world from its initial state. No time-based randomness is used.
-    engine_.reset(kPrototypeSeed);
-    engine_.setArchetype(archetype_);
+    engine_.reset(droneSeed_);
+    engine_.setArchetype(noctomorph::Archetype::Industrial);
     updateEngineParameters();
     engine_.noteOn(event.noteOn.pitch, event.noteOn.velocity);
 
@@ -371,7 +389,11 @@ tresult PLUGIN_API Processor::setState(IBStream* state) {
     if (!readState(stream, values))
         return kResultFalse;
 
-    archetype_ = archetypeFromIndex(archetypeIndex(values[0]));
+    randomControl_ = values[0];
+    intensity_ = values[1];
+    droneSeed_ = 0x125A4E4F43540000ULL ^
+        (static_cast<std::uint64_t>(randomControl_ * 4294967295.0f) * 0x9E3779B97F4A7C15ULL);
+    archetype_ = noctomorph::Archetype::Industrial;
     applyAssetProfile();
     parameters_.foundation = values[1];
     parameters_.world = values[2];
@@ -394,8 +416,8 @@ tresult PLUGIN_API Processor::getState(IBStream* state) {
 
     IBStreamer stream(state, kLittleEndian);
     const float values[kStateValueCount] = {
-        archetypeNormalized(archetype_),
-        parameters_.foundation,
+        randomControl_,
+        intensity_,
         parameters_.world,
         parameters_.texture,
         parameters_.body,
