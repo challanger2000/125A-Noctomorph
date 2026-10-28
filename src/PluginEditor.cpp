@@ -186,7 +186,9 @@ V4JBAudioProcessorEditor::V4JBAudioProcessorEditor (V4JBAudioProcessor& p)
     content.addChildComponent (aboutBox);
 
     // VST3 stays keyboard-free. The host already has keys; this strip is for Standalone.
-    if (proc.wrapperType == juce::AudioProcessor::wrapperType_Standalone)
+    const auto captureDir = juce::SystemStats::getEnvironmentVariable ("V4JB_CAPTURE_GUI_DIR", {});
+    // Test mode renders the VST3-sized editor without the Standalone-only keys.
+    if (proc.wrapperType == juce::AudioProcessor::wrapperType_Standalone && captureDir.isEmpty())
     {
         keyboard = std::make_unique<juce::MidiKeyboardComponent> (
             keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard);
@@ -217,7 +219,8 @@ V4JBAudioProcessorEditor::V4JBAudioProcessorEditor (V4JBAudioProcessor& p)
     setResizable (true, true);
     setResizeLimits (baseW * 2 / 5, baseH * 2 / 5, baseW * 3 / 2, baseH * 3 / 2);
     getConstrainer()->setFixedAspectRatio ((double) baseW / (double) baseH);
-    setSize (juce::roundToInt ((float) baseW * s), juce::roundToInt ((float) baseH * s));
+    setSize (juce::roundToInt ((float) baseW * (captureDir.isNotEmpty() ? 1.f : s)),
+             juce::roundToInt ((float) baseH * (captureDir.isNotEmpty() ? 1.f : s)));
     startTimerHz (30);
 }
 
@@ -258,6 +261,26 @@ void V4JBAudioProcessorEditor::timerCallback()
         case 2: morphPage.refresh(); break;
         case 3: wavePage.refresh(); break;
         default: break;
+    }
+
+    const auto outDir = juce::SystemStats::getEnvironmentVariable ("V4JB_CAPTURE_GUI_DIR", {});
+    if (outDir.isNotEmpty() && ciCaptureStep < 4)
+    {
+        static const char* const names[] = { "01-sound-modules-01-05.png",
+                                            "02-sound-modules-06-10.png",
+                                            "03-morph.png", "04-modulation.png" };
+        const auto folder = juce::File (outDir);
+        folder.createDirectory();
+        const auto pngFile = folder.getChildFile (names[ciCaptureStep]);
+        juce::PNGImageFormat png;
+        const auto image = createComponentSnapshot (getLocalBounds(), true);
+        if (image.isValid())
+            if (auto stream = pngFile.createOutputStream())
+                png.writeImageToStream (image, *stream);
+        ++ciCaptureStep;
+        if (ciCaptureStep == 1) editPage.setBank (1);
+        else if (ciCaptureStep == 2) tabs.setCurrentTabIndex (2);
+        else if (ciCaptureStep == 3) tabs.setCurrentTabIndex (1);
     }
 }
 
