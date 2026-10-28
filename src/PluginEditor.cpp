@@ -272,11 +272,20 @@ void V4JBAudioProcessorEditor::timerCallback()
         const auto folder = juce::File (outDir);
         folder.createDirectory();
         const auto pngFile = folder.getChildFile (names[ciCaptureStep]);
+        const auto pendingFile = folder.getChildFile (juce::String (names[ciCaptureStep]) + ".partial");
         juce::PNGImageFormat png;
         const auto image = createComponentSnapshot (getLocalBounds(), true);
         if (image.isValid())
-            if (auto stream = pngFile.createOutputStream())
-                png.writeImageToStream (image, *stream);
+        {
+            if (auto stream = pendingFile.createOutputStream())
+            {
+                const bool written = png.writeImageToStream (image, *stream);
+                stream->flush();
+                stream.reset(); // close before making the final .png visible to CI
+                if (written)
+                    pendingFile.moveFileTo (pngFile);
+            }
+        }
         ++ciCaptureStep;
         if (ciCaptureStep == 1) editPage.setBank (1);
         else if (ciCaptureStep == 2) tabs.setCurrentTabIndex (2);

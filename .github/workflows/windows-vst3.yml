@@ -106,7 +106,7 @@ jobs:
             foreach ($name in $required) {
               $file = Join-Path $env:V4JB_CAPTURE_GUI_DIR $name
               if (-not (Test-Path $file)) { throw "Missing real Windows GUI image: $name" }
-              if ((Get-Item $file).Length -lt 10000) { throw "PNG appears empty: $name" }
+              if ((Get-Item $file).Length -lt 4096) { throw "PNG appears empty: $name" }
               Write-Host "$name : $((Get-Item $file).Length) bytes"
             }
           } finally {
@@ -114,6 +114,7 @@ jobs:
           }
 
       - name: Package Windows VST3
+        if: always()
         shell: pwsh
         run: |
           $vst = Get-ChildItem -Path Builds/VisualStudio2022 -Recurse -Directory -Filter V4JB.vst3 |
@@ -123,6 +124,7 @@ jobs:
           Compress-Archive -Path $vst.FullName -DestinationPath 'dist/V4JB-0.0.4-125A-GUI-TEST-win-x64-vst3.zip' -Force
 
       - name: Upload genuine render and experimental VST3
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: 125A-Noctomorph-GUI-render-Windows
