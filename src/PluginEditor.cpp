@@ -158,8 +158,8 @@ V4JBAudioProcessorEditor::V4JBAudioProcessorEditor (V4JBAudioProcessor& p)
     setLookAndFeel (&panelLnF);
     setOpaque (true);
     // Master 125A logo kept as the exact source SVG, not a reconstructed font mark.
-    if (auto xml = juce::XmlDocument::parse (juce::String::fromUTF8 (BinaryData::logo_svg, BinaryData::logo_svgSize)))
-        logo = juce::Drawable::createFromSVG (*xml);
+    logo = juce::Drawable::createFromSVGString (
+        juce::String::fromUTF8 (BinaryData::logo_svg, BinaryData::logo_svgSize));
 
     presetBtn.onClick = [this] { showPresetMenu(); };
     presetBtn.setTooltip ("Presets");
