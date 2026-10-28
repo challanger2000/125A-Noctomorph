@@ -71,7 +71,7 @@ jobs:
           $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
           $vcvars = & $vswhere -latest -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -find 'VC\Auxiliary\Build\vcvars64.bat' | Select-Object -First 1
           if (-not $vcvars) { throw 'VC environment not found' }
-          cmd /c "call `"$vcvars`" >nul && cl /nologo /EHsc /std:c++17 /O2 tests\engine_check.cpp /Fe:engine_check.exe && engine_check.exe"
+          cmd /c "call `"$vcvars`" >nul && cl /nologo /EHsc /std:c++17 /O2 /Isrc tests\engine_check.cpp /Fe:engine_check.exe && engine_check.exe"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Compile VST3 x64 Release
