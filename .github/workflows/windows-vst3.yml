@@ -35,11 +35,11 @@ jobs:
         shell: pwsh
         run: |
           if (Test-Path presets) { throw 'presets directory unexpectedly exists; explicit merge policy required' }
-          if (Test-Path assets) { throw 'assets directory unexpectedly exists; explicit merge policy required' }
+          if (-not (Test-Path assets/logo.svg)) { throw 'Missing authoritative 125A SVG from branch' }
           Copy-Item _upstream/presets presets -Recurse
-          Copy-Item _upstream/assets assets -Recurse
+          Copy-Item _upstream/assets/logo.png assets/logo.png -Force
           if (-not (Test-Path presets/waves/vowels.wav)) { throw 'Missing pinned factory waves' }
-          if (-not (Test-Path assets/logo.png)) { throw 'Missing pinned V4JB artwork' }
+          if (-not (Test-Path assets/logo.png)) { throw 'Missing pinned original icon resource' }
 
       - name: Point Projucer at pinned JUCE modules
         shell: pwsh

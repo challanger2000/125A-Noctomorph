@@ -15,7 +15,7 @@ constexpr int kTopH = 64;
 constexpr int kKeyboardH = 72;
 constexpr int kKeyLow = 36;   // C2
 constexpr int kKeyHigh = 84;  // C6
-constexpr int kTitleHitW = 140;
+constexpr int kTitleHitW = 244;
 
 int whiteKeysInRange (int low, int high)
 {
@@ -157,7 +157,9 @@ V4JBAudioProcessorEditor::V4JBAudioProcessorEditor (V4JBAudioProcessor& p)
 {
     setLookAndFeel (&panelLnF);
     setOpaque (true);
-    logo = juce::ImageCache::getFromMemory (BinaryData::logo_png, BinaryData::logo_pngSize);
+    // Master 125A logo kept as the exact source SVG, not a reconstructed font mark.
+    if (auto xml = juce::XmlDocument::parse (juce::String::fromUTF8 (BinaryData::logo_svg, BinaryData::logo_svgSize)))
+        logo = juce::Drawable::createFromSVG (*xml);
 
     presetBtn.onClick = [this] { showPresetMenu(); };
     presetBtn.setTooltip ("Presets");
@@ -165,7 +167,7 @@ V4JBAudioProcessorEditor::V4JBAudioProcessorEditor (V4JBAudioProcessor& p)
     nextBtn.onClick = [this] { stepPreset (1); };
     saveBtn.onClick = [this] { savePresetDialog(); };
     randBtn.onClick = [this] { showRandomMenu(); };
-    randBtn.setTooltip ("Smart randomizer: new values, or a whole new module chain");
+    randBtn.setTooltip ("Generate a sound or vary the current module configuration");
     economy.setTooltip ("Economy: at most 128 partials per voice, much lighter on CPU");
     for (juce::Component* c : { (juce::Component*) &presetBtn, (juce::Component*) &prevBtn, (juce::Component*) &nextBtn,
                                 (juce::Component*) &saveBtn, (juce::Component*) &randBtn, (juce::Component*) &economy,
@@ -174,10 +176,10 @@ V4JBAudioProcessorEditor::V4JBAudioProcessorEditor (V4JBAudioProcessor& p)
         content.addAndMakeVisible (c);
 
     const auto tabColour = kNight.brighter (0.05f);
-    tabs.addTab ("Edit", tabColour, &editPage, false);
-    tabs.addTab ("Mod", tabColour, &modPage, false);
-    tabs.addTab ("Morph", tabColour, &morphPage, false);
-    tabs.addTab ("Wave", tabColour, &wavePage, false);
+    tabs.addTab ("SOUND", tabColour, &editPage, false);
+    tabs.addTab ("MODULATION", tabColour, &modPage, false);
+    tabs.addTab ("MORPH", tabColour, &morphPage, false);
+    tabs.addTab ("WAVES", tabColour, &wavePage, false);
     tabs.setTabBarDepth (28);
     tabs.setOutline (0);
     content.addAndMakeVisible (tabs);
@@ -379,29 +381,38 @@ void V4JBAudioProcessorEditor::paintContent (juce::Graphics& g)
 {
     g.fillAll (kNight);
 
-    auto title = content.getLocalBounds().reduced (kPad).removeFromTop (kTopH - kPad);
-    if (logo.isValid())
-    {
-        auto logoR = title.removeFromLeft (44).reduced (2);
-        g.drawImage (logo, logoR.toFloat(), juce::RectanglePlacement::centred);
-        title.removeFromLeft (6);
-    }
-    auto nameCol = title.removeFromLeft (90).withSizeKeepingCentre (90, 40);
-    g.setColour (kFog);
-    g.setFont (boldFont (16.f));
-    g.drawText ("V4JB", nameCol.removeFromTop (22), juce::Justification::centredLeft, false);
-    g.setFont (boldFont (10.f));
-    g.drawText ("v" JucePlugin_VersionString, nameCol, juce::Justification::centredLeft, false);
+    const auto header = content.getLocalBounds().removeFromTop (kTopH).toFloat();
+    g.setGradientFill (juce::ColourGradient (kDusk.brighter (0.09f), 0.f, 0.f,
+                                             kNight.brighter (0.07f), 0.f, header.getBottom(), false));
+    g.fillRect (header);
+    g.setColour (kFog.withAlpha (0.21f));
+    g.drawLine (8.f, header.getBottom() - 1.f, header.getRight() - 8.f,
+                header.getBottom() - 1.f, 1.f);
 
-    g.setColour (kNight.brighter (0.08f));
-    g.drawRoundedRectangle (content.getLocalBounds().toFloat().reduced (1.5f), 2.f, 2.f);
+    auto title = content.getLocalBounds().reduced (kPad).removeFromTop (kTopH - kPad);
+    if (logo != nullptr)
+    {
+        auto logoR = title.removeFromLeft (100).reduced (2);
+        logo->drawWithin (g, logoR.toFloat(), juce::RectanglePlacement::centred, 1.f);
+        title.removeFromLeft (8);
+    }
+    auto nameCol = title.removeFromLeft (124).withSizeKeepingCentre (124, 42);
+    g.setColour (kWhite);
+    g.setFont (boldFont (17.f));
+    g.drawText ("SPECTRAL", nameCol.removeFromTop (24), juce::Justification::centredLeft, false);
+    g.setFont (boldFont (9.f));
+    g.setColour (kFog.withAlpha (0.85f));
+    g.drawText ("V4JB ENGINE  /  " JucePlugin_VersionString, nameCol, juce::Justification::centredLeft, false);
+
+    g.setColour (kFog.withAlpha (0.30f));
+    g.drawRoundedRectangle (content.getLocalBounds().toFloat().reduced (1.5f), 3.f, 1.f);
 }
 
 void V4JBAudioProcessorEditor::layoutContent()
 {
     auto r = content.getLocalBounds().reduced (kPad);
     auto top = r.removeFromTop (kTopH - kPad);
-    top.removeFromLeft (44 + 6 + 90 + 10);
+    top.removeFromLeft (100 + 8 + 124 + 10);
 
     volume.setBounds (top.removeFromRight (70));
     for (auto* k : { &glide, &pitch, &octave, &poly })

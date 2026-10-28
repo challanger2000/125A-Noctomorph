@@ -191,12 +191,12 @@ struct SlotCard : public juce::Component
         modBtn.setBounds (head.removeFromRight (40));
         type.setBounds (head.reduced (2, 0));
         r.removeFromTop (3);
-        bars.setBounds (r.removeFromTop (34));
+        bars.setBounds (r.removeFromTop (64));
         r.removeFromTop (3);
-        main.setBounds (r.removeFromLeft (70));
+        main.setBounds (r.removeFromLeft (86));
         routeArea = r;
         auto pr = r;
-        const int ph = juce::jmin (24, pr.getHeight() / 4);
+        const int ph = juce::jlimit (24, 38, pr.getHeight() / 4);
         for (auto* s : params)
             s->setBounds (pr.removeFromTop (ph));
         auto rr = r;
@@ -237,25 +237,68 @@ struct EditPage : public juce::Component
         addAndMakeVisible (fx);
         for (int i = 0; i < v4jb::kNumSlots; ++i)
             addAndMakeVisible (slots.add (new SlotCard (p, i)));
+
+        bankA.setTooltip ("Edit modules 01 through 05");
+        bankB.setTooltip ("Edit modules 06 through 10");
+        bankA.onClick = [this] { setBank (0); };
+        bankB.onClick = [this] { setBank (1); };
+        addAndMakeVisible (bankA);
+        addAndMakeVisible (bankB);
+        setBank (0);
     }
+
+    void setBank (int index)
+    {
+        activeBank = juce::jlimit (0, 1, index);
+        bankA.setToggleState (activeBank == 0, juce::dontSendNotification);
+        bankB.setToggleState (activeBank == 1, juce::dontSendNotification);
+        for (int i = 0; i < slots.size(); ++i)
+            slots[i]->setVisible (i / 5 == activeBank);
+        resized(); // Presentation-only: never change the underlying APVTS module parameters.
+        repaint();
+    }
+
     void refresh()
     {
         spectral.bars.refresh();
         for (auto* s : slots)
-            s->refresh();
+            if (s->isVisible())
+                s->refresh();
     }
+
+    void paint (juce::Graphics& g) override
+    {
+        auto r = getLocalBounds().reduced (11);
+        const int topHeight = r.getHeight() * 44 / 100;
+        r.removeFromTop (topHeight);
+        g.setColour (kAmber);
+        g.setFont (boldFont (13.f));
+        g.drawText ("SPECTRAL MODULES  /  " + juce::String (activeBank == 0 ? "01 - 05" : "06 - 10"),
+                    r.removeFromTop (40), juce::Justification::centredLeft, false);
+    }
+
     void resized() override
     {
-        auto r = getLocalBounds().reduced (6);
-        auto top = r.removeFromTop (r.getHeight() * 36 / 100);
-        spectral.setBounds (top.removeFromLeft (top.getWidth() * 46 / 100).reduced (3));
-        fx.setBounds (top.reduced (3));
-        const int h = r.getHeight() / 2, w = r.getWidth() / 5;
+        auto r = getLocalBounds().reduced (8);
+        auto top = r.removeFromTop (r.getHeight() * 44 / 100);
+        spectral.setBounds (top.removeFromLeft (top.getWidth() * 46 / 100).reduced (4));
+        fx.setBounds (top.reduced (4));
+
+        auto bankBar = r.removeFromTop (40);
+        bankB.setBounds (bankBar.removeFromRight (104).reduced (3, 5));
+        bankA.setBounds (bankBar.removeFromRight (104).reduced (3, 5));
+
+        const int w = r.getWidth() / 5;
         for (int i = 0; i < slots.size(); ++i)
-            slots[i]->setBounds (juce::Rectangle<int> (r.getX() + (i % 5) * w, r.getY() + (i / 5) * h, w, h).reduced (3));
+            if (i / 5 == activeBank)
+                slots[i]->setBounds (r.getX() + (i % 5) * w + 4, r.getY() + 2,
+                                      w - 8, r.getHeight() - 4);
     }
+
     SpectralCard spectral;
     FxCard fx;
     juce::OwnedArray<SlotCard> slots;
+    juce::TextButton bankA { "01 - 05" }, bankB { "06 - 10" };
+    int activeBank = 0;
 };
 } // namespace ui

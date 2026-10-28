@@ -8,6 +8,7 @@
               jucerFormatVersion="1">
   <MAINGROUP id="v4jbMain" name="V4JB">
     <FILE id="logoPng1" name="logo.png" compile="0" resource="1" file="assets/logo.png"/>
+    <FILE id="brandSvg1" name="logo.svg" compile="0" resource="1" file="assets/logo.svg"/>
     <GROUP id="prsGrp01" name="presets">
       <FILE id="prs00001" name="00_init.xml" compile="0" resource="1" file="presets/00_init.xml"/>
       <FILE id="prs00002" name="01_fog_bank.xml" compile="0" resource="1" file="presets/01_fog_bank.xml"/>

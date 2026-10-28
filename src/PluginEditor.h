@@ -74,7 +74,7 @@ private:
     };
 
     // Top bar.
-    juce::TextButton presetBtn, prevBtn { "<" }, nextBtn { ">" }, saveBtn { "Save" }, randBtn { "Randomize" };
+    juce::TextButton presetBtn, prevBtn { "<" }, nextBtn { ">" }, saveBtn { "SAVE" }, randBtn { "GENERATE" };
     ui::Toggle economy { proc.apvts, ParamID::economy, "Economy" };
     ui::Knob poly   { proc.apvts, ParamID::poly,   "Voices" };
     ui::Knob octave { proc.apvts, ParamID::octave, "Octave" };
@@ -91,7 +91,7 @@ private:
 
     AboutBox aboutBox;
     juce::TooltipWindow tooltips { this };
-    juce::Image logo;
+    std::unique_ptr<juce::Drawable> logo;  // original 125A vector master
     juce::Array<PresetEntry> presetList;  // factory then user, rebuilt for the menu and arrows
     int presetIndex = 0;
 
