@@ -1,0 +1,99 @@
+name: Windows VST3 - manual
+# Manual dispatch only. No push or pull_request builds: save Actions minutes.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    steps:
+      - name: Checkout 125A development sources
+        uses: actions/checkout@v4
+
+      # The 125A repo holds editable C++/Projucer sources.
+      # Large factory presets, waves and legacy artwork are fetched
+      # from immutable upstream V4JB 0.0.4 for an exact baseline.
+      - name: Checkout pinned V4JB assets
+        uses: actions/checkout@v4
+        with:
+          repository: iamtew/V4JB
+          ref: 2b3bc12400ad3337ba6d8f2e37dc61672c39b951
+          path: _upstream
+
+      - name: Checkout pinned JUCE 9.0.4
+        uses: actions/checkout@v4
+        with:
+          repository: juce-framework/JUCE
+          ref: 9.0.4
+          path: JUCE
+
+      - name: Restore unmodified upstream binary assets and factory presets
+        shell: pwsh
+        run: |
+          if (Test-Path presets) { throw 'presets directory unexpectedly exists; explicit merge policy required' }
+          if (Test-Path assets) { throw 'assets directory unexpectedly exists; explicit merge policy required' }
+          Copy-Item _upstream/presets presets -Recurse
+          Copy-Item _upstream/assets assets -Recurse
+          if (-not (Test-Path presets/waves/vowels.wav)) { throw 'Missing pinned factory waves' }
+          if (-not (Test-Path assets/logo.png)) { throw 'Missing pinned V4JB artwork' }
+
+      - name: Point Projucer at pinned JUCE modules
+        shell: pwsh
+        run: |
+          $jucer = Join-Path (Get-Location) 'V4JB.jucer'
+          $old = 'C:\Users\Mikael\JUCE\modules'
+          $modules = (Resolve-Path 'JUCE/modules').Path
+          $source = [System.IO.File]::ReadAllText($jucer)
+          $updated = $source.Replace($old, $modules)
+          if ($source -eq $updated) { throw 'Original Projucer JUCE paths were not found' }
+          [System.IO.File]::WriteAllText($jucer, $updated, [System.Text.UTF8Encoding]::new($false))
+
+      - name: Build JUCE Projucer and regenerate Visual Studio solution
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $msbuild = & $vswhere -latest -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe' | Select-Object -First 1
+          if (-not $msbuild) { throw 'MSBuild not found' }
+          & $msbuild 'JUCE/extras/Projucer/Builds/VisualStudio2022/Projucer.sln' /p:Configuration=Release /p:Platform=x64 /m
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $projucer = 'JUCE/extras/Projucer/Builds/VisualStudio2022/x64/Release/App/Projucer.exe'
+          if (-not (Test-Path $projucer)) { throw 'Projucer executable not found' }
+          & $projucer --resave V4JB.jucer
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Compile original DSP self-test
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vcvars = & $vswhere -latest -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -find 'VC\Auxiliary\Build\vcvars64.bat' | Select-Object -First 1
+          if (-not $vcvars) { throw 'VC environment not found' }
+          cmd /c "call `"$vcvars`" >nul && cl /nologo /EHsc /std:c++17 /O2 tests\engine_check.cpp /Fe:engine_check.exe && engine_check.exe"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Compile VST3 x64 Release
+        shell: pwsh
+        run: |
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $msbuild = & $vswhere -latest -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe' | Select-Object -First 1
+          & $msbuild 'Builds/VisualStudio2022/V4JB.sln' /p:Configuration=Release /p:Platform=x64 /m
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Package VST3 test artifact
+        shell: pwsh
+        run: |
+          $vst = 'Builds/VisualStudio2022/x64/Release/VST3/V4JB.vst3'
+          if (-not (Test-Path $vst)) { throw 'Compiled VST3 not found' }
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Compress-Archive -Path $vst -DestinationPath 'dist/V4JB-0.0.4-125A-baseline-win-x64-vst3.zip' -Force
+
+      - name: Upload build - experimental, not approved release
+        uses: actions/upload-artifact@v4
+        with:
+          name: V4JB-125A-Windows-VST3-UNTESTED
+          path: dist/*.zip
+          if-no-files-found: error
+          retention-days: 7
