@@ -358,8 +358,10 @@ void V4JBAudioProcessorEditor::savePresetDialog()
     // deleteWhenDismissed: the window is deleted after this callback runs.
     w->enterModalState (true, juce::ModalCallbackFunction::create ([safe, w] (int result)
     {
-        if (safe != nullptr && result == 1)
-            safe->proc.saveUserPreset (w->getTextEditorContents ("name"), w->getTextEditorContents ("category"));
+        if (safe != nullptr && result == 1
+            && ! safe->proc.saveUserPreset (w->getTextEditorContents ("name"), w->getTextEditorContents ("category")))
+            juce::AlertWindow::showMessageBoxAsync (juce::MessageBoxIconType::WarningIcon,
+                "Preset not saved", "The preset could not be written. Check its name, folder permissions and disk space.");
     }), true);
 }
 

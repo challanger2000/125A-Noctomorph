@@ -208,6 +208,59 @@ static void presets()
     }
     std::cout<<"494 factory presets parsed, applied, and short MIDI rendered\n";
 }
+static void program_index()
+{
+    P p; init(p);
+    const auto& factory = p.getFactoryPresets();
+    CHECK(factory.size() == 494);
+    const int last = factory.size() - 1;
+    p.setCurrentProgram(last);
+    CHECK(p.getCurrentProgram() == last);
+    CHECK(p.getPresetName() == factory.getReference(last).name);
+    const auto oldName = p.getPresetName();
+    p.setCurrentProgram(-1);
+    p.setCurrentProgram(factory.size());
+    CHECK(p.getCurrentProgram() == last);
+    CHECK(p.getPresetName() == oldName);
+    PresetEntry missing;
+    missing.name = "Missing factory";
+    missing.file = juce::File::getSpecialLocation(juce::File::tempDirectory)
+                       .getNonexistentChildFile("missing-125a-preset", ".xml", false);
+    CHECK(! p.loadPreset(missing));
+    CHECK(p.getCurrentProgram() == last);
+    CHECK(p.getPresetName() == oldName);
+
+    juce::MemoryBlock state;
+    p.getStateInformation(state);
+    P recalled; init(recalled);
+    recalled.setStateInformation(state.getData(), (int) state.getSize());
+    CHECK(recalled.getCurrentProgram() == last);
+    CHECK(recalled.getPresetName() == oldName);
+    p.randomize(false);
+    CHECK(p.getCurrentProgram() == 0);
+    CHECK(p.getName() == "125A Noctomorph");
+}
+
+static void panic_midi()
+{
+    P p; init(p);
+    set(p, ParamID::env(0, "r"), 1.0f);
+    juce::AudioBuffer<float> b(2,512);
+    juce::MidiBuffer m;
+    m.addEvent(juce::MidiMessage::noteOn(1,60,.8f), 0);
+    p.processBlock(b,m);
+    CHECK(b.getMagnitude(0,512) > 1e-5f);
+    m.addEvent(juce::MidiMessage::controllerEvent(1,123,0),0);
+    p.processBlock(b,m);
+    CHECK(b.getMagnitude(0,512) > 1e-5f); // CC123 releases; envelope still rings
+    m.addEvent(juce::MidiMessage::noteOn(1,60,.8f),0);
+    p.processBlock(b,m);
+    CHECK(b.getMagnitude(0,512) > 1e-5f);
+    m.addEvent(juce::MidiMessage::controllerEvent(1,120,0),0);
+    p.processBlock(b,m);
+    CHECK(b.getMagnitude(0,512) < 1e-7f); // CC120 immediately silences
+}
+
 static void save_failure()
 {
     P p; init(p);
@@ -306,7 +359,7 @@ int main(int argc,char**argv)
 {
     juce::ScopedJuceInitialiser_GUI juceInit;
     const std::string which=argc>1?argv[1]:"";
-    if(which=="blocks") blocks();else if(which=="keys")keys();else if(which=="wet")wet();else if(which=="tempo")tempo();else if(which=="state")state();else if(which=="gui")gui();else if(which=="waves")waves();else if(which=="realtime")realtime();else if(which=="presets")presets();else if(which=="save")save_failure();else if(which=="midi")midi();else return 2;
+    if(which=="blocks") blocks();else if(which=="keys")keys();else if(which=="wet")wet();else if(which=="tempo")tempo();else if(which=="state")state();else if(which=="gui")gui();else if(which=="waves")waves();else if(which=="realtime")realtime();else if(which=="presets")presets();else if(which=="save")save_failure();else if(which=="program")program_index();else if(which=="panic")panic_midi();else if(which=="midi")midi();else return 2;
     std::cout<<which<<": "<<(failures?"FAIL":"PASS")<<" ("<<failures<<" failed checks)\n";
     return failures?1:0;
 }

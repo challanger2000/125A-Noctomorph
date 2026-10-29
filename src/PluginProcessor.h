@@ -26,14 +26,14 @@ public:
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override { return true; }
 
-    const juce::String getName() const override { return "V4JB"; }
+    const juce::String getName() const override { return "125A Noctomorph"; }
     bool acceptsMidi() const override { return true; }
     bool producesMidi() const override { return false; }
     bool isMidiEffect() const override { return false; }
     double getTailLengthSeconds() const override { return 20.0; }  // 10 s max release + reverb and delay
 
     int getNumPrograms() override { return juce::jmax (1, factoryPresets.size()); }
-    int getCurrentProgram() override { return currentProgram; }
+    int getCurrentProgram() override { return currentProgram.load(); }
     void setCurrentProgram (int index) override;
     const juce::String getProgramName (int index) override;
     void changeProgramName (int, const juce::String&) override {}
@@ -70,7 +70,7 @@ public:
 
     // Presets and randomizer.
     const juce::Array<PresetEntry>& getFactoryPresets() const { return factoryPresets; }
-    void loadPreset (const PresetEntry& e);
+    bool loadPreset (const PresetEntry& e);
     bool saveUserPreset (const juce::String& name, const juce::String& category);
     void randomize (bool newModules);
     juce::String currentPresetName { "Init" };
@@ -96,6 +96,7 @@ private:
     void drainKeys() noexcept;
     v4jb::EngineParams readParams() const;
     void processEffects (float* L, float* R, int n, const float* macros, double bpm);
+    void allSoundOff() noexcept;
     void timerCallback() override;
 
     std::unique_ptr<juce::XmlElement> createStateXml();

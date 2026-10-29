@@ -311,7 +311,12 @@ struct MorphPage : public juce::Component
     void fileAction (bool save, bool points)
     {
         const auto dir = Presets::userDir().getParentDirectory().getChildFile ("Morph");
-        dir.createDirectory();
+        if (! dir.createDirectory())
+        {
+            juce::AlertWindow::showMessageBoxAsync (juce::MessageBoxIconType::WarningIcon,
+                "Morph files", "Could not create the Morph folder.");
+            return;
+        }
         const juce::String pattern = "*.v4jbmorph";
         chooser = std::make_unique<juce::FileChooser> (save ? (points ? "Save morph points" : "Save morph path") : "Load points or path",
                                                        dir, pattern);
@@ -323,10 +328,12 @@ struct MorphPage : public juce::Component
             auto f = fc.getResult();
             if (safe == nullptr || f == juce::File())
                 return;
-            if (save)
-                safe->proc.saveMorphFile (f.withFileExtension (".v4jbmorph"), points);
-            else
-                safe->proc.loadMorphFile (f);
+            const bool ok = save ? safe->proc.saveMorphFile (f.withFileExtension (".v4jbmorph"), points)
+                                 : safe->proc.loadMorphFile (f);
+            if (! ok)
+                juce::AlertWindow::showMessageBoxAsync (juce::MessageBoxIconType::WarningIcon,
+                    save ? "Morph not saved" : "Morph not loaded",
+                    "The operation failed. Check the selected file and folder permissions.");
             safe->pad.repaint();
         });
     }
