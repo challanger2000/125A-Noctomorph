@@ -1,0 +1,317 @@
+Start testing: Oct 29 02:46 UTC
+----------------------------------------------------------
+1/18 Testing: engine_check
+1/18 Test: engine_check
+Command: "/workspace/125A-Noctomorph/build/audit/engine_check"
+Directory: /workspace/125A-Noctomorph/build/audit
+"engine_check" start time: Oct 29 02:46 UTC
+Output:
+----------------------------------------------------------
+rms chord 0.171  peak 0.587  | tail 0.00000
+engine_check OK
+<end of output>
+Test time =   7.65 sec
+----------------------------------------------------------
+Test Passed.
+"engine_check" end time: Oct 29 02:46 UTC
+"engine_check" time elapsed: 00:00:07
+----------------------------------------------------------
+
+2/18 Testing: version_check
+2/18 Test: version_check
+Command: "/workspace/125A-Noctomorph/build/audit/version_check"
+Directory: /workspace/125A-Noctomorph/build/audit
+"version_check" start time: Oct 29 02:46 UTC
+Output:
+----------------------------------------------------------
+version_check OK
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"version_check" end time: Oct 29 02:46 UTC
+"version_check" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/18 Testing: processor_blocks
+3/18 Test: processor_blocks
+Command: "/workspace/125A-Noctomorph/build/audit/processor_check_artefacts/Debug/processor_check" "blocks"
+Directory: /workspace/125A-Noctomorph/build/audit
+"processor_blocks" start time: Oct 29 02:46 UTC
+Output:
+----------------------------------------------------------
+JUCE v9.0.4
+blocks: PASS (0 failed checks)
+<end of output>
+Test time =  17.21 sec
+----------------------------------------------------------
+Test Passed.
+"processor_blocks" end time: Oct 29 02:46 UTC
+"processor_blocks" time elapsed: 00:00:17
+----------------------------------------------------------
+
+4/18 Testing: processor_keys
+4/18 Test: processor_keys
+Command: "/workspace/125A-Noctomorph/build/audit/processor_check_artefacts/Debug/processor_check" "keys"
+Directory: /workspace/125A-Noctomorph/build/audit
+"processor_keys" start time: Oct 29 02:46 UTC
+Output:
+----------------------------------------------------------
+JUCE v9.0.4
+keys: PASS (0 failed checks)
+<end of output>
+Test time =   0.46 sec
+----------------------------------------------------------
+Test Passed.
+"processor_keys" end time: Oct 29 02:46 UTC
+"processor_keys" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/18 Testing: processor_wet
+5/18 Test: processor_wet
+Command: "/workspace/125A-Noctomorph/build/audit/processor_check_artefacts/Debug/processor_check" "wet"
+Directory: /workspace/125A-Noctomorph/build/audit
+"processor_wet" start time: Oct 29 02:46 UTC
+Output:
+----------------------------------------------------------
+JUCE v9.0.4
+delay mix=0 direct=0.163117
+delay mix=0.25 direct=0.122338
+delay mix=0.5 direct=0.0815586
+delay mix=0.75 direct=0.0407793
+delay mix=1 direct=0
+reverb mix=0 direct=0.163117
+reverb mix=0.25 direct=0.122338
+reverb mix=0.5 direct=0.0815586
+reverb mix=0.75 direct=0.0407793
+reverb mix=1 direct=0
+wet: PASS (0 failed checks)
+<end of output>
+Test time =   3.22 sec
+----------------------------------------------------------
+Test Passed.
+"processor_wet" end time: Oct 29 02:46 UTC
+"processor_wet" time elapsed: 00:00:03
+----------------------------------------------------------
+
+6/18 Testing: processor_tempo
+6/18 Test: processor_tempo
+Command: "/workspace/125A-Noctomorph/build/audit/processor_check_artefacts/Debug/processor_check" "tempo"
+Directory: /workspace/125A-Noctomorph/build/audit
+"processor_tempo" start time: Oct 29 02:46 UTC
+Output:
+----------------------------------------------------------
+JUCE v9.0.4
+tempo: PASS (0 failed checks)
+<end of output>
+Test time =   1.90 sec
+----------------------------------------------------------
+Test Passed.
+"processor_tempo" end time: Oct 29 02:46 UTC
+"processor_tempo" time elapsed: 00:00:01
+----------------------------------------------------------
+
+7/18 Testing: processor_state
+7/18 Test: processor_state
+Command: "/workspace/125A-Noctomorph/build/audit/processor_check_artefacts/Debug/processor_check" "state"
+Directory: /workspace/125A-Noctomorph/build/audit
+"processor_state" start time: Oct 29 02:46 UTC
+Output:
+----------------------------------------------------------
+JUCE v9.0.4
+state: PASS (0 failed checks)
+<end of output>
+Test time =   1.30 sec
+----------------------------------------------------------
+Test Passed.
+"processor_state" end time: Oct 29 02:46 UTC
+"processor_state" time elapsed: 00:00:01
+----------------------------------------------------------
+
+8/18 Testing: processor_gui
+8/18 Test: processor_gui
+Command: "/workspace/125A-Noctomorph/build/audit/processor_check_artefacts/Debug/processor_check" "gui"
+Directory: /workspace/125A-Noctomorph/build/audit
+"processor_gui" start time: Oct 29 02:46 UTC
+Output:
+----------------------------------------------------------
+JUCE v9.0.4
+GUI bound parameter IDs: 224
+GUI bound parameter IDs: 224
+GUI bound parameter IDs: 224
+gui: PASS (0 failed checks)
+<end of output>
+Test time =  13.91 sec
+----------------------------------------------------------
+Test Passed.
+"processor_gui" end time: Oct 29 02:47 UTC
+"processor_gui" time elapsed: 00:00:13
+----------------------------------------------------------
+
+9/18 Testing: processor_waves
+9/18 Test: processor_waves
+Command: "/workspace/125A-Noctomorph/build/audit/processor_check_artefacts/Debug/processor_check" "waves"
+Directory: /workspace/125A-Noctomorph/build/audit
+"processor_waves" start time: Oct 29 02:47 UTC
+Output:
+----------------------------------------------------------
+JUCE v9.0.4
+waves: PASS (0 failed checks)
+<end of output>
+Test time =   0.43 sec
+----------------------------------------------------------
+Test Passed.
+"processor_waves" end time: Oct 29 02:47 UTC
+"processor_waves" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/18 Testing: processor_realtime
+10/18 Test: processor_realtime
+Command: "/workspace/125A-Noctomorph/build/audit/processor_check_artefacts/Debug/processor_check" "realtime"
+Directory: /workspace/125A-Noctomorph/build/audit
+"processor_realtime" start time: Oct 29 02:47 UTC
+Output:
+----------------------------------------------------------
+JUCE v9.0.4
+C++ new in processBlock: 0
+realtime: PASS (0 failed checks)
+<end of output>
+Test time =   0.55 sec
+----------------------------------------------------------
+Test Passed.
+"processor_realtime" end time: Oct 29 02:47 UTC
+"processor_realtime" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/18 Testing: processor_presets
+11/18 Test: processor_presets
+Command: "/workspace/125A-Noctomorph/build/audit/processor_check_artefacts/Debug/processor_check" "presets"
+Directory: /workspace/125A-Noctomorph/build/audit
+"processor_presets" start time: Oct 29 02:47 UTC
+Output:
+----------------------------------------------------------
+JUCE v9.0.4
+494 factory presets parsed, applied, and short MIDI rendered
+presets: PASS (0 failed checks)
+<end of output>
+Test time =  12.48 sec
+----------------------------------------------------------
+Test Passed.
+"processor_presets" end time: Oct 29 02:47 UTC
+"processor_presets" time elapsed: 00:00:12
+----------------------------------------------------------
+
+12/18 Testing: processor_midi
+12/18 Test: processor_midi
+Command: "/workspace/125A-Noctomorph/build/audit/processor_check_artefacts/Debug/processor_check" "midi"
+Directory: /workspace/125A-Noctomorph/build/audit
+"processor_midi" start time: Oct 29 02:47 UTC
+Output:
+----------------------------------------------------------
+JUCE v9.0.4
+midi: PASS (0 failed checks)
+<end of output>
+Test time =   0.48 sec
+----------------------------------------------------------
+Test Passed.
+"processor_midi" end time: Oct 29 02:47 UTC
+"processor_midi" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/18 Testing: transport_safety_check
+13/18 Test: transport_safety_check
+Command: "/workspace/125A-Noctomorph/build/audit/transport_safety_check"
+Directory: /workspace/125A-Noctomorph/build/audit
+"transport_safety_check" start time: Oct 29 02:47 UTC
+Output:
+----------------------------------------------------------
+transport_safety_check OK
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"transport_safety_check" end time: Oct 29 02:47 UTC
+"transport_safety_check" time elapsed: 00:00:00
+----------------------------------------------------------
+
+14/18 Testing: audio_read_slot_check
+14/18 Test: audio_read_slot_check
+Command: "/workspace/125A-Noctomorph/build/audit/audio_read_slot_check"
+Directory: /workspace/125A-Noctomorph/build/audit
+"audio_read_slot_check" start time: Oct 29 02:47 UTC
+Output:
+----------------------------------------------------------
+audio_read_slot_check PASS, 304774 protected reads
+<end of output>
+Test time =   0.06 sec
+----------------------------------------------------------
+Test Passed.
+"audio_read_slot_check" end time: Oct 29 02:47 UTC
+"audio_read_slot_check" time elapsed: 00:00:00
+----------------------------------------------------------
+
+15/18 Testing: dsp_version
+15/18 Test: dsp_version
+Command: "/workspace/125A-Noctomorph/build/audit/dsp_safety_check" "version"
+Directory: /workspace/125A-Noctomorph/build/audit
+"dsp_version" start time: Oct 29 02:47 UTC
+Output:
+----------------------------------------------------------
+version PASS
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"dsp_version" end time: Oct 29 02:47 UTC
+"dsp_version" time elapsed: 00:00:00
+----------------------------------------------------------
+
+16/18 Testing: dsp_preroll
+16/18 Test: dsp_preroll
+Command: "/workspace/125A-Noctomorph/build/audit/dsp_safety_check" "preroll"
+Directory: /workspace/125A-Noctomorph/build/audit
+"dsp_preroll" start time: Oct 29 02:47 UTC
+Output:
+----------------------------------------------------------
+preroll PASS
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"dsp_preroll" end time: Oct 29 02:47 UTC
+"dsp_preroll" time elapsed: 00:00:00
+----------------------------------------------------------
+
+17/18 Testing: dsp_ppq
+17/18 Test: dsp_ppq
+Command: "/workspace/125A-Noctomorph/build/audit/dsp_safety_check" "ppq"
+Directory: /workspace/125A-Noctomorph/build/audit
+"dsp_ppq" start time: Oct 29 02:47 UTC
+Output:
+----------------------------------------------------------
+ppq PASS
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"dsp_ppq" end time: Oct 29 02:47 UTC
+"dsp_ppq" time elapsed: 00:00:00
+----------------------------------------------------------
+
+18/18 Testing: dsp_voices
+18/18 Test: dsp_voices
+Command: "/workspace/125A-Noctomorph/build/audit/dsp_safety_check" "voices"
+Directory: /workspace/125A-Noctomorph/build/audit
+"dsp_voices" start time: Oct 29 02:47 UTC
+Output:
+----------------------------------------------------------
+voices PASS
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"dsp_voices" end time: Oct 29 02:47 UTC
+"dsp_voices" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Oct 29 02:47 UTC

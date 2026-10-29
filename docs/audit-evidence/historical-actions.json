@@ -1,0 +1,28 @@
+{
+  "runNumber": 8,
+  "id": "40800652521",
+  "runUrl": "https://github.com/challanger2000/125A-Noctomorph/actions/runs/40800652521",
+  "state": {
+    "status": "WORKFLOW_RUN_STATUS_COMPLETED",
+    "conclusion": "WORKFLOW_RUN_CONCLUSION_SUCCESS"
+  },
+  "branch": {
+    "name": "refs/heads/ci/gui-render-20261029",
+    "url": "/challanger2000/125A-Noctomorph/tree/refs/heads/ci/gui-render-20261029",
+    "title": "ci/gui-render-20261029"
+  },
+  "description": {
+    "primaryText": "Commit",
+    "linkText": "fae7d83",
+    "linkUrl": "/challanger2000/125A-Noctomorph/commit/fae7d839146457b1b12f2684ccdeb006d2744b64",
+    "action": "pushed",
+    "showActor": true,
+    "actorName": "challanger2000",
+    "actorUrl": "/challanger2000",
+    "actorType": "WORKFLOW_RUN_ACTOR_TYPE_USER",
+    "actorHovercard": {
+      "type": "WORKFLOW_RUN_HOVERCARD_TYPE_USER",
+      "url": "/users/challanger2000/hovercard"
+    }
+  }
+}
