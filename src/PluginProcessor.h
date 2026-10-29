@@ -82,6 +82,17 @@ public:
     std::atomic<float> uiScale { 0.85f };
 
 private:
+#if defined(NOCTOMORPH_AUDIT_BUILD)
+    // Test-only friend functions. Do NOT redefine C++ access specifiers:
+    // MSVC encodes access in decorated names and the JUCE processor would
+    // otherwise link against different symbols than those it defines.
+    friend void keys();
+    friend void wet();
+    friend void tempo();
+    friend void state();
+    friend void waves();
+    friend void midi();
+#endif
     void drainKeys() noexcept;
     v4jb::EngineParams readParams() const;
     void processEffects (float* L, float* R, int n, const float* macros, double bpm);

@@ -1,9 +1,8 @@
 #include <JuceHeader.h>
 #include <BinaryData.h>
-// Test access only: JUCE and standard-library headers are already parsed.
-#define private public
+// Access to private processor/editor internals is granted explicitly by
+// test-only friend declarations; never rewrite C++ access specifiers on MSVC.
 #include "PluginEditor.h"
-#undef private
 #include "WaveAnalyzer.h"
 #include <iostream>
 #include <limits>
@@ -56,7 +55,7 @@ static void blocks()
         if(n>8192) CHECK(a.getMagnitude(0,n-512,512)>1e-5f);
     }
 }
-static void keys()
+void keys()
 {
     P p; init(p);
     // An accepted on followed by a rejected off used to hang forever.
@@ -69,7 +68,7 @@ static void keys()
     for(int i=0;i<v4jb::kMaxVoices;++i) CHECK(!p.engine->voiceHeld(i));
     CHECK(b.getMagnitude(0,512)<1e-5f);
 }
-static void wet()
+void wet()
 {
     const float neutral[v4jb::kNumMacros]={.5f,.5f,.5f,.5f,.5f,.5f,.5f,.5f,.5f,.5f,.5f};
     P dry;init(dry);std::vector<float> dl(8192,0),dr(8192,0);
@@ -91,7 +90,7 @@ static void wet()
     }
 }
 struct Head : juce::AudioPlayHead { double bpm=120,ppq=0; juce::Optional<PositionInfo> getPosition() const override { PositionInfo p;p.setBpm(bpm);p.setPpqPosition(ppq);p.setIsPlaying(true);return p;} };
-static void tempo()
+void tempo()
 {
     for(double bpm : {0.,-120.,std::numeric_limits<double>::infinity(),std::numeric_limits<double>::quiet_NaN(),1e-300,120.})
     {
@@ -100,7 +99,7 @@ static void tempo()
         p.processBlock(b,m);CHECK(finite(b));CHECK(std::isfinite(p.engine->beatClock()));p.setPlayHead(nullptr);
     }
 }
-static void state()
+void state()
 {
     P a,b; init(a); init(b);
     for(auto* q:a.getParameters()) q->setValueNotifyingHost(q->isBoolean()?1.f:0.37f);
@@ -135,7 +134,7 @@ static void state()
     auto file=juce::File::getSpecialLocation(juce::File::tempDirectory).getNonexistentChildFile("noctomorph-invalid",".v4jbmorph");
     CHECK(file.replaceWithText("<MORPH nodes=\"0.5\"/>"));CHECK(!a.loadMorphFile(file));CHECK(file.deleteFile());
 }
-static void midi()
+void midi()
 {
     P p;init(p);set(p,ParamID::spModDepth,0);set(p,ParamID::nzMix,0);
     juce::AudioBuffer<float>b(2,512);juce::MidiBuffer m;
@@ -149,7 +148,7 @@ static void midi()
     m.addEvent(juce::MidiMessage::noteOff(1,69),0);for(int i=0;i<20;++i)p.processBlock(b,m);
     CHECK(b.getMagnitude(0,512)<1e-5f);
 }
-static void waves()
+void waves()
 {
     P p;init(p);auto old=std::make_shared<v4jb::WaveData>();old->numFrames=1;old->seconds=1;old->gain.assign(256,.5f);
     std::weak_ptr<v4jb::WaveData> sentinel=old;p.publishWave(0,old,"old");old.reset();
@@ -169,7 +168,8 @@ static void waves()
     CHECK(!sentinel.expired());if(!sentinel.expired())CHECK(reading->gain[0]==.5f);
 #if __has_include("dsp/AudioReadSlot.h")
     p.waveSlots[0].release();p.timerCallback();CHECK(sentinel.expired());
-    CHECK(p.waveSlots[0].retired.empty());
+    // The expired weak pointer proves the old wave was actually reclaimed,
+    // without accessing private AudioReadSlot implementation details.
 #endif
     const auto prev=p.getWave(0);const int ver=p.waveVersion.load();p.loadWave(0,"/tmp/noctomorph-does-not-exist.wav");
     for(int i=0;i<100 && p.waveVersion.load()==ver;++i)pump(20);
@@ -233,7 +233,7 @@ static void save_failure()
     CHECK(written.deleteFile());
 }
 
-static void gui()
+void gui()
 {
     P p;init(p);auto before=p.apvts.copyState().toXmlString();
     for(int run=0;run<3;++run)

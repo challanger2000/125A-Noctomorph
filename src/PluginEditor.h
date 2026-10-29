@@ -23,6 +23,9 @@ public:
     void resized() override;
 
 private:
+#if defined(NOCTOMORPH_AUDIT_BUILD)
+    friend void gui(); // native editor bindings and callbacks, test only
+#endif
     // Everything lives in `content`, laid out at a fixed base size and scaled as
     // one picture. Dragging the corner changes only the scale, so nothing reflows.
     struct Content : public juce::Component
