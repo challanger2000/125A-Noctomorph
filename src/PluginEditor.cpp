@@ -176,12 +176,17 @@ V4JBAudioProcessorEditor::V4JBAudioProcessorEditor (V4JBAudioProcessor& p)
         content.addAndMakeVisible (c);
 
     const auto tabColour = kNight.brighter (0.05f);
-    tabs.addTab ("SOUND", tabColour, &editPage, false);
-    tabs.addTab ("MODULATION", tabColour, &modPage, false);
-    tabs.addTab ("MORPH", tabColour, &morphPage, false);
-    tabs.addTab ("WAVES", tabColour, &wavePage, false);
-    tabs.setTabBarDepth (28);
+    advancedTabs.addTab ("SOUND", tabColour, &editPage, false);
+    advancedTabs.addTab ("MODULATION", tabColour, &modPage, false);
+    advancedTabs.addTab ("MORPH", tabColour, &morphPage, false);
+    advancedTabs.addTab ("WAVES", tabColour, &wavePage, false);
+    advancedTabs.setTabBarDepth (30);
+    advancedTabs.setOutline (0);
+    tabs.addTab ("PLAY", tabColour, &playPage, false);
+    tabs.addTab ("ADVANCED", tabColour, &advancedTabs, false);
+    tabs.setTabBarDepth (32);
     tabs.setOutline (0);
+    tabs.setCurrentTabIndex (0);
     content.addAndMakeVisible (tabs);
     content.addChildComponent (aboutBox);
 
@@ -252,13 +257,21 @@ void V4JBAudioProcessorEditor::timerCallback()
     presetBtn.setTooltip (proc.currentPresetCategory.isNotEmpty()
                               ? proc.currentPresetCategory + " / " + proc.currentPresetName
                               : proc.currentPresetName);
-    switch (tabs.getCurrentTabIndex())
+    if (lastHeaderMode != tabs.getCurrentTabIndex())
     {
-        case 0: editPage.refresh(); break;
-        case 2: morphPage.refresh(); break;
-        case 3: wavePage.refresh(); break;
-        default: break;
+        lastHeaderMode = tabs.getCurrentTabIndex();
+        layoutContent();
     }
+    if (tabs.getCurrentTabIndex() == 0)
+        playPage.refresh();
+    else
+        switch (advancedTabs.getCurrentTabIndex())
+        {
+            case 0: editPage.refresh(); break;
+            case 2: morphPage.refresh(); break;
+            case 3: wavePage.refresh(); break;
+            default: break;
+        }
 }
 
 void V4JBAudioProcessorEditor::refreshPresetList()
@@ -414,19 +427,27 @@ void V4JBAudioProcessorEditor::layoutContent()
     auto top = r.removeFromTop (kTopH - kPad);
     top.removeFromLeft (100 + 8 + 124 + 10);
 
-    volume.setBounds (top.removeFromRight (70));
+    // Hide engineering-oriented globals on PLAY, but retain their real APVTS controls.
+    const bool advanced = tabs.getCurrentTabIndex() == 1;
     for (auto* k : { &glide, &pitch, &octave, &poly })
-        k->setBounds (top.removeFromRight (62));
-    economy.setBounds (top.removeFromRight (84).withSizeKeepingCentre (76, 26));
-
-    auto presets = top.withSizeKeepingCentre (top.getWidth(), 28);
-    prevBtn.setBounds (presets.removeFromLeft (28).reduced (1));
-    presetBtn.setBounds (presets.removeFromLeft (260).reduced (1));
-    nextBtn.setBounds (presets.removeFromLeft (28).reduced (1));
-    presets.removeFromLeft (8);
-    saveBtn.setBounds (presets.removeFromLeft (60).reduced (1));
-    presets.removeFromLeft (8);
-    randBtn.setBounds (presets.removeFromLeft (100).reduced (1));
+        k->setVisible (advanced);
+    economy.setVisible (advanced);
+    volume.setBounds (top.removeFromRight (76));
+    if (advanced)
+    {
+        for (auto* k : { &glide, &pitch, &octave, &poly })
+            k->setBounds (top.removeFromRight (62));
+        economy.setBounds (top.removeFromRight (80).withSizeKeepingCentre (76, 26));
+    }
+    auto presets = top.withSizeKeepingCentre (top.getWidth(), 32);
+    prevBtn.setBounds (presets.removeFromLeft (30).reduced (2));
+    const int presetW = juce::jmin (325, juce::jmax (130, presets.getWidth() - 250));
+    presetBtn.setBounds (presets.removeFromLeft (presetW).reduced (2));
+    nextBtn.setBounds (presets.removeFromLeft (30).reduced (2));
+    presets.removeFromLeft (9);
+    saveBtn.setBounds (presets.removeFromLeft (60).reduced (2));
+    presets.removeFromLeft (9);
+    randBtn.setBounds (presets.removeFromLeft (110).reduced (2));
 
     if (keyboard != nullptr)
     {

@@ -4,6 +4,7 @@
 #include "ui/EditPage.h"
 #include "ui/ModPage.h"
 #include "ui/MorphPage.h"
+#include "ui/PlayPage.h"
 #include "ui/WavePage.h"
 
 #include <atomic>
@@ -82,12 +83,15 @@ private:
     ui::Knob glide  { proc.apvts, ParamID::glide,  "Glide" };
     ui::Knob volume { proc.apvts, ParamID::level,  "Volume" };
 
-    // Pages.
+    // PLAY is the entire default surface. The full upstream editor stays in ADVANCED.
+    ui::PlayPage playPage { proc };
     ui::EditPage editPage { proc };
     ui::ModPage modPage { proc };
     ui::MorphPage morphPage { proc };
     ui::WavePage wavePage { proc };
+    juce::TabbedComponent advancedTabs { juce::TabbedButtonBar::TabsAtTop };
     juce::TabbedComponent tabs { juce::TabbedButtonBar::TabsAtTop };
+    int lastHeaderMode = -1;
 
     AboutBox aboutBox;
     juce::TooltipWindow tooltips { this };
