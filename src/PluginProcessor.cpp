@@ -1,6 +1,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "WaveAnalyzer.h"
+#include "dsp/WaveRetirePolicy.h"
 
 using namespace v4jb;
 
@@ -487,7 +488,7 @@ void V4JBAudioProcessor::publishWave (int w, std::shared_ptr<WaveData> data, con
 {
     waveLive[w].store (data.get());
     if (waveOwned[w] != nullptr)
-        retired.push_back ({ waveOwned[w], blockCounter.load (std::memory_order_acquire), juce::Time::getMillisecondCounter() });
+        retired.push_back ({ waveOwned[w], blockCounter.load (std::memory_order_acquire) });
     waveOwned[w] = std::move (data);
     waveSource[w] = source;
     ++waveVersion;
@@ -495,12 +496,12 @@ void V4JBAudioProcessor::publishWave (int w, std::shared_ptr<WaveData> data, con
 
 void V4JBAudioProcessor::timerCallback()
 {
-    // Free a replaced wave once the audio thread has finished two blocks since the
-    // swap (it reads the pointer once per block), or after 10 s if audio is stopped.
+    // A callback can remain suspended while holding the previous raw WaveData*.
+    // No wall-clock deadline is a safe indication that its memory can be freed.
+    // Reclaim only after two audio blocks have actually completed post-swap.
     const auto now = blockCounter.load (std::memory_order_acquire);
-    const auto ms = juce::Time::getMillisecondCounter();
     retired.erase (std::remove_if (retired.begin(), retired.end(), [&] (const Retired& r)
-                   { return now >= r.block + 2 || ms - r.time > 10000; }),
+                   { return v4jb::canRetireWaveAfterBlocks (now, r.block); }),
                    retired.end());
 }
 

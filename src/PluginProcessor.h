@@ -122,7 +122,7 @@ private:
     std::atomic<v4jb::WaveData*> waveLive[2] { nullptr, nullptr };
     juce::String waveSource[2];
     int waveGen[2] { 0, 0 };
-    struct Retired { std::shared_ptr<v4jb::WaveData> data; juce::int64 block; juce::uint32 time; };
+    struct Retired { std::shared_ptr<v4jb::WaveData> data; juce::int64 block; };
     std::vector<Retired> retired;
     std::atomic<juce::int64> blockCounter { 0 };
     juce::ThreadPool analysisPool { 1 };
