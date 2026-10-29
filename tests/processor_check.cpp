@@ -144,7 +144,7 @@ void midi()
     m.addEvent(juce::MidiMessage::pitchWheel(1,16383),0);m.addEvent(juce::MidiMessage::controllerEvent(1,1,127),1);
     m.addEvent(juce::MidiMessage::channelPressureChange(1,64),2);p.processBlock(b,m);
     CHECK(std::abs(p.engine->voiceFreq(0,0)-440*std::exp2((8191.f/8192.f*2.f)/12.f))<.02f);
-    CHECK(p.engine->wheel==1);CHECK(std::abs(p.engine->touch-64.f/127.f)<1e-6f);
+    CHECK(p.engine->auditModWheel()==1);CHECK(std::abs(p.engine->auditAftertouch()-64.f/127.f)<1e-6f);
     m.addEvent(juce::MidiMessage::noteOff(1,69),0);for(int i=0;i<20;++i)p.processBlock(b,m);
     CHECK(b.getMagnitude(0,512)<1e-5f);
 }
