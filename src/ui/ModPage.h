@@ -24,7 +24,7 @@ struct EnvCard : public juce::Component
         r.removeFromTop (20);
         const int w = r.getWidth() / knobs.size();
         for (auto* k : knobs)
-            k->setBounds (r.removeFromLeft (w).withSizeKeepingCentre (w, juce::jmin (r.getHeight(), 84)));
+            k->setBounds (r.removeFromLeft (w).withSizeKeepingCentre (w, juce::jmin (r.getHeight(), 140)));
     }
     int index;
     juce::OwnedArray<Knob> knobs;
@@ -46,8 +46,8 @@ struct LfoCard : public juce::Component
     {
         auto r = getLocalBounds().reduced (8, 4);
         r.removeFromTop (20);
-        rate.setBounds (r.removeFromLeft (90).withSizeKeepingCentre (90, juce::jmin (r.getHeight(), 84)));
-        auto col = r.reduced (6, 0).withSizeKeepingCentre (r.getWidth() - 12, 84);
+        rate.setBounds (r.removeFromLeft (120).withSizeKeepingCentre (120, juce::jmin (r.getHeight(), 120)));
+        auto col = r.reduced (8, 0).withSizeKeepingCentre (r.getWidth() - 16, 96);
         shape.setBounds (col.removeFromTop (26).reduced (0, 2));
         col.removeFromTop (4);
         auto line = col.removeFromTop (26);
@@ -71,25 +71,33 @@ struct ModPage : public juce::Component
     }
     void paint (juce::Graphics& g) override
     {
-        g.setColour (kFog.withAlpha (0.6f));
+        g.setColour (kAmber);
+        g.setFont (boldFont (13.f));
+        g.drawText ("ENVELOPES", envTitle, juce::Justification::centredLeft, false);
+        g.drawText ("LOW-FREQUENCY OSCILLATORS", lfoTitle, juce::Justification::centredLeft, false);
+        g.setColour (kFog.withAlpha (0.65f));
         g.setFont (boldFont (11.f));
-        g.drawText ("Each module slot can route one envelope, one LFO and one MIDI source to its main knob (MOD on the slot card).",
+        g.drawText ("Route envelopes, LFOs and MIDI from SOUND > module MOD.",
                     hint, juce::Justification::centred, false);
     }
     void resized() override
     {
-        auto r = getLocalBounds().reduced (6);
-        hint = r.removeFromBottom (24);
-        auto top = r.removeFromTop (r.getHeight() / 2);
-        const int ew = top.getWidth() / 2, eh = top.getHeight() / 2;
+        auto r = getLocalBounds().reduced (12);
+        hint = r.removeFromBottom (26);
+        envTitle = r.removeFromTop (28);
+        auto envelopeArea = r.removeFromTop (r.getHeight() * 61 / 100);
+        const int ew = envelopeArea.getWidth() / 2, eh = envelopeArea.getHeight() / 2;
         for (int i = 0; i < envs.size(); ++i)
-            envs[i]->setBounds (juce::Rectangle<int> (top.getX() + (i % 2) * ew, top.getY() + (i / 2) * eh, ew, eh).reduced (3));
+            envs[i]->setBounds (juce::Rectangle<int> (envelopeArea.getX() + (i % 2) * ew,
+                                                      envelopeArea.getY() + (i / 2) * eh,
+                                                      ew, eh).reduced (5));
+        lfoTitle = r.removeFromTop (33);
         const int lw = r.getWidth() / lfos.size();
         for (auto* l : lfos)
-            l->setBounds (r.removeFromLeft (lw).withSizeKeepingCentre (lw, juce::jmin (r.getHeight(), 130)).reduced (3));
+            l->setBounds (r.removeFromLeft (lw).reduced (5));
     }
     juce::OwnedArray<EnvCard> envs;
     juce::OwnedArray<LfoCard> lfos;
-    juce::Rectangle<int> hint;
+    juce::Rectangle<int> hint, envTitle, lfoTitle;
 };
 } // namespace ui
