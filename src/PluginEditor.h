@@ -4,6 +4,7 @@
 #include "ui/EditPage.h"
 #include "ui/ModPage.h"
 #include "ui/MorphPage.h"
+#include "ui/PlayPage.h"
 #include "ui/WavePage.h"
 
 #include <atomic>
@@ -82,19 +83,22 @@ private:
     ui::Knob glide  { proc.apvts, ParamID::glide,  "Glide" };
     ui::Knob volume { proc.apvts, ParamID::level,  "Volume" };
 
-    // Pages.
+    // PLAY is the entire default surface. The full upstream editor stays in ADVANCED.
+    ui::PlayPage playPage { proc };
     ui::EditPage editPage { proc };
     ui::ModPage modPage { proc };
     ui::MorphPage morphPage { proc };
     ui::WavePage wavePage { proc };
+    juce::TabbedComponent advancedTabs { juce::TabbedButtonBar::TabsAtTop };
     juce::TabbedComponent tabs { juce::TabbedButtonBar::TabsAtTop };
+    int lastHeaderMode = -1;
 
     AboutBox aboutBox;
     juce::TooltipWindow tooltips { this };
     std::unique_ptr<juce::Drawable> logo;  // original 125A vector master
     juce::Array<PresetEntry> presetList;  // factory then user, rebuilt for the menu and arrows
     int presetIndex = 0;
-    int ciCaptureStep = 0; // Windows GUI snapshot test only
+    int ciCaptureStep = 0; // Only in isolated Windows screenshot CI branch
 
     // Standalone only. Declared after the state so the component dies first.
     juce::MidiKeyboardState keyboardState;
