@@ -1,0 +1,41 @@
+Test project /workspace/125A-Noctomorph/build/audit
+      Start  1: engine_check
+ 1/18 Test  #1: engine_check .....................   Passed    7.65 sec
+      Start  2: version_check
+ 2/18 Test  #2: version_check ....................   Passed    0.01 sec
+      Start  3: processor_blocks
+ 3/18 Test  #3: processor_blocks .................   Passed   17.21 sec
+      Start  4: processor_keys
+ 4/18 Test  #4: processor_keys ...................   Passed    0.46 sec
+      Start  5: processor_wet
+ 5/18 Test  #5: processor_wet ....................   Passed    3.22 sec
+      Start  6: processor_tempo
+ 6/18 Test  #6: processor_tempo ..................   Passed    1.90 sec
+      Start  7: processor_state
+ 7/18 Test  #7: processor_state ..................   Passed    1.30 sec
+      Start  8: processor_gui
+ 8/18 Test  #8: processor_gui ....................   Passed   13.91 sec
+      Start  9: processor_waves
+ 9/18 Test  #9: processor_waves ..................   Passed    0.43 sec
+      Start 10: processor_realtime
+10/18 Test #10: processor_realtime ...............   Passed    0.55 sec
+      Start 11: processor_presets
+11/18 Test #11: processor_presets ................   Passed   12.48 sec
+      Start 12: processor_midi
+12/18 Test #12: processor_midi ...................   Passed    0.48 sec
+      Start 13: transport_safety_check
+13/18 Test #13: transport_safety_check ...........   Passed    0.01 sec
+      Start 14: audio_read_slot_check
+14/18 Test #14: audio_read_slot_check ............   Passed    0.06 sec
+      Start 15: dsp_version
+15/18 Test #15: dsp_version ......................   Passed    0.01 sec
+      Start 16: dsp_preroll
+16/18 Test #16: dsp_preroll ......................   Passed    0.01 sec
+      Start 17: dsp_ppq
+17/18 Test #17: dsp_ppq ..........................   Passed    0.01 sec
+      Start 18: dsp_voices
+18/18 Test #18: dsp_voices .......................   Passed    0.01 sec
+
+100% tests passed out of 18
+
+Total Test time (real) =  59.73 sec

@@ -163,6 +163,7 @@ struct SlotCard : public juce::Component
         for (int i = 0; i < 3; ++i)
         {
             auto& rt = routes[i];
+            rt.amount.setComponentID (ParamID::slot (slotIndex, amtKeys[i]));
             rt.amount.setSliderStyle (juce::Slider::LinearHorizontal);
             rt.amount.setTextBoxStyle (juce::Slider::NoTextBox, false, 0, 0);
             rt.amount.setColour (juce::Slider::trackColourId, kAmber.withAlpha (0.6f));
@@ -174,7 +175,7 @@ struct SlotCard : public juce::Component
         modBtn.setClickingTogglesState (true);
         modBtn.onClick = [this] { showRoutes (modBtn.getToggleState()); };
         addAndMakeVisible (modBtn);
-        emptyHint.setText ("THIS SLOT IS EMPTY  —  SELECT A MODULE ABOVE", juce::dontSendNotification);
+        emptyHint.setText ("THIS SLOT IS EMPTY - SELECT A MODULE ABOVE", juce::dontSendNotification);
         emptyHint.setJustificationType (juce::Justification::centred);
         emptyHint.setFont (boldFont (15.f));
         emptyHint.setColour (juce::Label::textColourId, kFog.withAlpha (0.80f));

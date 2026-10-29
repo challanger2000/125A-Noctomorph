@@ -155,6 +155,7 @@ struct Knob : public juce::Component
 {
     Knob (APVTS& st, const juce::String& id, const juce::String& name)
     {
+        slider.setComponentID (id);
         label.setText (name, juce::dontSendNotification);
         label.setJustificationType (juce::Justification::centred);
         label.setInterceptsMouseClicks (false, false);
@@ -184,6 +185,7 @@ struct HSlider : public juce::Component
 {
     HSlider (APVTS& st, const juce::String& id, const juce::String& name)
     {
+        slider.setComponentID (id);
         label.setText (name, juce::dontSendNotification);
         label.setFont (boldFont (10.f));
         addAndMakeVisible (label);
@@ -212,6 +214,7 @@ struct Combo : public juce::ComboBox
 {
     Combo (APVTS& st, const juce::String& id)
     {
+        setComponentID (id);
         if (auto* c = dynamic_cast<juce::AudioParameterChoice*> (st.getParameter (id)))
             addItemList (c->choices, 1);
         att = std::make_unique<APVTS::ComboBoxAttachment> (st, id, *this);
@@ -223,6 +226,7 @@ struct Toggle : public juce::ToggleButton
 {
     Toggle (APVTS& st, const juce::String& id, const juce::String& text) : juce::ToggleButton (text)
     {
+        setComponentID (id);
         att = std::make_unique<APVTS::ButtonAttachment> (st, id, *this);
     }
     std::unique_ptr<APVTS::ButtonAttachment> att;

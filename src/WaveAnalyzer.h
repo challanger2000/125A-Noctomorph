@@ -29,6 +29,8 @@ inline juce::StringArray factoryWaves()
 
 inline std::unique_ptr<juce::AudioFormatReader> openReader (juce::AudioFormatManager& formats, const juce::String& source)
 {
+    if (! source.startsWith (kFactoryPrefix) && ! juce::File::isAbsolutePath (source))
+        return nullptr;
     if (! source.startsWith (kFactoryPrefix))
         return std::unique_ptr<juce::AudioFormatReader> (formats.createReaderFor (juce::File (source)));
     const auto name = source.fromFirstOccurrenceOf (kFactoryPrefix, false, false);
@@ -52,17 +54,21 @@ inline std::shared_ptr<v4jb::WaveData> analyse (const juce::String& source)
     juce::AudioFormatManager formats;
     formats.registerBasicFormats();
     auto reader = openReader (formats, source);
-    if (reader == nullptr || reader->lengthInSamples <= 0 || reader->sampleRate <= 0.0)
+    if (reader == nullptr || reader->lengthInSamples <= 0 || ! std::isfinite (reader->sampleRate)
+        || reader->sampleRate < 1.0 || reader->sampleRate > 768000.0 || reader->numChannels == 0)
         return nullptr;
 
     const int len = (int) std::min<juce::int64> (reader->lengthInSamples, (juce::int64) (reader->sampleRate * kMaxSeconds));
-    juce::AudioBuffer<float> buf ((int) reader->numChannels, len);
-    reader->read (&buf, 0, len, 0, true, true);
+    // JUCE's buffer reader mixes the first two channels. Do not allocate an
+    // unbounded number of channels from an untrusted file header.
+    juce::AudioBuffer<float> buf ((int) std::min (reader->numChannels, 2u), len);
+    if (! reader->read (&buf, 0, len, 0, true, true)) return nullptr;
 
     // Mono mixdown.
     std::vector<float> mono ((size_t) len, 0.f);
     for (int ch = 0; ch < buf.getNumChannels(); ++ch)
         juce::FloatVectorOperations::add (mono.data(), buf.getReadPointer (ch), len);
+    for (float sample : mono) if (! std::isfinite (sample)) return nullptr;
 
     // Frames: one per hop, thinned evenly if the file is long.
     const int rawFrames = std::max (1, (len - kSize) / kHop + 1);

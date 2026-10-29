@@ -3,6 +3,7 @@
 #include "Presets.h"
 #include "dsp/Engine.h"
 #include "dsp/Morph.h"
+#include "dsp/AudioReadSlot.h"
 #include "parameters/ParameterLayout.h"
 
 #include <JuceHeader.h>
@@ -18,7 +19,7 @@ public:
     ~V4JBAudioProcessor() override;
 
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
-    void releaseResources() override {}
+    void releaseResources() override { for (auto& slot : waveSlots) slot.release(); }
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
 
@@ -46,8 +47,7 @@ public:
     // UI spectrum taps (stage 0 = spectral slot, 1..10 = slots 2..11).
     float tap (int stage, int bar) const { return engine->taps[stage][bar].load (std::memory_order_relaxed); }
 
-    // Message thread only. processBlock drains this. A click is dropped if the
-    // queue is still full (AbstractFifo keeps one slot empty, so 31 fit).
+    // Message-thread SPSC producer. Overflow requests an audio-thread panic.
     void pushKey (int note, bool on) noexcept;
 
     // ---- Message thread API for the editor ----
@@ -61,8 +61,9 @@ public:
     // A source is an absolute path or "factory:<name>.wav" (bundled, see WaveAnalyzer::kFactoryPrefix).
     void loadWave (int w, const juce::String& source);
     void clearWave (int w);
-    std::shared_ptr<v4jb::WaveData> getWave (int w) const { return waveOwned[w]; }
-    juce::String getWaveName (int w) const { return waveSource[w].fromLastOccurrenceOf (":", false, false)
+    std::shared_ptr<v4jb::WaveData> getWave (int w) const { const juce::ScopedLock lock (waveMutex); return waveSlots[w].current(); }
+    juce::String getWaveError (int w) const { const juce::ScopedLock lock (waveMutex); return waveError[w]; }
+    juce::String getWaveName (int w) const { const juce::ScopedLock lock (waveMutex); return waveSource[w].fromLastOccurrenceOf (":", false, false)
                                                                  .fromLastOccurrenceOf ("\\", false, false)
                                                                  .fromLastOccurrenceOf ("/", false, false); }
     std::atomic<int> waveVersion { 0 };  // bumps when a wave changes, the UI polls it
@@ -74,9 +75,11 @@ public:
     void randomize (bool newModules);
     juce::String currentPresetName { "Init" };
     juce::String currentPresetCategory { "Init" };
+    juce::String getPresetName() const { const juce::ScopedLock lock (waveMutex); return currentPresetName; }
+    juce::String getPresetCategory() const { const juce::ScopedLock lock (waveMutex); return currentPresetCategory; }
 
     // Editor scale (drag the corner). 0.85 fits a 1440x900 screen; saved with the session.
-    float uiScale = 0.85f;
+    std::atomic<float> uiScale { 0.85f };
 
 private:
     void drainKeys() noexcept;
@@ -85,7 +88,7 @@ private:
     void timerCallback() override;
 
     std::unique_ptr<juce::XmlElement> createStateXml();
-    void applyStateXml (const juce::XmlElement& xml, bool fromPreset);
+    bool applyStateXml (const juce::XmlElement& xml, bool fromPreset);
     juce::ValueTree morphTree (bool points, bool path) const;
     void applyMorphTree (const juce::ValueTree& t, bool resetMissing);
     void setParam (const juce::String& id, float realValue);
@@ -98,6 +101,7 @@ private:
     static constexpr int kKeyQueue = 32;
     juce::AbstractFifo keyFifo { kKeyQueue };
     KeyEvent keyEvents[kKeyQueue] {};
+    std::atomic<bool> keyOverflow { false };
 
     std::unique_ptr<v4jb::Engine> engine = std::make_unique<v4jb::Engine>();  // ~700 KB of voices
     double sr = 48000.0;
@@ -115,20 +119,16 @@ private:
     bool delayWasOn = false;
     juce::dsp::Limiter<float> limiter;
 
-    // Waves: the message thread owns them (shared_ptr), the audio thread reads a raw
-    // pointer. A replaced wave is only freed after the audio thread has finished
-    // two more blocks, so it can never be read after free.
-    std::shared_ptr<v4jb::WaveData> waveOwned[2];
-    std::atomic<v4jb::WaveData*> waveLive[2] { nullptr, nullptr };
+    // Non-audio callers serialize ownership/metadata; audio only uses hazard pointers.
+    mutable juce::CriticalSection waveMutex;
+    v4jb::AudioReadSlot<v4jb::WaveData> waveSlots[2];
     juce::String waveSource[2];
+    juce::String waveError[2];
     int waveGen[2] { 0, 0 };
-    struct Retired { std::shared_ptr<v4jb::WaveData> data; juce::int64 block; juce::uint32 time; };
-    std::vector<Retired> retired;
-    std::atomic<juce::int64> blockCounter { 0 };
     juce::ThreadPool analysisPool { 1 };
 
     juce::Array<PresetEntry> factoryPresets = Presets::factory();
-    int currentProgram = 0;
+    std::atomic<int> currentProgram { 0 };
 
     // Cached once; reading an atomic is real-time safe, looking up by id is not.
     struct SlotPtrs { std::atomic<float>* type, *main, *p[4], *es, *ea, *ls, *la, *ms, *ma; };

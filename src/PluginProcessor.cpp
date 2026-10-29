@@ -1,6 +1,8 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "WaveAnalyzer.h"
+#include "dsp/TransportSafety.h"
+#include "WaveState.h"
 
 using namespace v4jb;
 
@@ -10,11 +12,40 @@ inline float ld (const std::atomic<float>* a) { return a->load (std::memory_orde
 inline int ldi (const std::atomic<float>* a) { return (int) std::lround (ld (a)); }
 inline bool ldb (const std::atomic<float>* a) { return ld (a) > 0.5f; }
 
+bool validMorph (const juce::ValueTree& t)
+{
+    auto finiteUnit = [] (const juce::String& text)
+    {
+        const auto start = text.getCharPointer();
+        auto end = start;
+        const auto value = juce::CharacterFunctions::readDoubleValue (end);
+        return end != start && end.isEmpty() && std::isfinite (value) && value >= 0 && value <= 1;
+    };
+    for (int c = 0; c < 4; ++c)
+    {
+        const auto key = "c" + juce::String (c);
+        if (! t.hasProperty (key)) continue;
+        const auto vals = juce::StringArray::fromTokens (t[key].toString(), " ", "");
+        if (vals.size() != kNumMacros) return false;
+        for (auto& v : vals) if (! finiteUnit (v)) return false;
+    }
+    auto nodes = juce::StringArray::fromTokens (t["nodes"].toString(), ";", "");
+    nodes.removeEmptyStrings();
+    if (nodes.size() > kMaxNodes) return false;
+    for (auto& node : nodes)
+    {
+        const auto vals = juce::StringArray::fromTokens (node, " ", "");
+        if (vals.size() != 3 || ! finiteUnit (vals[0]) || ! finiteUnit (vals[1])
+            || vals[2].length() != 1 || vals[2][0] < '0' || vals[2][0] >= '0' + kNumSegLens) return false;
+    }
+    return true;
+}
+
 juce::String joinFloats (const float* v, int n)
 {
     juce::StringArray s;
     for (int i = 0; i < n; ++i)
-        s.add (juce::String (v[i], 4));
+        s.add (juce::String (v[i], 9, true));
     return s.joinIntoString (" ");
 }
 } // namespace
@@ -118,10 +149,15 @@ void V4JBAudioProcessor::pushKey (int note, bool on) noexcept
     if (scope.blockSize1 > 0)
         keyEvents[scope.startIndex1] = { (juce::uint8) juce::jlimit (0, 127, note),
                                          (juce::uint8) (on ? 1 : 0) };
+    else
+        keyOverflow.store (true, std::memory_order_release);
 }
 
 void V4JBAudioProcessor::drainKeys() noexcept
 {
+    // Consume panic BEFORE taking the read snapshot. A concurrent overflow then
+    // remains pending for the next callback instead of clearing a newer panic.
+    const bool panic = keyOverflow.exchange (false, std::memory_order_acquire);
     const auto scope = keyFifo.read (keyFifo.getNumReady());
     auto apply = [this] (int i)
     {
@@ -131,6 +167,11 @@ void V4JBAudioProcessor::drainKeys() noexcept
         else
             engine->noteOff ((int) e.note);
     };
+    if (panic)
+    {
+        engine->allNotesOff();
+        return; // discard this potentially incomplete batch (RAII commits read)
+    }
     for (int i = 0; i < scope.blockSize1; ++i)
         apply (scope.startIndex1 + i);
     for (int i = 0; i < scope.blockSize2; ++i)
@@ -198,7 +239,8 @@ void V4JBAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
                     playing = true;
                 }
         }
-    engine->setTransport (bpm, playing, ppq);
+    bpm = v4jb::safeHostBpm (bpm);
+    engine->setTransport (bpm, playing && std::isfinite (ppq), ppq);
 
     // Morph pad -> macros -> engine parameters.
     float offsets[kNumMacros], macros[kNumMacros];
@@ -212,55 +254,72 @@ void V4JBAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
                    engine->beatClock(), (float) (n / sr), engine->takeNoteStarted());
     morph.macros (offsets, locks, macros);
     engine->setParams (readParams(), macros);
-    engine->setWaves (waveLive[0].load(), waveLive[1].load());
+    engine->setWaves (waveSlots[0].acquire(), waveSlots[1].acquire());
+    struct WaveReadEnd
+    {
+        V4JBAudioProcessor& p;
+        ~WaveReadEnd() { p.engine->setWaves (nullptr, nullptr); }
+    } waveReadEnd { *this };
     drainKeys();
+
+    if (buffer.getNumChannels() == 0) { midi.clear(); return; }
 
     auto* L = buffer.getWritePointer (0);
     const bool stereo = buffer.getNumChannels() > 1;
-    const int m = stereo ? n : juce::jmin (n, (int) monoScratch.size());  // mono hosts: capped at the scratch size
-    auto* R = stereo ? buffer.getWritePointer (1) : monoScratch.data();
-
-    // Render up to each MIDI event, apply it, carry on: notes land on their exact sample.
-    int pos = 0;
-    for (const auto meta : midi)
+    auto event = midi.begin();
+    int off = 0;
+    do
     {
-        const int at = juce::jlimit (pos, m, meta.samplePosition);
-        engine->render (L + pos, R + pos, at - pos);
-        pos = at;
+        const int m = juce::jmin (n - off, (int) monoScratch.size());
+        auto* left = L + off;
+        auto* R = stereo ? buffer.getWritePointer (1) + off : monoScratch.data();
 
-        const auto msg = meta.getMessage();
-        if (msg.isNoteOn())
-            engine->noteOn (msg.getNoteNumber(), msg.getFloatVelocity());
-        else if (msg.isNoteOff())
-            engine->noteOff (msg.getNoteNumber());
-        else if (msg.isAllNotesOff() || msg.isAllSoundOff())
-            engine->allNotesOff();
-        else if (msg.isPitchWheel())
-            engine->setPitchBend ((float) (msg.getPitchWheelValue() - 8192) / 8192.f * 2.f);  // +-2 semitones
-        else if (msg.isControllerOfType (1))
-            engine->setModWheel ((float) msg.getControllerValue() / 127.f);
-        else if (msg.isChannelPressure())
-            engine->setAftertouch ((float) msg.getChannelPressureValue() / 127.f);
-        else if (msg.isAftertouch())
-            engine->setAftertouch ((float) msg.getAfterTouchValue() / 127.f);
-    }
-    engine->render (L + pos, R + pos, m - pos);
+        // Render up to each MIDI event, apply it, carry on: notes land on their exact sample.
+        int pos = 0;
+        while (event != midi.end())
+        {
+            const auto meta = *event;
+            const int at = juce::jlimit (pos, n - off, meta.samplePosition - off);
+            if (at > m) break;
+            ++event;
+            if (at > pos) engine->render (left + pos, R + pos, at - pos);
+            pos = at;
+
+            // Unsupported long messages (SysEx) must not allocate MidiMessage
+            // storage on the audio thread merely to be ignored below.
+            if (meta.numBytes > 3) continue;
+            const auto msg = meta.getMessage();
+            if (msg.isNoteOn())
+                engine->noteOn (msg.getNoteNumber(), msg.getFloatVelocity());
+            else if (msg.isNoteOff())
+                engine->noteOff (msg.getNoteNumber());
+            else if (msg.isAllNotesOff() || msg.isAllSoundOff())
+                engine->allNotesOff();
+            else if (msg.isPitchWheel())
+                engine->setPitchBend ((float) (msg.getPitchWheelValue() - 8192) / 8192.f * 2.f);  // +-2 semitones
+            else if (msg.isControllerOfType (1))
+                engine->setModWheel ((float) msg.getControllerValue() / 127.f);
+            else if (msg.isChannelPressure())
+                engine->setAftertouch ((float) msg.getChannelPressureValue() / 127.f);
+            else if (msg.isAftertouch())
+                engine->setAftertouch ((float) msg.getAfterTouchValue() / 127.f);
+        }
+        if (m > pos) engine->render (left + pos, R + pos, m - pos);
+
+        processEffects (left, R, m, macros, bpm);
+
+        if (! stereo)
+        {
+            for (int i = 0; i < m; ++i)
+                left[i] = 0.5f * (left[i] + R[i]);
+        }
+        off += m;
+    } while (off < n);
     midi.clear();
-
-    processEffects (L, R, m, macros, bpm);
-
-    if (! stereo)
-    {
-        for (int i = 0; i < m; ++i)
-            L[i] = 0.5f * (L[i] + R[i]);
-        for (int i = m; i < n; ++i)
-            L[i] = 0.f;
-    }
 
     const float lv = ld (ptr.level);
     buffer.applyGainRamp (0, n, lastLevel, lv);
     lastLevel = lv;
-    blockCounter.fetch_add (1, std::memory_order_release);
 }
 
 // Slot 12: drive, chorus/phaser, delay, reverb, then width and the limiter.
@@ -335,8 +394,8 @@ void V4JBAudioProcessor::processEffects (float* L, float* R, int n, const float*
                 const float dl = delay.popSample (0, t), dr = delay.popSample (1, t);
                 delay.pushSample (0, l[i] + dr * fb);
                 delay.pushSample (1, r[i] + dl * fb);
-                l[i] += mix * dl;
-                r[i] += mix * dr;
+                l[i] = (1.f - mix) * l[i] + mix * dl;
+                r[i] = (1.f - mix) * r[i] + mix * dr;
             }
         }
 
@@ -347,7 +406,9 @@ void V4JBAudioProcessor::processEffects (float* L, float* R, int n, const float*
             rp.roomSize = ld (ptr.rvSize);
             rp.damping = ld (ptr.rvDamp);
             rp.wetLevel = mix;
-            rp.dryLevel = 1.f - 0.5f * mix;
+            // juce::Reverb internally multiplies dryLevel by 2. Keep unity
+            // dry at 0%, and no direct signal at 100%; retain its wet scaling.
+            rp.dryLevel = 0.5f * (1.f - mix);
             rp.width = 1.f;
             if (rp.roomSize != reverbParams.roomSize || rp.damping != reverbParams.damping
                 || rp.wetLevel != reverbParams.wetLevel || rp.dryLevel != reverbParams.dryLevel)
@@ -386,7 +447,7 @@ juce::ValueTree V4JBAudioProcessor::morphTree (bool points, bool path) const
     {
         juce::StringArray nodes;
         for (int i = 0; i < morph.numNodes.load(); ++i)
-            nodes.add (juce::String (morph.nodeX[i].load(), 4) + " " + juce::String (morph.nodeY[i].load(), 4)
+            nodes.add (juce::String (morph.nodeX[i].load(), 9, true) + " " + juce::String (morph.nodeY[i].load(), 9, true)
                        + " " + juce::String (morph.nodeLen[i].load()));
         t.setProperty ("nodes", nodes.joinIntoString (";"), nullptr);
     }
@@ -432,7 +493,7 @@ void V4JBAudioProcessor::storeCorner (int c)
     for (int m = 0; m < kNumMacros; ++m)
         morph.corner[c][m].store (morph.outMacro[m].load());
     for (int m = 0; m < kNumMacros; ++m)
-        setParam (ParamID::macro (m), 0.f);
+        if (! ldb (ptr.lock[m])) setParam (ParamID::macro (m), 0.f);
     recallCorner (c);
 }
 
@@ -455,7 +516,9 @@ bool V4JBAudioProcessor::loadMorphFile (const juce::File& f)
     auto xml = juce::parseXML (f);
     if (xml == nullptr || ! xml->hasTagName ("MORPH"))
         return false;
-    applyMorphTree (juce::ValueTree::fromXml (*xml), false);  // a points file leaves the path alone, and vice versa
+    const auto tree = juce::ValueTree::fromXml (*xml);
+    if (! validMorph (tree)) return false;
+    applyMorphTree (tree, false);  // a points file leaves the path alone, and vice versa
     return true;
 }
 
@@ -463,6 +526,7 @@ bool V4JBAudioProcessor::loadMorphFile (const juce::File& f)
 
 void V4JBAudioProcessor::loadWave (int w, const juce::String& source)
 {
+    const juce::ScopedLock lock (waveMutex);
     const int gen = ++waveGen[w];
     juce::WeakReference<V4JBAudioProcessor> weak (this);
     analysisPool.addJob ([weak, w, gen, source]
@@ -471,37 +535,36 @@ void V4JBAudioProcessor::loadWave (int w, const juce::String& source)
         juce::MessageManager::callAsync ([weak, w, gen, source, data]
         {
             if (auto* self = weak.get())
-                if (self->waveGen[w] == gen && data != nullptr)  // a newer load wins
-                    self->publishWave (w, data, source);
+            {
+                const juce::ScopedLock guard (self->waveMutex);
+                if (self->waveGen[w] != gen) return;
+                if (data != nullptr) self->publishWave (w, data, source);
+                else { self->waveError[w] = "Could not load audio: " + source; ++self->waveVersion; }
+            }
         });
     });
 }
 
 void V4JBAudioProcessor::clearWave (int w)
 {
+    const juce::ScopedLock lock (waveMutex);
     ++waveGen[w];
     publishWave (w, nullptr, {});
 }
 
 void V4JBAudioProcessor::publishWave (int w, std::shared_ptr<WaveData> data, const juce::String& source)
 {
-    waveLive[w].store (data.get());
-    if (waveOwned[w] != nullptr)
-        retired.push_back ({ waveOwned[w], blockCounter.load (std::memory_order_acquire), juce::Time::getMillisecondCounter() });
-    waveOwned[w] = std::move (data);
+    const juce::ScopedLock lock (waveMutex);
+    waveSlots[w].publish (std::move (data));
     waveSource[w] = source;
+    waveError[w].clear();
     ++waveVersion;
 }
 
 void V4JBAudioProcessor::timerCallback()
 {
-    // Free a replaced wave once the audio thread has finished two blocks since the
-    // swap (it reads the pointer once per block), or after 10 s if audio is stopped.
-    const auto now = blockCounter.load (std::memory_order_acquire);
-    const auto ms = juce::Time::getMillisecondCounter();
-    retired.erase (std::remove_if (retired.begin(), retired.end(), [&] (const Retired& r)
-                   { return now >= r.block + 2 || ms - r.time > 10000; }),
-                   retired.end());
+    const juce::ScopedLock lock (waveMutex);
+    for (auto& slot : waveSlots) slot.collect();
 }
 
 // ---------------------------------------------------------------- state and presets
@@ -521,20 +584,63 @@ void V4JBAudioProcessor::resetParamsToDefaults()
 
 std::unique_ptr<juce::XmlElement> V4JBAudioProcessor::createStateXml()
 {
+    const juce::ScopedLock lock (waveMutex);
     auto state = apvts.copyState();
+    for (int i = state.getNumChildren(); --i >= 0;)
+        if (state.getChild (i).hasType ("WAVE_DATA")) state.removeChild (i, nullptr);
+    state.setProperty ("waveDataVersion", 1, nullptr);
+    for (int w = 0; w < 2; ++w)
+        if (auto wave = waveSlots[w].current()) WaveState::append (state, w, *wave);
     state.removeChild (state.getChildWithName ("MORPH"), nullptr);
     state.appendChild (morphTree (true, true), nullptr);
     state.setProperty ("waveA", waveSource[0], nullptr);
     state.setProperty ("waveB", waveSource[1], nullptr);
     state.setProperty ("presetName", currentPresetName, nullptr);
     state.setProperty ("category", currentPresetCategory, nullptr);
-    state.setProperty ("uiScale", uiScale, nullptr);
+    state.setProperty ("uiScale", uiScale.load(), nullptr);
     return state.createXml();
 }
 
-void V4JBAudioProcessor::applyStateXml (const juce::XmlElement& xml, bool fromPreset)
+bool V4JBAudioProcessor::applyStateXml (const juce::XmlElement& xml, bool fromPreset)
 {
+    const juce::ScopedLock lock (waveMutex);
     auto tree = juce::ValueTree::fromXml (xml);
+    if (! tree.isValid() || (int) tree.getProperty ("waveDataVersion", 0) > 1) return false;
+    if (! validMorph (tree.getChildWithName ("MORPH"))) return false;
+    if (! std::isfinite (xml.getDoubleAttribute ("uiScale", uiScale.load()))) return false;
+    std::shared_ptr<WaveData> restored[2];
+    bool embedded[2] {};
+    // Validate ALL resources before touching parameters or previously valid sound.
+    for (auto child : tree)
+        if (child.hasType ("WAVE_DATA"))
+        {
+            const int w = child.getProperty ("slot", -1);
+            if (w < 0 || w > 1 || embedded[w]) return false;
+            embedded[w] = true;
+            restored[w] = WaveState::decode (child);
+            if (! restored[w]) { waveError[w] = "Invalid embedded wave data; state not loaded"; ++waveVersion; return false; }
+        }
+    for (int w = 0; w < 2; ++w)
+        if (! embedded[w] && xml.hasAttribute (w == 0 ? "waveA" : "waveB"))
+        {
+            const auto src = xml.getStringAttribute (w == 0 ? "waveA" : "waveB");
+            if (src.isNotEmpty())
+            {
+                restored[w] = WaveAnalyzer::analyse (src);
+                if (! restored[w]) { waveError[w] = "Missing or invalid wave; state not loaded: " + src; ++waveVersion; return false; }
+            }
+        }
+    for (auto* e : xml.getChildWithTagNameIterator ("PARAM"))
+    {
+        const auto value = e->getDoubleAttribute ("value");
+        if (! std::isfinite (value)) return false;
+        if (auto* parameter = apvts.getParameter (e->getStringAttribute ("id")))
+        {
+            const auto& range = parameter->getNormalisableRange();
+            const float realValue = (float) value;
+            if (! std::isfinite (realValue) || realValue < range.start || realValue > range.end) return false;
+        }
+    }
     if (fromPreset)
     {
         // Factory presets may be partial: start from defaults, then apply what is listed.
@@ -547,21 +653,22 @@ void V4JBAudioProcessor::applyStateXml (const juce::XmlElement& xml, bool fromPr
     }
     else
     {
-        apvts.replaceState (tree);
-        uiScale = juce::jlimit (0.4f, 1.5f, (float) xml.getDoubleAttribute ("uiScale", uiScale));  // sessions only, presets keep your size
+        auto parameters = tree.createCopy();
+        for (int i = parameters.getNumChildren(); --i >= 0;)
+            if (parameters.getChild (i).hasType ("WAVE_DATA")) parameters.removeChild (i, nullptr);
+        apvts.replaceState (parameters);
+        uiScale = juce::jlimit (0.4f, 1.5f, (float) xml.getDoubleAttribute ("uiScale", uiScale.load()));  // sessions only, presets keep your size
     }
 
     applyMorphTree (tree.getChildWithName ("MORPH"), true);
     for (int w = 0; w < 2; ++w)
     {
         const auto key = w == 0 ? "waveA" : "waveB";
-        if (! xml.hasAttribute (key))
+        if (! xml.hasAttribute (key) && ! embedded[w])
             continue;  // presets without waveA/waveB keep whatever waves are loaded
         const auto src = xml.getStringAttribute (key);
-        if (src.startsWith (WaveAnalyzer::kFactoryPrefix) || (src.isNotEmpty() && juce::File::isAbsolutePath (src) && juce::File (src).existsAsFile()))
-            loadWave (w, src);
-        else
-            clearWave (w);
+        ++waveGen[w]; // stale worker completions cannot overwrite recalled state
+        publishWave (w, restored[w], src);
     }
     currentPresetName = xml.getStringAttribute ("presetName", currentPresetName);
     if (xml.hasAttribute ("category"))
@@ -576,6 +683,7 @@ void V4JBAudioProcessor::applyStateXml (const juce::XmlElement& xml, bool fromPr
                 break;
             }
     }
+    return true;
 }
 
 void V4JBAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
@@ -586,6 +694,7 @@ void V4JBAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 
 void V4JBAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
+    if (data == nullptr || sizeInBytes <= 0 || sizeInBytes > 16 * 1024 * 1024) return;
     // Hosts can hand us anything. Only accept our own tree.
     if (auto xml = getXmlFromBinary (data, sizeInBytes))
         if (xml->hasTagName (apvts.state.getType()))
@@ -608,10 +717,11 @@ const juce::String V4JBAudioProcessor::getProgramName (int index)
 
 void V4JBAudioProcessor::loadPreset (const PresetEntry& e)
 {
+    const juce::ScopedLock lock (waveMutex);
     if (auto xml = Presets::parse (e))
         if (xml->hasTagName (apvts.state.getType()))
         {
-            applyStateXml (*xml, true);
+            if (! applyStateXml (*xml, true)) return;
             currentPresetName = e.name;
             currentPresetCategory = e.category;
         }
@@ -619,6 +729,7 @@ void V4JBAudioProcessor::loadPreset (const PresetEntry& e)
 
 bool V4JBAudioProcessor::saveUserPreset (const juce::String& name, const juce::String& category)
 {
+    const juce::ScopedLock lock (waveMutex);
     const auto clean = juce::File::createLegalFileName (name.trim());
     if (clean.isEmpty())
         return false;
@@ -635,6 +746,7 @@ bool V4JBAudioProcessor::saveUserPreset (const juce::String& name, const juce::S
 // newModules = also pick a new module chain; otherwise only the values move.
 void V4JBAudioProcessor::randomize (bool newModules)
 {
+    const juce::ScopedLock lock (waveMutex);
     juce::Random r;
     auto between = [&r] (float lo, float hi) { return lo + (hi - lo) * r.nextFloat(); };
     auto chance = [&r] (float p) { return r.nextFloat() < p; };
@@ -648,9 +760,9 @@ void V4JBAudioProcessor::randomize (bool newModules)
                               M::Lowpass, M::Highpass, M::Bandpass, M::Notch, M::MovingFilter, M::Decay, M::Hype,
                               M::Modulator, M::Detuned, M::Blur, M::Noise, M::Octaver, M::SecondTone,
                               M::Phrase, M::RandomDrops, M::Tail, M::Clip, M::HarmonicAdd, M::RangeEnhance };
-        if (waveOwned[0] != nullptr)
+        if (getWave (0) != nullptr)
             pool.push_back (M::Wave);
-        if (waveOwned[0] != nullptr || waveOwned[1] != nullptr)
+        if (getWave (0) != nullptr || getWave (1) != nullptr)
             pool.push_back (M::DoubleWave);
         const int active = 3 + r.nextInt (4);
         bool doubleUsed = false;

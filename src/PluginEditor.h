@@ -98,7 +98,6 @@ private:
     std::unique_ptr<juce::Drawable> logo;  // original 125A vector master
     juce::Array<PresetEntry> presetList;  // factory then user, rebuilt for the menu and arrows
     int presetIndex = 0;
-    int ciCaptureStep = 0; // Only in isolated Windows screenshot CI branch
 
     // Standalone only. Declared after the state so the component dies first.
     juce::MidiKeyboardState keyboardState;

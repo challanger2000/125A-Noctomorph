@@ -1,5 +1,5 @@
 name: Windows VST3 - manual
-# Manual builds, except exactly one CI screenshot test branch. No other push/PR runs.
+# Manual dispatch only. No push or pull_request builds: save Actions minutes.
 on:
   workflow_dispatch:
   push:
@@ -85,53 +85,57 @@ jobs:
           & $msbuild 'Builds/VisualStudio2022/V4JB.sln' /p:Configuration=Release /p:Platform=x64 /m
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Render actual JUCE editor screenshots (Windows Standalone, VST3-size)
+      - name: Run consolidated JUCE processor and GUI regressions
         shell: pwsh
         run: |
-          $exe = Get-ChildItem -Path Builds/VisualStudio2022 -Recurse -Filter V4JB.exe -File |
-            Where-Object { $_.FullName -match 'Release' } | Select-Object -First 1
-          if (-not $exe) { throw 'Standalone V4JB.exe not found; cannot render actual editor' }
-          $env:V4JB_CAPTURE_GUI_DIR = Join-Path (Get-Location) 'screenshots'
-          New-Item -ItemType Directory -Force $env:V4JB_CAPTURE_GUI_DIR | Out-Null
-          $process = Start-Process -FilePath $exe.FullName -PassThru
-          try {
-            $required = @('01-play.png', '02-source.png', '03-fx-drive.png',
-                          '04-fx-delay.png', '05-fx-master.png',
-                          '06-module-02.png', '07-module-11.png',
-                          '08-morph.png', '09-modulation.png', '10-waves.png')
-            for ($i = 0; $i -lt 100; $i++) {
-              Start-Sleep -Milliseconds 500
-              $found = @($required | Where-Object { Test-Path (Join-Path $env:V4JB_CAPTURE_GUI_DIR $_) })
-              if ($found.Count -eq $required.Count) { break }
-              if ($process.HasExited) { throw "Standalone closed before rendering GUI" }
-            }
-            foreach ($name in $required) {
-              $file = Join-Path $env:V4JB_CAPTURE_GUI_DIR $name
-              if (-not (Test-Path $file)) { throw "Missing real Windows GUI image: $name" }
-              if ((Get-Item $file).Length -lt 4096) { throw "PNG appears empty: $name" }
-              Write-Host "$name : $((Get-Item $file).Length) bytes"
-            }
-          } finally {
-            if (-not $process.HasExited) { Stop-Process -Id $process.Id -Force }
-          }
+          cmake -S tests -B build/audit-tests -A x64 -DJUCE_SOURCE="$pwd/JUCE" -DV4JB_ASSETS="$pwd/_upstream"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build build/audit-tests --config Release --parallel 2
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ctest --test-dir build/audit-tests -C Release --output-on-failure
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Package Windows VST3
-        if: always()
+      - name: Checkout official Steinberg SDK 3.8.1 validator
+        uses: actions/checkout@v4
+        with:
+          repository: steinbergmedia/vst3sdk
+          ref: 3cdf9ca5d1f5b1b21e0a86832aa4abe55607bd96
+          path: vst3sdk
+          submodules: recursive
+
+      - name: Validate the actual Windows VST3 bundle
         shell: pwsh
         run: |
-          $vst = Get-ChildItem -Path Builds/VisualStudio2022 -Recurse -Directory -Filter V4JB.vst3 |
-            Where-Object { $_.FullName -match 'Release' } | Select-Object -First 1
-          if (-not $vst) { throw 'Compiled VST3 not found' }
-          New-Item -ItemType Directory -Force dist | Out-Null
-          Compress-Archive -Path $vst.FullName -DestinationPath 'dist/V4JB-0.0.4-125A-GUI-TEST-win-x64-vst3.zip' -Force
+          cmake -S vst3sdk -B build/validator -A x64 -DSMTG_ENABLE_VST3_PLUGIN_EXAMPLES=OFF -DSMTG_ENABLE_VST3_HOSTING_EXAMPLES=OFF -DSMTG_ENABLE_VSTGUI_SUPPORT=OFF -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE="$pwd/build/validator-bin"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build build/validator --config Release --target validator --parallel 2
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & ./build/validator-bin/validator.exe ./Builds/VisualStudio2022/x64/Release/VST3/V4JB.vst3
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Upload genuine render and experimental VST3
+      - name: Retain audit evidence even on failure
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: 125A-Noctomorph-GUI-render-Windows
+          name: Noctomorph-audit-evidence
           path: |
-            screenshots/*.png
-            dist/*.zip
+            build/audit-tests/Testing/Temporary/LastTest.log
+            build/audit-tests/control-inventory.tsv
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Package VST3 test artifact
+        shell: pwsh
+        run: |
+          $vst = 'Builds/VisualStudio2022/x64/Release/VST3/V4JB.vst3'
+          if (-not (Test-Path $vst)) { throw 'Compiled VST3 not found' }
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Compress-Archive -Path $vst -DestinationPath 'dist/V4JB-0.0.4-125A-baseline-win-x64-vst3.zip' -Force
+
+      - name: Upload build - experimental, not approved release
+        uses: actions/upload-artifact@v4
+        with:
+          name: V4JB-125A-Windows-VST3-UNTESTED
+          path: dist/*.zip
           if-no-files-found: error
           retention-days: 7

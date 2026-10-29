@@ -191,9 +191,7 @@ V4JBAudioProcessorEditor::V4JBAudioProcessorEditor (V4JBAudioProcessor& p)
     content.addChildComponent (aboutBox);
 
     // VST3 stays keyboard-free. The host already has keys; this strip is for Standalone.
-    const auto captureDir = juce::SystemStats::getEnvironmentVariable ("V4JB_CAPTURE_GUI_DIR", {});
-    // CI-only: render exactly the VST3-sized editor without Standalone piano keys.
-    if (proc.wrapperType == juce::AudioProcessor::wrapperType_Standalone && captureDir.isEmpty())
+    if (proc.wrapperType == juce::AudioProcessor::wrapperType_Standalone)
     {
         keyboard = std::make_unique<juce::MidiKeyboardComponent> (
             keyboardState, juce::MidiKeyboardComponent::horizontalKeyboard);
@@ -220,12 +218,11 @@ V4JBAudioProcessorEditor::V4JBAudioProcessorEditor (V4JBAudioProcessor& p)
 
     // Drag the corner to scale (40%..150%), aspect ratio locked. The scale is saved with the session.
     // Read it first: setResizeLimits clamps the still-empty editor and resized() overwrites uiScale.
-    const float s = juce::jlimit (0.4f, 1.5f, proc.uiScale);
+    const float s = juce::jlimit (0.4f, 1.5f, proc.uiScale.load());
     setResizable (true, true);
     setResizeLimits (baseW * 2 / 5, baseH * 2 / 5, baseW * 3 / 2, baseH * 3 / 2);
     getConstrainer()->setFixedAspectRatio ((double) baseW / (double) baseH);
-    setSize (juce::roundToInt ((float) baseW * (captureDir.isNotEmpty() ? 1.f : s)),
-             juce::roundToInt ((float) baseH * (captureDir.isNotEmpty() ? 1.f : s)));
+    setSize (juce::roundToInt ((float) baseW * s), juce::roundToInt ((float) baseH * s));
     startTimerHz (30);
 }
 
@@ -253,13 +250,13 @@ void V4JBAudioProcessorEditor::handleNoteOff (juce::MidiKeyboardState*, int, int
 // 30 Hz: only the visible page pulls spectra and meters.
 void V4JBAudioProcessorEditor::timerCallback()
 {
-    if (proc.currentPresetCategory.isNotEmpty())
-        presetBtn.setButtonText (proc.currentPresetCategory + "  ·  " + proc.currentPresetName);
+    if (proc.getPresetCategory().isNotEmpty())
+        presetBtn.setButtonText (proc.getPresetCategory() + "  ·  " + proc.getPresetName());
     else
-        presetBtn.setButtonText (proc.currentPresetName);
-    presetBtn.setTooltip (proc.currentPresetCategory.isNotEmpty()
-                              ? proc.currentPresetCategory + " / " + proc.currentPresetName
-                              : proc.currentPresetName);
+        presetBtn.setButtonText (proc.getPresetName());
+    presetBtn.setTooltip (proc.getPresetCategory().isNotEmpty()
+                              ? proc.getPresetCategory() + " / " + proc.getPresetName()
+                              : proc.getPresetName());
     if (lastHeaderMode != tabs.getCurrentTabIndex())
     {
         lastHeaderMode = tabs.getCurrentTabIndex();
@@ -275,45 +272,6 @@ void V4JBAudioProcessorEditor::timerCallback()
             case 3: wavePage.refresh(); break;
             default: break;
         }
-
-    // Test-only real JUCE component snapshots, saved atomically.
-    const auto outDir = juce::SystemStats::getEnvironmentVariable ("V4JB_CAPTURE_GUI_DIR", {});
-    if (outDir.isNotEmpty() && ciCaptureStep < 10)
-    {
-        static const char* const names[] = {
-            "01-play.png", "02-source.png", "03-fx-drive.png",
-            "04-fx-delay.png", "05-fx-master.png",
-            "06-module-02.png", "07-module-11.png",
-            "08-morph.png", "09-modulation.png", "10-waves.png"
-        };
-        const auto folder = juce::File (outDir);
-        folder.createDirectory();
-        const auto pngFile = folder.getChildFile (names[ciCaptureStep]);
-        const auto pendingFile = folder.getChildFile (juce::String (names[ciCaptureStep]) + ".partial");
-        juce::PNGImageFormat png;
-        const auto image = createComponentSnapshot (getLocalBounds(), true);
-        if (image.isValid())
-        {
-            if (auto stream = pendingFile.createOutputStream())
-            {
-                const bool written = png.writeImageToStream (image, *stream);
-                stream->flush();
-                stream.reset();
-                if (written)
-                    pendingFile.moveFileTo (pngFile);
-            }
-        }
-        ++ciCaptureStep;
-        if (ciCaptureStep == 1) tabs.setCurrentTabIndex (1);
-        else if (ciCaptureStep == 2) editPage.setTop (1);
-        else if (ciCaptureStep == 3) editPage.fx.setEffect (2);
-        else if (ciCaptureStep == 4) editPage.fx.setEffect (4);
-        else if (ciCaptureStep == 5) editPage.setTop (0);
-        else if (ciCaptureStep == 6) editPage.setSlot (9);
-        else if (ciCaptureStep == 7) advancedTabs.setCurrentTabIndex (2);
-        else if (ciCaptureStep == 8) advancedTabs.setCurrentTabIndex (1);
-        else if (ciCaptureStep == 9) advancedTabs.setCurrentTabIndex (3);
-    }
 }
 
 void V4JBAudioProcessorEditor::refreshPresetList()
@@ -336,7 +294,7 @@ void V4JBAudioProcessorEditor::showPresetMenu()
         juce::PopupMenu sub;
         for (int i = 0; i < presetList.size(); ++i)
             if (presetList[i].category == cat)
-                sub.addItem (i + 1, presetList[i].name, true, presetList[i].name == proc.currentPresetName);
+                sub.addItem (i + 1, presetList[i].name, true, presetList[i].name == proc.getPresetName());
         menu.addSubMenu (cat, sub);
     }
     menu.addSeparator();
@@ -371,7 +329,7 @@ void V4JBAudioProcessorEditor::stepPreset (int delta)
 
     juce::Array<int> group;
     for (int i = 0; i < presetList.size(); ++i)
-        if (presetList[i].category == proc.currentPresetCategory)
+        if (presetList[i].category == proc.getPresetCategory())
             group.add (i);
     if (group.isEmpty())  // Random / unknown name: walk the whole list
         for (int i = 0; i < presetList.size(); ++i)
@@ -379,7 +337,7 @@ void V4JBAudioProcessorEditor::stepPreset (int delta)
 
     int pos = 0;
     for (int g = 0; g < group.size(); ++g)
-        if (presetList[group[g]].name == proc.currentPresetName)
+        if (presetList[group[g]].name == proc.getPresetName())
         {
             pos = g;
             break;
@@ -392,7 +350,7 @@ void V4JBAudioProcessorEditor::stepPreset (int delta)
 void V4JBAudioProcessorEditor::savePresetDialog()
 {
     auto* w = new juce::AlertWindow ("Save preset", "Saved to Documents/V4JB/Presets", juce::MessageBoxIconType::NoIcon);
-    w->addTextEditor ("name", proc.currentPresetName, "Name");
+    w->addTextEditor ("name", proc.getPresetName(), "Name");
     w->addTextEditor ("category", "User", "Category");
     w->addButton ("Save", 1, juce::KeyPress (juce::KeyPress::returnKey));
     w->addButton ("Cancel", 0, juce::KeyPress (juce::KeyPress::escapeKey));

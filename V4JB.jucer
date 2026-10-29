@@ -521,6 +521,7 @@
             file="src/PluginEditor.cpp"/>
       <FILE id="prsH001" name="Presets.h" compile="0" resource="0" file="src/Presets.h"/>
       <FILE id="wanH001" name="WaveAnalyzer.h" compile="0" resource="0" file="src/WaveAnalyzer.h"/>
+      <FILE id="wstH001" name="WaveState.h" compile="0" resource="0" file="src/WaveState.h"/>
       <GROUP id="dspGrp01" name="dsp">
         <FILE id="comH001" name="Common.h" compile="0" resource="0" file="src/dsp/Common.h"/>
         <FILE id="engH001" name="Engine.h" compile="0" resource="0" file="src/dsp/Engine.h"/>
@@ -530,6 +531,8 @@
         <FILE id="prtH001" name="Partials.h" compile="0" resource="0" file="src/dsp/Partials.h"/>
         <FILE id="spcH001" name="Spectral.h" compile="0" resource="0" file="src/dsp/Spectral.h"/>
         <FILE id="wavH001" name="Wave.h" compile="0" resource="0" file="src/dsp/Wave.h"/>
+        <FILE id="arsH001" name="AudioReadSlot.h" compile="0" resource="0" file="src/dsp/AudioReadSlot.h"/>
+        <FILE id="trsH001" name="TransportSafety.h" compile="0" resource="0" file="src/dsp/TransportSafety.h"/>
       </GROUP>
       <GROUP id="prmGrp01" name="parameters">
         <FILE id="pidH001" name="ParameterIDs.h" compile="0" resource="0" file="src/parameters/ParameterIDs.h"/>

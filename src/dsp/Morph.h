@@ -85,10 +85,11 @@ public:
             for (int i = 0; i < n; ++i)
                 total += kSegBars[std::clamp (nodeLen[i].load (std::memory_order_relaxed), 0, kNumSegLens - 1)];
             if (mode == kPathSync)
-                pathPos = std::fmod (beats / 4.0, (double) total);
+                pathPos = std::isfinite (beats) ? std::fmod (beats / 4.0, (double) total) : 0.0;
             else
                 pathPos = std::fmod (pathPos + dt / std::max (unitSec, 0.01f), (double) total);
 
+            if (pathPos < 0.0) pathPos += total;
             float u = (float) pathPos;
             for (int i = 0; i < n; ++i)
             {

@@ -69,7 +69,17 @@ Macro value = morph-pad blend of the four corners (bilinear), or 0.5 if the macr
 
 ## Wave analysis (`WaveAnalyzer.h`, `Wave.h`)
 
-On a worker thread: mono mixdown (max 120 s), Hann 2048-point FFT every 1024 samples, loudest bin per band into 256 log bands (20 Hz..20 kHz), peak-normalised, at most 2048 frames. The audio thread gets a raw pointer through an atomic. The replaced data is freed on the message thread after two more audio blocks. Per voice, each wave plays through its Start..End region at Speed (0.25x..4x) and loops.
+On a worker thread: mono mixdown (max 120 s), Hann 2048-point FFT every 1024 samples, loudest bin per band into 256 log bands (20 Hz..20 kHz), peak-normalised, at most 2048 frames. The audio thread protects its raw pointers through `AudioReadSlot`; only unprotected retired data is freed off audio. Per voice, each wave plays through its Start..End region at Speed (0.25x..4x) and loops.
+
+## Intentional audit-candidate sound change
+
+Delay now uses `(1-mix)*dry + mix*echo`, instead of always retaining unity dry.
+Reverb uses `dryLevel=0.5*(1-mix)` because JUCE 9.0.4 multiplies that parameter
+by two; its wet network and wet scaling remain unchanged. Both therefore retain
+unity direct gain at 0% and zero direct gain at 100%, before the existing limiter.
+Old patches/projects with active effects sound different: this is the explicit
+125A wet/dry correction, not bit-identical V4JB compatibility. No parameter IDs
+were renamed. Owner level-matched listening remains required before release.
 
 ## Cost
 

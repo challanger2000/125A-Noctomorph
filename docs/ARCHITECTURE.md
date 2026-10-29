@@ -1,6 +1,6 @@
 # V4JB – Architecture
 
-JUCE plugin built from `V4JB.jucer` with Projucer and MSBuild (`just build-debug`). No CMake. Every new file needs a `<FILE>` entry in the jucer, then `just resave`.
+JUCE plugin built from `V4JB.jucer` with Projucer and MSBuild (`just build-debug`). The separate `tests/CMakeLists.txt` builds audit executables, not a replacement product. Every new product file needs a `<FILE>` entry in the jucer, then `just resave`.
 
 ## Source
 
@@ -20,11 +20,19 @@ JUCE plugin built from `V4JB.jucer` with Projucer and MSBuild (`just build-debug
 | Standalone key clicks | UI | audio | `AbstractFifo` |
 | Morph corners, path nodes | UI | audio | relaxed atomics in `v4jb::Morph` |
 | Puck, live macros, spectrum taps | audio | UI | relaxed atomics, UI polls at 30 Hz |
-| Wave data | worker -> message thread | audio | `atomic<WaveData*>`, old data freed after 2 audio blocks |
+| Wave data | worker -> message thread / host recall | audio | `AudioReadSlot` single-reader hazard; non-audio publishers/collectors serialize under `waveMutex` |
 
 ## State
 
 The APVTS tree (`<PARAMS>`) plus a `<MORPH c0..c3 nodes>` child, `waveA`/`waveB` sources (file path or `factory:` name) and `presetName`. Factory presets may set `waveA`/`waveB`; presets without them keep the loaded waves. User presets are the same XML with `presetName` and `category`. Factory presets list only what differs from the defaults. Morph points and paths can also be saved on their own (`.v4jbmorph`).
+
+Audit candidate: `waveDataVersion=1` adds `WAVE_DATA` children containing bounded,
+little-endian spectral-analysis floats, so new sessions/presets do not require
+the source file. Legacy sources are decoded before committing recall; a missing
+source rejects recall and reports an error instead of discarding the old sound.
+Resource validation precedes parameter mutation. Host/control-thread recalls
+must remain off audio: XML/APVTS and legacy file decoding are not realtime safe.
+Old plugin versions cannot restore the new embedded data without the old files.
 
 ## Update check
 

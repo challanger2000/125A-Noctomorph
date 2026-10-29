@@ -4,6 +4,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <limits>
 
 namespace v4jb
 {
@@ -25,6 +26,8 @@ inline bool parseVersion (std::string_view s, std::vector<int>& parts)
         int n = 0;
         while (i < s.size() && std::isdigit (static_cast<unsigned char> (s[i])))
         {
+            if (n > (std::numeric_limits<int>::max() - (s[i] - '0')) / 10)
+                return false;
             n = n * 10 + (s[i] - '0');
             ++i;
         }

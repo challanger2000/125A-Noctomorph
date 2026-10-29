@@ -88,6 +88,13 @@ struct WavePanel : public juce::Component
         g.setColour (kNight);
         g.fillRoundedRectangle (view.toFloat(), 3.f);
         g.setFont (boldFont (11.f));
+        const auto error = proc.getWaveError (index);
+        if (error.isNotEmpty())
+        {
+            g.setColour (juce::Colours::salmon);
+            g.drawFittedText (error, view.reduced (10), juce::Justification::centred, 4);
+            return;
+        }
         if (image.isValid())
         {
             g.drawImage (image, view.toFloat(), juce::RectanglePlacement::stretchToFit);
