@@ -47,63 +47,98 @@ struct FxCard : public juce::Component
     {
         auto& s = p.apvts;
         namespace I = ParamID;
-        auto knob = [&] (const char* id, const char* name) { auto* k = knobs.add (new Knob (s, id, name)); addAndMakeVisible (k); return k; };
-        auto tog = [&] (const char* id, const char* name) { auto* t = toggles.add (new Toggle (s, id, name)); addAndMakeVisible (t); return t; };
-        auto combo = [&] (const char* id) { auto* c = combos.add (new Combo (s, id)); addAndMakeVisible (c); return c; };
+        auto knob = [&] (const char* id, const char* name)
+        { auto* k = knobs.add (new Knob (s, id, name)); addAndMakeVisible (k); return k; };
+        auto tog = [&] (const char* id, const char* name)
+        { auto* t = toggles.add (new Toggle (s, id, name)); addAndMakeVisible (t); return t; };
+        auto combo = [&] (const char* id)
+        { auto* c = combos.add (new Combo (s, id)); addAndMakeVisible (c); return c; };
 
-        cols[0] = { "DRIVE",  tog (I::drOn, "On"), nullptr, nullptr, { knob (I::drAmt, "Drive"), knob (I::drMix, "Mix") } };
-        cols[1] = { "MOD",    tog (I::mdOn, "On"), combo (I::mdType), nullptr,
-                    { knob (I::mdRate, "Rate"), knob (I::mdDepth, "Depth"), knob (I::mdMix, "Mix") } };
-        cols[2] = { "DELAY",  tog (I::dlOn, "On"), combo (I::dlDiv), tog (I::dlSync, "Sync"),
-                    { knob (I::dlTime, "Time"), knob (I::dlFb, "Feedback"), knob (I::dlMix, "Mix") } };
-        cols[3] = { "REVERB", tog (I::rvOn, "On"), nullptr, nullptr,
-                    { knob (I::rvSize, "Size"), knob (I::rvDamp, "Damping"), knob (I::rvMix, "Mix") } };
-        cols[4] = { "MASTER", nullptr, nullptr, nullptr, { knob (I::width, "Width"), knob (I::spread, "Spread") } };
+        cols[0] = { "DRIVE",  tog (I::drOn, "ON"), nullptr, nullptr,
+                    { knob (I::drAmt, "DRIVE"), knob (I::drMix, "MIX") } };
+        cols[1] = { "MOD", tog (I::mdOn, "ON"), combo (I::mdType), nullptr,
+                    { knob (I::mdRate, "RATE"), knob (I::mdDepth, "DEPTH"), knob (I::mdMix, "MIX") } };
+        cols[2] = { "DELAY", tog (I::dlOn, "ON"), combo (I::dlDiv), tog (I::dlSync, "SYNC"),
+                    { knob (I::dlTime, "TIME"), knob (I::dlFb, "FEEDBACK"), knob (I::dlMix, "MIX") } };
+        cols[3] = { "REVERB", tog (I::rvOn, "ON"), nullptr, nullptr,
+                    { knob (I::rvSize, "SIZE"), knob (I::rvDamp, "DAMPING"), knob (I::rvMix, "MIX") } };
+        cols[4] = { "MASTER", nullptr, nullptr, nullptr,
+                    { knob (I::width, "WIDTH"), knob (I::spread, "SPREAD") } };
+
+        for (int i = 0; i < 5; ++i)
+        {
+            auto* button = pageButtons.add (new juce::TextButton (cols[i].title));
+            button->onClick = [this, i] { setEffect (i); };
+            addAndMakeVisible (button);
+        }
+        setEffect (0);
     }
+
+    void setEffect (int index)
+    {
+        activeEffect = juce::jlimit (0, 4, index);
+        for (int i = 0; i < 5; ++i)
+        {
+            pageButtons[i]->setToggleState (i == activeEffect, juce::dontSendNotification);
+            const auto& group = cols[i];
+            if (group.on != nullptr) group.on->setVisible (i == activeEffect);
+            if (group.combo != nullptr) group.combo->setVisible (i == activeEffect);
+            if (group.extra != nullptr) group.extra->setVisible (i == activeEffect);
+            for (auto* k : group.knobs) k->setVisible (i == activeEffect);
+        }
+        resized();
+        repaint();
+    }
+
     void paint (juce::Graphics& g) override
     {
         paintCard (g, getLocalBounds(), "12  EFFECTS & MASTER");
-        g.setFont (boldFont (10.f));
-        g.setColour (kFog.withAlpha (0.7f));
-        for (auto& c : cols)
-            g.drawText (c.title, c.titleArea, juce::Justification::centredLeft, false);
+        auto label = getLocalBounds().reduced (22, 4).withTrimmedTop (63).removeFromTop (22);
+        g.setColour (kFog.withAlpha (0.88f));
+        g.setFont (boldFont (11.f));
+        g.drawText (juce::String (cols[activeEffect].title) + "  /  EFFECT SETTINGS",
+                    label, juce::Justification::centredLeft, false);
     }
+
     void resized() override
     {
-        auto r = getLocalBounds().reduced (8, 4);
-        r.removeFromTop (20);
-        const int w = r.getWidth() / 5;
-        for (auto& c : cols)
-        {
-            auto col = r.removeFromLeft (w).reduced (3, 0);
-            auto head = col.removeFromTop (20);
-            c.titleArea = head.removeFromLeft (46);
-            if (c.on != nullptr)
-                c.on->setBounds (head.removeFromLeft (34));
-            auto line2 = col.removeFromTop (c.combo != nullptr || c.extra != nullptr ? 24 : 0);
-            if (c.extra != nullptr)
-                c.extra->setBounds (line2.removeFromLeft (44).reduced (0, 2));
-            if (c.combo != nullptr)
-                c.combo->setBounds (line2.reduced (2, 2));
-            const int kh = juce::jmin (64, col.getHeight() / 2);
-            for (size_t i = 0; i < c.knobs.size(); ++i)
-                c.knobs[i]->setBounds (col.getX() + (int) (i % 2) * (col.getWidth() / 2), col.getY() + (int) (i / 2) * kh,
-                                       col.getWidth() / 2, kh);
-        }
+        auto r = getLocalBounds().reduced (14, 4);
+        r.removeFromTop (27);
+        auto nav = r.removeFromTop (36);
+        const int navW = nav.getWidth() / 5;
+        for (auto* b : pageButtons)
+            b->setBounds (nav.removeFromLeft (navW).reduced (4, 3));
+        r.removeFromTop (24);
+        auto options = r.removeFromTop (32);
+        auto& col = cols[activeEffect];
+        if (col.on != nullptr)
+            col.on->setBounds (options.removeFromLeft (90).reduced (4, 3));
+        if (col.extra != nullptr)
+            col.extra->setBounds (options.removeFromLeft (100).reduced (4, 3));
+        if (col.combo != nullptr)
+            col.combo->setBounds (options.removeFromLeft (245).reduced (4, 3));
+
+        const int n = (int) col.knobs.size();
+        const int width = juce::jmin (n * 185, r.getWidth() - 20);
+        auto knobsArea = r.withSizeKeepingCentre (width, r.getHeight());
+        for (auto* k : col.knobs)
+            k->setBounds (knobsArea.removeFromLeft (width / n).reduced (16, 1));
     }
+
     struct Column
     {
-        const char* title = "";
-        juce::ToggleButton* on = nullptr;
-        juce::ComboBox* combo = nullptr;
-        juce::ToggleButton* extra = nullptr;
+        const char* title;
+        juce::ToggleButton* on;
+        juce::ComboBox* combo;
+        juce::ToggleButton* extra;
         std::vector<Knob*> knobs;
-        juce::Rectangle<int> titleArea;
     };
     Column cols[5];
     juce::OwnedArray<Knob> knobs;
     juce::OwnedArray<Toggle> toggles;
     juce::OwnedArray<Combo> combos;
+    juce::OwnedArray<juce::TextButton> pageButtons;
+    int activeEffect = 0;
 };
 
 // One user slot. MOD flips the lower half between the module's knobs and its
@@ -128,7 +163,7 @@ struct SlotCard : public juce::Component
         for (int i = 0; i < 3; ++i)
         {
             auto& rt = routes[i];
-            rt.amount.setSliderStyle (juce::Slider::LinearBar);
+            rt.amount.setSliderStyle (juce::Slider::LinearHorizontal);
             rt.amount.setTextBoxStyle (juce::Slider::NoTextBox, false, 0, 0);
             rt.amount.setColour (juce::Slider::trackColourId, kAmber.withAlpha (0.6f));
             rt.amount.setPopupDisplayEnabled (true, false, nullptr);
@@ -179,32 +214,36 @@ struct SlotCard : public juce::Component
         {
             g.setFont (boldFont (9.f));
             g.setColour (kFog.withAlpha (0.6f));
-            g.drawText ("routes push the main knob", routeArea.removeFromBottom (12), juce::Justification::centredLeft, false);
+            g.drawText ("routes modulate MAIN", routeArea.withTrimmedTop (routeArea.getHeight() - 15),
+                        juce::Justification::centredLeft, false);
         }
     }
 
     void resized() override
     {
-        auto r = getLocalBounds().reduced (6, 4);
-        auto head = r.removeFromTop (20);
-        head.removeFromLeft (18);
-        modBtn.setBounds (head.removeFromRight (40));
-        type.setBounds (head.reduced (2, 0));
-        r.removeFromTop (3);
-        bars.setBounds (r.removeFromTop (64));
-        r.removeFromTop (3);
-        main.setBounds (r.removeFromLeft (86));
-        routeArea = r;
-        auto pr = r;
-        const int ph = juce::jlimit (24, 38, pr.getHeight() / 4);
-        for (auto* s : params)
-            s->setBounds (pr.removeFromTop (ph));
-        auto rr = r;
+        auto r = getLocalBounds().reduced (14, 8);
+        auto header = r.removeFromTop (30);
+        header.removeFromLeft (60); // slot number is painted by the card
+        modBtn.setBounds (header.removeFromRight (100).reduced (5, 2));
+        type.setBounds (header.removeFromLeft (juce::jmin (365, header.getWidth())).reduced (5, 2));
+        r.removeFromTop (8);
+
+        // One full-width inspector, split into spectrum/main and parameter routes.
+        auto left = r.removeFromLeft (r.getWidth() * 38 / 100).reduced (8, 2);
+        bars.setBounds (left.removeFromTop (juce::jmin (115, left.getHeight() / 2)));
+        main.setBounds (left.withSizeKeepingCentre (135, juce::jmin (140, left.getHeight())));
+        routeArea = r.reduced (9, 3);
+        auto pr = routeArea;
+        const int rowH = juce::jmax (32, pr.getHeight() / 4);
+        for (auto* slider : params)
+            slider->setBounds (pr.removeFromTop (juce::jmin (rowH, pr.getHeight())).reduced (8, 3));
+        auto rr = routeArea;
+        const int routeH = juce::jmax (36, rr.getHeight() / 3);
         for (auto& rt : routes)
         {
-            auto line = rr.removeFromTop (juce::jmin (28, rr.getHeight() / 3));
-            rt.source.setBounds (line.removeFromLeft (line.getWidth() / 2 + 6).reduced (0, 3));
-            rt.amount.setBounds (line.reduced (3, 6));
+            auto line = rr.removeFromTop (juce::jmin (routeH, rr.getHeight()));
+            rt.source.setBounds (line.removeFromLeft (juce::jmin (210, line.getWidth() / 2)).reduced (3, 4));
+            rt.amount.setBounds (line.reduced (8, 6));
         }
     }
 
@@ -236,19 +275,19 @@ struct EditPage : public juce::Component
         addAndMakeVisible (spectral);
         addAndMakeVisible (fx);
         for (int i = 0; i < v4jb::kNumSlots; ++i)
+        {
             addAndMakeVisible (slots.add (new SlotCard (p, i)));
+            auto* button = slotButtons.add (new juce::TextButton (juce::String (i + 2).paddedLeft ('0', 2)));
+            button->onClick = [this, i] { setSlot (i); };
+            addAndMakeVisible (button);
+        }
 
         sourceBtn.onClick = [this] { setTop (0); };
-        fxBtn.onClick     = [this] { setTop (1); };
-        for (auto* b : { &sourceBtn, &fxBtn, &bankA, &bankB, &bankC, &bankD })
-            addAndMakeVisible (*b);
-        bankA.onClick = [this] { setBank (0); };
-        bankB.onClick = [this] { setBank (1); };
-        bankC.onClick = [this] { setBank (2); };
-        bankD.onClick = [this] { setBank (3); };
-
+        fxBtn.onClick = [this] { setTop (1); };
+        addAndMakeVisible (sourceBtn);
+        addAndMakeVisible (fxBtn);
         setTop (0);
-        setBank (0);
+        setSlot (0);
     }
 
     void setTop (int selected)
@@ -262,14 +301,14 @@ struct EditPage : public juce::Component
         repaint();
     }
 
-    void setBank (int selected)
+    void setSlot (int index)
     {
-        activeBank = juce::jlimit (0, 3, selected);
-        juce::TextButton* buttons[] = { &bankA, &bankB, &bankC, &bankD };
-        for (int i = 0; i < 4; ++i)
-            buttons[i]->setToggleState (i == activeBank, juce::dontSendNotification);
+        activeSlot = juce::jlimit (0, v4jb::kNumSlots - 1, index);
         for (int i = 0; i < slots.size(); ++i)
-            slots[i]->setVisible (i / 3 == activeBank);
+        {
+            slots[i]->setVisible (i == activeSlot);
+            slotButtons[i]->setToggleState (i == activeSlot, juce::dontSendNotification);
+        }
         resized();
         repaint();
     }
@@ -278,9 +317,16 @@ struct EditPage : public juce::Component
     {
         if (spectral.isVisible())
             spectral.bars.refresh();
-        for (auto* s : slots)
-            if (s->isVisible())
-                s->refresh();
+        for (int i = 0; i < slots.size(); ++i)
+        {
+            const auto v = slots[i]->typeParam->load();
+            const int index = juce::jlimit (0, v4jb::kNumModuleTypes - 1, (int) std::lround (v));
+            const auto name = juce::String (i + 2).paddedLeft ('0', 2) + "  " +
+                              juce::String (v4jb::kModuleInfo[index].name);
+            if (slotButtons[i]->getButtonText() != name)
+                slotButtons[i]->setButtonText (name);
+        }
+        slots[activeSlot]->refresh();
     }
 
     void paint (juce::Graphics& g) override
@@ -291,43 +337,37 @@ struct EditPage : public juce::Component
         g.setFont (boldFont (12.f));
         g.drawText ("SPECTRAL SOURCE  /  EFFECTS & MASTER",
                     top.removeFromTop (38), juce::Justification::centredLeft, false);
-        g.drawText ("MODULE CHAIN  /  SLOTS " +
-                    juce::String (activeBank == 0 ? "02-04" :
-                                  activeBank == 1 ? "05-07" :
-                                  activeBank == 2 ? "08-10" : "11"),
-                    r.removeFromTop (40), juce::Justification::centredLeft, false);
+        g.drawText ("MODULE CHAIN  /  SELECT ONE OF 10 SLOTS",
+                    r.removeFromTop (50), juce::Justification::centredLeft, false);
     }
 
     void resized() override
     {
         auto r = getLocalBounds().reduced (10);
         auto top = r.removeFromTop (r.getHeight() * 46 / 100);
-        auto head = top.removeFromTop (38);
-        fxBtn.setBounds (head.removeFromRight (124).reduced (3, 5));
-        sourceBtn.setBounds (head.removeFromRight (124).reduced (3, 5));
-        auto full = top.reduced (4);
-        spectral.setBounds (full);
-        fx.setBounds (full);
+        auto topBar = top.removeFromTop (38);
+        fxBtn.setBounds (topBar.removeFromRight (124).reduced (3, 5));
+        sourceBtn.setBounds (topBar.removeFromRight (124).reduced (3, 5));
+        auto upper = top.reduced (4);
+        spectral.setBounds (upper);
+        fx.setBounds (upper);
 
-        auto bankBar = r.removeFromTop (40);
-        bankD.setBounds (bankBar.removeFromRight (96).reduced (3, 5));
-        bankC.setBounds (bankBar.removeFromRight (96).reduced (3, 5));
-        bankB.setBounds (bankBar.removeFromRight (96).reduced (3, 5));
-        bankA.setBounds (bankBar.removeFromRight (96).reduced (3, 5));
+        auto slotBar = r.removeFromTop (50);
+        // Slot buttons are always visible; modules are never hidden or skipped.
+        const int width = slotBar.getWidth() / slotButtons.size();
+        for (auto* button : slotButtons)
+            button->setBounds (slotBar.removeFromLeft (width).reduced (3, 6));
 
-        const int w = r.getWidth() / 3;
         for (int i = 0; i < slots.size(); ++i)
-            if (i / 3 == activeBank)
-                slots[i]->setBounds (r.getX() + (i % 3) * w + 4, r.getY() + 2,
-                                      w - 8, r.getHeight() - 4);
+            if (i == activeSlot)
+                slots[i]->setBounds (r.reduced (4, 2));
     }
 
     SpectralCard spectral;
     FxCard fx;
     juce::OwnedArray<SlotCard> slots;
+    juce::OwnedArray<juce::TextButton> slotButtons;
     juce::TextButton sourceBtn { "SOURCE" }, fxBtn { "FX & MASTER" };
-    juce::TextButton bankA { "02-04" }, bankB { "05-07" },
-                     bankC { "08-10" }, bankD { "11" };
-    int activeBank = 0, topPage = 0;
+    int activeSlot = 0, topPage = 0;
 };
 } // namespace ui

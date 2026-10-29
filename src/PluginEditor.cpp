@@ -278,13 +278,13 @@ void V4JBAudioProcessorEditor::timerCallback()
 
     // Test-only real JUCE component snapshots, saved atomically.
     const auto outDir = juce::SystemStats::getEnvironmentVariable ("V4JB_CAPTURE_GUI_DIR", {});
-    if (outDir.isNotEmpty() && ciCaptureStep < 9)
+    if (outDir.isNotEmpty() && ciCaptureStep < 10)
     {
         static const char* const names[] = {
-            "01-play.png", "02-source.png", "03-effects.png",
-            "04-modules-05-07.png", "05-modules-08-10.png",
-            "06-modules-11.png", "07-morph.png",
-            "08-modulation.png", "09-waves.png"
+            "01-play.png", "02-source.png", "03-fx-drive.png",
+            "04-fx-delay.png", "05-fx-master.png",
+            "06-module-02.png", "07-module-11.png",
+            "08-morph.png", "09-modulation.png", "10-waves.png"
         };
         const auto folder = juce::File (outDir);
         folder.createDirectory();
@@ -306,12 +306,13 @@ void V4JBAudioProcessorEditor::timerCallback()
         ++ciCaptureStep;
         if (ciCaptureStep == 1) tabs.setCurrentTabIndex (1);
         else if (ciCaptureStep == 2) editPage.setTop (1);
-        else if (ciCaptureStep == 3) { editPage.setTop (0); editPage.setBank (1); }
-        else if (ciCaptureStep == 4) editPage.setBank (2);
-        else if (ciCaptureStep == 5) editPage.setBank (3);
-        else if (ciCaptureStep == 6) advancedTabs.setCurrentTabIndex (2);
-        else if (ciCaptureStep == 7) advancedTabs.setCurrentTabIndex (1);
-        else if (ciCaptureStep == 8) advancedTabs.setCurrentTabIndex (3);
+        else if (ciCaptureStep == 3) editPage.fx.setEffect (2);
+        else if (ciCaptureStep == 4) editPage.fx.setEffect (4);
+        else if (ciCaptureStep == 5) editPage.setTop (0);
+        else if (ciCaptureStep == 6) editPage.setSlot (9);
+        else if (ciCaptureStep == 7) advancedTabs.setCurrentTabIndex (2);
+        else if (ciCaptureStep == 8) advancedTabs.setCurrentTabIndex (1);
+        else if (ciCaptureStep == 9) advancedTabs.setCurrentTabIndex (3);
     }
 }
 
