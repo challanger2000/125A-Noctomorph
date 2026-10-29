@@ -1,0 +1,43 @@
+JUCE v9.0.4
+FAIL 109: std::abs(a.morph.corner[0][0].load()-b.morph.corner[0][0].load())<1e-7f
+FAIL 113: restored && restored->gain==wd->gain
+FAIL 124: std::abs(macro-a.morph.outMacro[0].load())<1e-6f
+FAIL 131: false&&"WAV recall PCM differs"
+FAIL 131: false&&"WAV recall PCM differs"
+FAIL 133: !a.loadMorphFile(file)
+state: FAIL (6 failed checks)
+state exit=1
+JUCE v9.0.4
+FAIL 166: !sentinel.expired()
+FAIL 173: p.waveVersion.load()>ver
+waves: FAIL (2 failed checks)
+waves exit=1
+JUCE v9.0.4
+delay mix=0 direct=0.163117
+delay mix=0.25 direct=0.163117
+FAIL 86: std::abs(l[0]-direct*(1.f-mix))<1e-6f
+delay mix=0.5 direct=0.163117
+FAIL 86: std::abs(l[0]-direct*(1.f-mix))<1e-6f
+delay mix=0.75 direct=0.163117
+FAIL 86: std::abs(l[0]-direct*(1.f-mix))<1e-6f
+delay mix=1 direct=0.163117
+FAIL 86: std::abs(l[0]-direct*(1.f-mix))<1e-6f
+FAIL 87: std::abs(l[0])<1e-7f && std::abs(r[0])<1e-7f
+reverb mix=0 direct=0.326235
+FAIL 86: std::abs(l[0]-direct*(1.f-mix))<1e-6f
+reverb mix=0.25 direct=0.285455
+FAIL 86: std::abs(l[0]-direct*(1.f-mix))<1e-6f
+reverb mix=0.5 direct=0.244676
+FAIL 86: std::abs(l[0]-direct*(1.f-mix))<1e-6f
+reverb mix=0.75 direct=0.203897
+FAIL 86: std::abs(l[0]-direct*(1.f-mix))<1e-6f
+reverb mix=1 direct=0.163117
+FAIL 86: std::abs(l[0]-direct*(1.f-mix))<1e-6f
+FAIL 87: std::abs(l[0])<1e-7f && std::abs(r[0])<1e-7f
+wet: FAIL (11 failed checks)
+wet exit=1
+JUCE v9.0.4
+FAIL 181: audioNews==0
+C++ new in processBlock: 1
+realtime: FAIL (1 failed checks)
+realtime exit=1
