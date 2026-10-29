@@ -167,6 +167,12 @@ public:
     void setModWheel (float v) { wheel = clamp01 (v); }
     void setAftertouch (float v) { touch = clamp01 (v); }
 
+#if defined(NOCTOMORPH_AUDIT_BUILD)
+    // Test-only inspection of MIDI controller state; not in product binary.
+    float auditModWheel() const noexcept { return wheel; }
+    float auditAftertouch() const noexcept { return touch; }
+#endif
+
     void noteOn (int note, float vel)
     {
         bool anyHeld = false;

@@ -44,6 +44,16 @@ jobs:
           if (-not (Test-Path presets/waves/vowels.wav)) { throw 'Missing pinned factory waves' }
           if (-not (Test-Path assets/logo.png)) { throw 'Missing pinned original icon resource' }
 
+      - name: Run consolidated JUCE processor and GUI regressions
+        shell: pwsh
+        run: |
+          cmake -S tests -B build/audit-tests -A x64 -DJUCE_SOURCE="$pwd/JUCE" -DV4JB_ASSETS="$pwd/_upstream"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build build/audit-tests --config Release --parallel 2
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ctest --test-dir build/audit-tests -C Release --output-on-failure
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
       - name: Point Projucer at pinned JUCE modules
         shell: pwsh
         run: |
@@ -83,16 +93,6 @@ jobs:
           $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
           $msbuild = & $vswhere -latest -requires Microsoft.Component.MSBuild -find 'MSBuild\**\Bin\MSBuild.exe' | Select-Object -First 1
           & $msbuild 'Builds/VisualStudio2022/V4JB.sln' /p:Configuration=Release /p:Platform=x64 /m
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-      - name: Run consolidated JUCE processor and GUI regressions
-        shell: pwsh
-        run: |
-          cmake -S tests -B build/audit-tests -A x64 -DJUCE_SOURCE="$pwd/JUCE" -DV4JB_ASSETS="$pwd/_upstream"
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          cmake --build build/audit-tests --config Release --parallel 2
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          ctest --test-dir build/audit-tests -C Release --output-on-failure
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Checkout official Steinberg SDK 3.8.1 validator
