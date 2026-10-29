@@ -174,7 +174,7 @@ struct SlotCard : public juce::Component
         modBtn.setClickingTogglesState (true);
         modBtn.onClick = [this] { showRoutes (modBtn.getToggleState()); };
         addAndMakeVisible (modBtn);
-        emptyHint.setText ("THIS SLOT IS EMPTY  —  SELECT A MODULE ABOVE", juce::dontSendNotification);
+        emptyHint.setText ("THIS SLOT IS EMPTY - SELECT A MODULE ABOVE", juce::dontSendNotification);
         emptyHint.setJustificationType (juce::Justification::centred);
         emptyHint.setFont (boldFont (15.f));
         emptyHint.setColour (juce::Label::textColourId, kFog.withAlpha (0.80f));
