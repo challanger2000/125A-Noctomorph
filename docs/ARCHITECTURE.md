@@ -41,3 +41,9 @@ About → "Check for update" fetches `https://api.github.com/repos/iamtew/V4JB/t
 ## Release
 
 `just build-dist` builds Release, zips VST3 and Standalone, and builds the WiX MSI from `installer/`.
+
+## Continuous editor resizing: reusable JUCE reference
+
+Source: `src/PluginEditor.cpp` (constructor's resize setup and `resized()`) and `src/PluginEditor.h` (`Content` component); session persistence: `src/PluginProcessor.cpp` (`uiScale`). The logical layout remains at **1220 x 800** pixels (Standalone: plus 72-pixel keyboard strip). The editor is `setResizable(true, true)`, with `setResizeLimits` for **40–150%**, a fixed aspect ratio, and a proportional `content.setTransform(juce::AffineTransform::scale(s))` for **all real interactive child components**. It is neither a raster screenshot zoom nor a set of discrete zoom buttons. The initial scale is restored from the session's `uiScale` before setting resize limits; `resized()` writes updates back to that state. Factory preset loading does not change the editor size.
+
+**For future 125A chats:** the central, authoritative copy of this reusable design pattern is [`125A-Engineering/STANDARDS/GUI-GUIDELINES.md`](https://github.com/challanger2000/125A-Engineering/blob/main/STANDARDS/GUI-GUIDELINES.md), linked from `125A-Engineering/START-HERE.md`. Refer to this implementation when asked for *stufenlose Vergrößerung / nahtloses GUI-Resize / Ziehen der Fensterecke ohne Zoom-Buttons*. JUCE code must be adapted for plugins using VSTGUI or other frameworks. Actual Studio One drag-to-resize, mouse interactions and high-DPI rendering are **NOT RUN**, even though the Windows VST3 CI and Steinberg validator passed. Current owner acceptance is for **private use**, not a publication claim.
