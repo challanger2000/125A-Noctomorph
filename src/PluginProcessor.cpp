@@ -1,6 +1,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 #include "WaveAnalyzer.h"
+#include "dsp/TransportSafety.h"
 
 using namespace v4jb;
 
@@ -198,6 +199,9 @@ void V4JBAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
                     playing = true;
                 }
         }
+    // Host playhead data is untrusted: avoid NaN/Inf and division by zero
+    // in the sync delay, while preserving ordinary positive BPM exactly.
+    bpm = v4jb::safeHostBpm (bpm);
     engine->setTransport (bpm, playing, ppq);
 
     // Morph pad -> macros -> engine parameters.
