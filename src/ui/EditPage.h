@@ -174,6 +174,12 @@ struct SlotCard : public juce::Component
         modBtn.setClickingTogglesState (true);
         modBtn.onClick = [this] { showRoutes (modBtn.getToggleState()); };
         addAndMakeVisible (modBtn);
+        emptyHint.setText ("THIS SLOT IS EMPTY  —  SELECT A MODULE ABOVE", juce::dontSendNotification);
+        emptyHint.setJustificationType (juce::Justification::centred);
+        emptyHint.setFont (boldFont (15.f));
+        emptyHint.setColour (juce::Label::textColourId, kFog.withAlpha (0.80f));
+        emptyHint.setInterceptsMouseClicks (false, false);
+        addAndMakeVisible (emptyHint);
         refresh();
     }
 
@@ -196,10 +202,19 @@ struct SlotCard : public juce::Component
         if (t == lastType)
             return;
         lastType = t;
+        const bool enabled = (t != 0);
+        bars.setVisible (enabled);
+        modBtn.setVisible (enabled);
+        emptyHint.setVisible (! enabled);
         const auto& info = v4jb::kModuleInfo[t];
         main.label.setText (info.labels[0], juce::dontSendNotification);
-        main.setVisible (t != 0);
-        const bool routesOn = modBtn.getToggleState();
+        main.setVisible (enabled);
+        const bool routesOn = enabled && modBtn.getToggleState();
+        for (auto& rt : routes)
+        {
+            rt.source.setVisible (routesOn);
+            rt.amount.setVisible (routesOn);
+        }
         for (int k = 0; k < 4; ++k)
         {
             params[k]->label.setText (info.labels[k + 1], juce::dontSendNotification);
@@ -233,6 +248,7 @@ struct SlotCard : public juce::Component
         bars.setBounds (left.removeFromTop (juce::jmin (115, left.getHeight() / 2)));
         main.setBounds (left.withSizeKeepingCentre (135, juce::jmin (140, left.getHeight())));
         routeArea = r.reduced (9, 3);
+        emptyHint.setBounds (getLocalBounds().reduced (65, 92));
         auto pr = routeArea;
         const int rowH = juce::jmax (32, pr.getHeight() / 4);
         for (auto* slider : params)
@@ -263,6 +279,7 @@ struct SlotCard : public juce::Component
     juce::OwnedArray<HSlider> params;
     Route routes[3];
     juce::ToggleButton modBtn { "MOD" };
+    juce::Label emptyHint;
     juce::Rectangle<int> routeArea;
     std::atomic<float>* typeParam = nullptr;
     int lastType = -1;
@@ -338,7 +355,7 @@ struct EditPage : public juce::Component
         g.drawText ("SPECTRAL SOURCE  /  EFFECTS & MASTER",
                     top.removeFromTop (38), juce::Justification::centredLeft, false);
         g.drawText ("MODULE CHAIN  /  SELECT ONE OF 10 SLOTS",
-                    r.removeFromTop (50), juce::Justification::centredLeft, false);
+                    r.removeFromTop (28), juce::Justification::centredLeft, false);
     }
 
     void resized() override
@@ -352,7 +369,8 @@ struct EditPage : public juce::Component
         spectral.setBounds (upper);
         fx.setBounds (upper);
 
-        auto slotBar = r.removeFromTop (50);
+        auto slotBar = r.removeFromTop (73);
+        slotBar.removeFromTop (29); // dedicated label row: no buttons over text
         // Slot buttons are always visible; modules are never hidden or skipped.
         const int width = slotBar.getWidth() / slotButtons.size();
         for (auto* button : slotButtons)
