@@ -110,7 +110,9 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           cmake --build build/validator --config Release --target validator --parallel 2
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          & ./build/validator-bin/validator.exe ./Builds/VisualStudio2022/x64/Release/VST3/V4JB.vst3
+          $vst = Get-ChildItem 'Builds/VisualStudio2022/x64/Release/VST3' -Directory -Filter '*.vst3' | Select-Object -First 1
+          if (-not $vst) { throw 'No VST3 bundle produced' }
+          & ./build/validator-bin/validator.exe $vst.FullName
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Retain audit evidence even on failure
@@ -127,15 +129,15 @@ jobs:
       - name: Package VST3 test artifact
         shell: pwsh
         run: |
-          $vst = 'Builds/VisualStudio2022/x64/Release/VST3/V4JB.vst3'
-          if (-not (Test-Path $vst)) { throw 'Compiled VST3 not found' }
+          $vst = Get-ChildItem 'Builds/VisualStudio2022/x64/Release/VST3' -Directory -Filter '*.vst3' | Select-Object -First 1
+          if (-not $vst) { throw 'Compiled VST3 not found' }
           New-Item -ItemType Directory -Force dist | Out-Null
-          Compress-Archive -Path $vst -DestinationPath 'dist/V4JB-0.0.4-125A-baseline-win-x64-vst3.zip' -Force
+          Compress-Archive -Path $vst.FullName -DestinationPath 'dist/125A-Noctomorph-0.0.4-Windows-VST3-QA-CANDIDATE.zip' -Force
 
       - name: Upload build - experimental, not approved release
         uses: actions/upload-artifact@v4
         with:
-          name: V4JB-125A-Windows-VST3-UNTESTED
+          name: 125A-Noctomorph-Windows-VST3-QA-CANDIDATE
           path: dist/*.zip
           if-no-files-found: error
           retention-days: 7

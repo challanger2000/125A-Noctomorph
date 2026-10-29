@@ -293,7 +293,9 @@ void V4JBAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
                 engine->noteOn (msg.getNoteNumber(), msg.getFloatVelocity());
             else if (msg.isNoteOff())
                 engine->noteOff (msg.getNoteNumber());
-            else if (msg.isAllNotesOff() || msg.isAllSoundOff())
+            else if (msg.isAllSoundOff())
+                allSoundOff();
+            else if (msg.isAllNotesOff())
                 engine->allNotesOff();
             else if (msg.isPitchWheel())
                 engine->setPitchBend ((float) (msg.getPitchWheelValue() - 8192) / 8192.f * 2.f);  // +-2 semitones
@@ -320,6 +322,17 @@ void V4JBAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
     const float lv = ld (ptr.level);
     buffer.applyGainRamp (0, n, lastLevel, lv);
     lastLevel = lv;
+}
+
+// CC120 is an immediate hard stop, unlike CC123's envelope releases.
+void V4JBAudioProcessor::allSoundOff() noexcept
+{
+    engine->allSoundOff();
+    delay.reset();
+    reverb.reset();
+    chorus.reset();
+    phaser.reset();
+    limiter.reset();
 }
 
 // Slot 12: drive, chorus/phaser, delay, reverb, then width and the limiter.
@@ -683,6 +696,17 @@ bool V4JBAudioProcessor::applyStateXml (const juce::XmlElement& xml, bool fromPr
                 break;
             }
     }
+    // VST host program lists only factory entries. Recalled user/random
+    // snapshots cannot be represented there and use the safe index 0.
+    int selected = 0;
+    for (int i = 0; i < factoryPresets.size(); ++i)
+        if (currentPresetName == factoryPresets.getReference(i).name
+            && currentPresetCategory == factoryPresets.getReference(i).category)
+        {
+            selected = i;
+            break;
+        }
+    currentProgram.store (selected);
     return true;
 }
 
@@ -705,7 +729,6 @@ void V4JBAudioProcessor::setCurrentProgram (int index)
 {
     if (juce::isPositiveAndBelow (index, factoryPresets.size()))
     {
-        currentProgram = index;
         loadPreset (factoryPresets.getReference (index));
     }
 }
@@ -715,16 +738,28 @@ const juce::String V4JBAudioProcessor::getProgramName (int index)
     return juce::isPositiveAndBelow (index, factoryPresets.size()) ? factoryPresets[index].name : juce::String ("Init");
 }
 
-void V4JBAudioProcessor::loadPreset (const PresetEntry& e)
+bool V4JBAudioProcessor::loadPreset (const PresetEntry& e)
 {
     const juce::ScopedLock lock (waveMutex);
     if (auto xml = Presets::parse (e))
-        if (xml->hasTagName (apvts.state.getType()))
+        if (xml->hasTagName (apvts.state.getType()) && applyStateXml (*xml, true))
         {
-            if (! applyStateXml (*xml, true)) return;
             currentPresetName = e.name;
             currentPresetCategory = e.category;
+            // Map by the exact embedded resource, not by a potentially
+            // duplicated name. Failed loads preserve the previous index.
+            int selected = 0;
+            if (e.resource.isNotEmpty())
+                for (int i = 0; i < factoryPresets.size(); ++i)
+                    if (e.resource == factoryPresets.getReference (i).resource)
+                    {
+                        selected = i;
+                        break;
+                    }
+            currentProgram.store (selected);
+            return true;
         }
+    return false;
 }
 
 bool V4JBAudioProcessor::saveUserPreset (const juce::String& name, const juce::String& category)
@@ -745,6 +780,7 @@ bool V4JBAudioProcessor::saveUserPreset (const juce::String& name, const juce::S
         return false;
     currentPresetName = newName;
     currentPresetCategory = newCategory;
+    currentProgram.store (0); // user preset has no factory program index
     return true;
 }
 
@@ -847,6 +883,7 @@ void V4JBAudioProcessor::randomize (bool newModules)
 
     currentPresetName = newModules ? "Random" : "Random (varied)";
     currentPresetCategory.clear();  // not a real group; arrows fall back to the full list
+    currentProgram.store (0);
 }
 
 juce::AudioProcessorEditor* V4JBAudioProcessor::createEditor()
