@@ -208,6 +208,31 @@ static void presets()
     }
     std::cout<<"494 factory presets parsed, applied, and short MIDI rendered\n";
 }
+static void save_failure()
+{
+    P p; init(p);
+    p.currentPresetName = "Previous";
+    p.currentPresetCategory = "Old";
+    const auto dir = Presets::userDir();
+    CHECK(dir.createDirectory());
+    const juce::String base = "125A-QA-" + juce::Uuid().toString();
+    const auto blocked = dir.getChildFile(base + ".xml");
+    CHECK(blocked.createDirectory()); // saving to an existing directory must fail
+    CHECK(!p.saveUserPreset(base, "New Category"));
+    CHECK(p.currentPresetName == "Previous");
+    CHECK(p.currentPresetCategory == "Old");
+    CHECK(blocked.isDirectory());
+    CHECK(blocked.deleteRecursively());
+
+    const juce::String successName = "125A-QA-" + juce::Uuid().toString();
+    const auto written = dir.getChildFile(successName + ".xml");
+    CHECK(p.saveUserPreset(successName, "User"));
+    CHECK(p.currentPresetName == successName);
+    CHECK(p.currentPresetCategory == "User");
+    CHECK(written.existsAsFile());
+    CHECK(written.deleteFile());
+}
+
 static void gui()
 {
     P p;init(p);auto before=p.apvts.copyState().toXmlString();
@@ -281,7 +306,7 @@ int main(int argc,char**argv)
 {
     juce::ScopedJuceInitialiser_GUI juceInit;
     const std::string which=argc>1?argv[1]:"";
-    if(which=="blocks") blocks();else if(which=="keys")keys();else if(which=="wet")wet();else if(which=="tempo")tempo();else if(which=="state")state();else if(which=="gui")gui();else if(which=="waves")waves();else if(which=="realtime")realtime();else if(which=="presets")presets();else if(which=="midi")midi();else return 2;
+    if(which=="blocks") blocks();else if(which=="keys")keys();else if(which=="wet")wet();else if(which=="tempo")tempo();else if(which=="state")state();else if(which=="gui")gui();else if(which=="waves")waves();else if(which=="realtime")realtime();else if(which=="presets")presets();else if(which=="save")save_failure();else if(which=="midi")midi();else return 2;
     std::cout<<which<<": "<<(failures?"FAIL":"PASS")<<" ("<<failures<<" failed checks)\n";
     return failures?1:0;
 }

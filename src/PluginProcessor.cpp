@@ -730,16 +730,22 @@ void V4JBAudioProcessor::loadPreset (const PresetEntry& e)
 bool V4JBAudioProcessor::saveUserPreset (const juce::String& name, const juce::String& category)
 {
     const juce::ScopedLock lock (waveMutex);
-    const auto clean = juce::File::createLegalFileName (name.trim());
+    const auto newName = name.trim();
+    const auto clean = juce::File::createLegalFileName (newName);
     if (clean.isEmpty())
         return false;
-    currentPresetName = name.trim();
-    currentPresetCategory = category.isNotEmpty() ? category : juce::String ("User");
+    const auto newCategory = category.isNotEmpty() ? category : juce::String ("User");
+    // Do not report a new current preset to the editor until serialization
+    // and the actual filesystem write have succeeded.
     auto xml = createStateXml();
-    xml->setAttribute ("presetName", currentPresetName);
-    xml->setAttribute ("category", currentPresetCategory);
+    xml->setAttribute ("presetName", newName);
+    xml->setAttribute ("category", newCategory);
     const auto dir = Presets::userDir();
-    return dir.createDirectory() && xml->writeTo (dir.getChildFile (clean + ".xml"));
+    if (! dir.createDirectory() || ! xml->writeTo (dir.getChildFile (clean + ".xml")))
+        return false;
+    currentPresetName = newName;
+    currentPresetCategory = newCategory;
+    return true;
 }
 
 // Smart randomizer: random, but inside ranges that tend to sound like music.
