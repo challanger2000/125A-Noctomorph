@@ -9,19 +9,20 @@ namespace v4jb
 // One audio reader; publishers/collectors are externally serialized off audio.
 // All pointer operations are seq_cst: publish -> scan and protect -> validate
 // cannot both miss one another. Never dereference the speculative first load.
-// A concurrent publication may cause one block to use no wave; no retry/spin.
+// A racing publication retains the last safely protected wave until next block.
+// No retry/spin. At most two distinct retired objects can remain protected.
 template<class T> class AudioReadSlot
 {
 public:
     const T* acquire() noexcept
     {
         const auto* candidate = live.load();
-        hazard.store(candidate);
-        if (candidate == live.load()) return candidate;
-        hazard.store(nullptr);
-        return nullptr;
+        speculative.store(candidate);
+        if (candidate == live.load()) currentRead.store(candidate);
+        speculative.store(nullptr);
+        return currentRead.load();
     }
-    void release() noexcept { hazard.store(nullptr); }
+    void release() noexcept { currentRead.store(nullptr); speculative.store(nullptr); }
     void publish(std::shared_ptr<T> next)
     {
         live.store(next.get());
@@ -31,14 +32,18 @@ public:
     }
     void collect()
     {
-        const auto* protectedObject = hazard.load();
+        // Scan in the opposite order to the reader's handoff. If speculative
+        // was already cleared, its pointer has been installed in currentRead.
+        const auto* speculativeObject = speculative.load();
+        const auto* protectedObject = currentRead.load();
         retired.erase(std::remove_if(retired.begin(),retired.end(),
-            [protectedObject](const auto& p){return p.get()!=protectedObject;}),retired.end());
+            [protectedObject,speculativeObject](const auto& p)
+            {return p.get()!=protectedObject && p.get()!=speculativeObject;}),retired.end());
     }
     std::shared_ptr<T> current() const { return owned; }
 private:
     static_assert(std::atomic<const T*>::is_always_lock_free, "Audio pointers must be lock free");
-    std::atomic<const T*> live{nullptr}, hazard{nullptr};
+    std::atomic<const T*> live{nullptr}, currentRead{nullptr}, speculative{nullptr};
     std::shared_ptr<T> owned;
     std::vector<std::shared_ptr<T>> retired;
 };

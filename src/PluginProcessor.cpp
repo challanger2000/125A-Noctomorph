@@ -258,7 +258,7 @@ void V4JBAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::M
     struct WaveReadEnd
     {
         V4JBAudioProcessor& p;
-        ~WaveReadEnd() { p.engine->setWaves (nullptr, nullptr); for (auto& slot : p.waveSlots) slot.release(); }
+        ~WaveReadEnd() { p.engine->setWaves (nullptr, nullptr); }
     } waveReadEnd { *this };
     drainKeys();
 
