@@ -66,16 +66,35 @@ struct PlayPage final : juce::Component
         auto left = upper.removeFromLeft (upper.getWidth() * 57 / 100).reduced (4);
         auto right = upper.reduced (4);
         panel (g, left, "SPECTRAL SOURCE");
-        panel (g, right, "MORPH  /  A - B - C - D");
+        panel (g, right, "MORPH / A - B - C - D");
 
         all.removeFromTop (10);
-        panel (g, all.reduced (4, 0), "SOUND SHAPING");
+        const auto shaping = all.reduced (4, 0);
+        panel (g, shaping, "SOUND SHAPING");
 
-        g.setColour (kFog.withAlpha (0.60f));
+        // Four vertical functional pairs, not an anonymous eight-knob grid.
+        const char* const titles[] = { "01  TONE", "02  MOVEMENT", "03  ENVELOPE", "04  SPACE" };
+        auto groups = shaping.reduced (10, 0).withTrimmedTop (37);
+        const int groupW = groups.getWidth() / 4;
+        for (int i = 0; i < 4; ++i)
+        {
+            auto cell = groups.removeFromLeft (groupW).reduced (4, 2);
+            auto rect = cell.toFloat();
+            g.setColour (kNight.withAlpha (0.35f));
+            g.fillRoundedRectangle (rect, 5.f);
+            g.setColour (kFog.withAlpha (0.12f));
+            g.drawRoundedRectangle (rect.reduced (0.5f), 5.f, 1.f);
+            g.setColour (kFog.withAlpha (0.90f));
+            g.setFont (boldFont (11.f));
+            g.drawText (titles[i], cell.reduced (12, 7).removeFromTop (20),
+                        juce::Justification::centredLeft, false);
+        }
+
+        g.setColour (kFog.withAlpha (0.67f));
         g.setFont (boldFont (11.f));
-        auto hint = left.reduced (22, 34).removeFromBottom (25);
-        g.drawText ("Live source spectrum · play a MIDI note", hint,
-                    juce::Justification::centredLeft);
+        g.drawText ("Live source spectrum - play a MIDI note",
+                    left.reduced (22, 34).removeFromBottom (25),
+                    juce::Justification::centredLeft, false);
     }
 
     void resized() override
@@ -89,23 +108,26 @@ struct PlayPage final : juce::Component
         morphPad.setBounds (right.reduced (22, 39).withTrimmedBottom (4));
 
         all.removeFromTop (10);
-        auto controls = all.reduced (8, 0);
-        controls.removeFromTop (36);
-        const int rowH = controls.getHeight() / 2;
-        auto first = controls.removeFromTop (rowH);
-        auto second = controls.removeFromTop (rowH);
-        const auto distribute = [] (juce::Rectangle<int> row,
-                                     std::initializer_list<juce::Component*> knobs)
-        {
-            const int w = row.getWidth() / (int) knobs.size();
-            for (auto* k : knobs)
-                k->setBounds (row.removeFromLeft (w).reduced (16, 3));
+        auto groups = all.reduced (14, 0).withTrimmedTop (37);
+        const int groupW = groups.getWidth() / 4;
+        const std::pair<juce::Component*, juce::Component*> pairings[] = {
+            { &tilt, &depth }, { &motion, &speed },
+            { &attack, &release }, { &space, &width }
         };
-        distribute (first, { &tilt, &depth, &motion, &speed });
-        distribute (second, { &attack, &release, &space, &width });
-        auto spaceArea = space.getBounds();
-        space.setBounds (spaceArea.withTrimmedBottom (24));
-        reverbOn.setBounds (spaceArea.removeFromBottom (24).reduced (18, 2));
+
+        for (int i = 0; i < 4; ++i)
+        {
+            auto cell = groups.removeFromLeft (groupW).reduced (4, 2);
+            cell.removeFromTop (27);
+            const int rowH = cell.getHeight() / 2;
+            pairings[i].first->setBounds (cell.removeFromTop (rowH).reduced (14, 0));
+            pairings[i].second->setBounds (cell.removeFromTop (rowH).reduced (14, 0));
+        }
+
+        // A real reverb switch in its section header (not taking space from the knob).
+        const auto canvas = getLocalBounds().reduced (20);
+        const int spaceX = canvas.getRight() - juce::jmax (1, (canvas.getWidth() - 28) / 4);
+        reverbOn.setBounds (spaceX + 95, all.getY() + 43, 106, 22);
     }
 
     SpectrumBars spectrum;

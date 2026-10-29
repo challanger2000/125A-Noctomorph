@@ -49,33 +49,46 @@ struct PanelLnF : public juce::LookAndFeel_V4
         setColour (juce::TextEditor::textColourId, kFog);
     }
 
+    // Uniform 125A hardware knob: dark graphite, subtle bevel and a fine illuminated marker.
     void drawRotarySlider (juce::Graphics& g, int x, int y, int w, int h, float pos,
                            float startAngle, float endAngle, juce::Slider&) override
     {
-        auto bounds = juce::Rectangle<float> ((float) x, (float) y, (float) w, (float) h).reduced (3.f);
+        const auto bounds = juce::Rectangle<float> ((float) x, (float) y, (float) w, (float) h).reduced (4.f);
         const float d = juce::jmin (bounds.getWidth(), bounds.getHeight());
-        auto rc = bounds.withSizeKeepingCentre (d, d);
-        const auto c = rc.getCentre();
+        const auto circle = bounds.withSizeKeepingCentre (d, d);
+        const auto c = circle.getCentre();
         const float angle = startAngle + pos * (endAngle - startAngle);
 
-        g.setColour (kDusk.brighter (0.15f));
-        g.fillEllipse (rc);
+        g.setColour (juce::Colour (0xff080d12));
+        g.fillEllipse (circle);
+        g.setColour (kFog.withAlpha (0.20f));
+        g.drawEllipse (circle.reduced (1.f), 1.f);
+        const float radius = d * 0.435f;
+        juce::Path track, valueArc;
+        track.addCentredArc (c.x, c.y, radius, radius, 0.f, startAngle, endAngle, true);
+        valueArc.addCentredArc (c.x, c.y, radius, radius, 0.f, startAngle, angle, true);
+        g.setColour (juce::Colour (0xff394c59));
+        g.strokePath (track, juce::PathStrokeType (2.5f, juce::PathStrokeType::curved,
+                                                  juce::PathStrokeType::rounded));
+        g.setColour (kTeal.withAlpha (0.88f));
+        g.strokePath (valueArc, juce::PathStrokeType (2.5f, juce::PathStrokeType::curved,
+                                                     juce::PathStrokeType::rounded));
 
-        // Slim calibrated value arc; bright cap with a subdued metal gradient.
-        juce::Path arc;
-        arc.addCentredArc (c.x, c.y, d * 0.44f, d * 0.44f, 0.f, startAngle, angle, true);
-        g.setColour (kTeal);
-        g.strokePath (arc, juce::PathStrokeType (2.3f, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
-
-        auto cap = rc.reduced (d * 0.18f);
-        g.setGradientFill (juce::ColourGradient (kFog.brighter (0.2f), cap.getX(), cap.getY(),
-                                                kDusk.brighter (0.25f), cap.getRight(), cap.getBottom(), false));
+        const auto cap = circle.reduced (d * 0.205f);
+        g.setGradientFill (juce::ColourGradient (juce::Colour (0xff414d59),
+                                                 cap.getX(), cap.getY(),
+                                                 juce::Colour (0xff0b1016),
+                                                 cap.getRight(), cap.getBottom(), false));
         g.fillEllipse (cap);
-        g.setColour (kNight.withAlpha (0.65f));
-        g.drawEllipse (cap, 0.9f);
-        const auto tip = c.getPointOnCircumference (cap.getWidth() * 0.42f, angle);
-        g.setColour (kNight);
-        g.drawLine (c.x, c.y, tip.x, tip.y, 2.2f);
+        g.setColour (kFog.withAlpha (0.30f));
+        g.drawEllipse (cap.reduced (0.7f), 1.1f);
+        g.setColour (juce::Colour (0xff090e14).withAlpha (0.55f));
+        g.drawEllipse (cap.reduced (2.3f), 1.f);
+        const auto inner = c.getPointOnCircumference (d * 0.105f, angle);
+        const auto outer = c.getPointOnCircumference (d * 0.260f, angle);
+        g.setColour (kTeal.brighter (0.25f));
+        g.drawLine (inner.x, inner.y, outer.x, outer.y, juce::jmax (1.4f, d * 0.024f));
+        g.fillEllipse (juce::Rectangle<float> (3.2f, 3.2f).withCentre (outer));
     }
 
     // Thin-rimmed metal buttons. Active state is unmistakable without neon glow.
