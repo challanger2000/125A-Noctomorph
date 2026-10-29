@@ -95,9 +95,10 @@ jobs:
           New-Item -ItemType Directory -Force $env:V4JB_CAPTURE_GUI_DIR | Out-Null
           $process = Start-Process -FilePath $exe.FullName -PassThru
           try {
-            $required = @('01-play.png', '02-advanced-sound-01-05.png',
-                          '03-advanced-sound-06-10.png', '04-advanced-morph.png',
-                          '05-advanced-modulation.png')
+            $required = @('01-play.png', '02-source.png', '03-effects.png',
+                          '04-modules-05-07.png', '05-modules-08-10.png',
+                          '06-modules-11.png', '07-morph.png',
+                          '08-modulation.png', '09-waves.png')
             for ($i = 0; $i -lt 100; $i++) {
               Start-Sleep -Milliseconds 500
               $found = @($required | Where-Object { Test-Path (Join-Path $env:V4JB_CAPTURE_GUI_DIR $_) })

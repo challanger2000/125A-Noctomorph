@@ -113,13 +113,13 @@ struct WavePanel : public juce::Component
         auto r = getLocalBounds().reduced (8, 4);
         auto head = r.removeFromTop (22);
         head.removeFromLeft (60);
-        clearBtn.setBounds (head.removeFromRight (60).reduced (2, 1));
-        loadBtn.setBounds (head.removeFromRight (80).reduced (2, 1));
+        clearBtn.setBounds (head.removeFromRight (82).reduced (2, 1));
+        loadBtn.setBounds (head.removeFromRight (82).reduced (2, 1));
         nameArea = head.reduced (4, 0);
         r.removeFromTop (4);
-        auto knobs = r.removeFromBottom (80);
-        view = r.reduced (0, 4);
-        row (knobs.withSizeKeepingCentre (240, 80), { &start, &end, &speed });
+        auto knobs = r.removeFromBottom (122);
+        view = r.reduced (6, 6);
+        row (knobs.reduced (40, 2), { &start, &end, &speed });
     }
 
     V4JBAudioProcessor& proc;
@@ -155,25 +155,29 @@ struct WavePage : public juce::Component
     }
     void paint (juce::Graphics& g) override
     {
-        g.setColour (kFog.withAlpha (0.6f));
+        paintCard (g, balanceArea, "WAVE SOURCES  /  A - B BLEND");
+        g.setColour (kFog.withAlpha (0.72f));
         g.setFont (boldFont (11.f));
-        g.drawText ("Put a Wave module (follows A, or B with Source B) or a Double Wave module (A and B, mixed by Balance) "
-                    "in a slot on the Edit page. End before Start plays backwards.",
-                    hint, juce::Justification::centred, true);
+        g.drawText ("WAVE A", balanceTextA, juce::Justification::centredRight, false);
+        g.drawText ("WAVE B", balanceTextB, juce::Justification::centredLeft, false);
+        g.drawText ("Select WAVE or DOUBLE WAVE in SOUND > module slots. Start > End plays in reverse.",
+                    hint, juce::Justification::centred, false);
     }
     void resized() override
     {
-        auto r = getLocalBounds().reduced (6);
-        hint = r.removeFromBottom (36);
-        auto bal = r.removeFromBottom (90);
-        balance.setBounds (bal.withSizeKeepingCentre (90, 86));
-        a.setBounds (r.removeFromLeft (r.getWidth() / 2).reduced (3));
-        b.setBounds (r.reduced (3));
+        auto r = getLocalBounds().reduced (12);
+        hint = r.removeFromBottom (30);
+        balanceArea = r.removeFromBottom (126).reduced (4);
+        balance.setBounds (balanceArea.withSizeKeepingCentre (120, 98).translated (0, 10));
+        balanceTextA = balance.getBounds().translated (-190, 0).withHeight (90);
+        balanceTextB = balance.getBounds().translated (190, 0).withHeight (90);
+        a.setBounds (r.removeFromLeft (r.getWidth() / 2).reduced (5));
+        b.setBounds (r.reduced (5));
     }
     V4JBAudioProcessor& proc;
     WavePanel a, b;
     Knob balance;
-    juce::Rectangle<int> hint;
+    juce::Rectangle<int> hint, balanceArea, balanceTextA, balanceTextB;
     int seenVersion = -1;
 };
 } // namespace ui

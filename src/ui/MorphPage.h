@@ -339,24 +339,31 @@ struct MorphPage : public juce::Component
 
     void paint (juce::Graphics& g) override
     {
-        paintCard (g, macroArea.expanded (4), "MACROS");
-        paintCard (g, ctlArea.expanded (4), "PATH & CORNERS");
+        paintCard (g, macroArea.expanded (4), "MORPH MACROS  /  11 DESTINATIONS");
+        paintCard (g, ctlArea.expanded (4), "CORNERS & PATH CONTROL");
     }
 
     void resized() override
     {
         auto r = getLocalBounds().reduced (10);
-        const int padSize = juce::jmin (r.getHeight(), r.getWidth() / 2 - 20);
-        pad.setBounds (r.removeFromLeft (padSize).withSizeKeepingCentre (padSize, padSize));
-        r.removeFromLeft (16);
+        const int padSize = juce::jmin (460, juce::jmin (r.getHeight() - 20, r.getWidth() / 2 - 20));
+        auto padColumn = r.removeFromLeft (padSize + 20);
+        pad.setBounds (padColumn.withSizeKeepingCentre (padSize, padSize));
+        r.removeFromLeft (8);
 
-        ctlArea = r.removeFromBottom (170).reduced (4);
+        ctlArea = r.removeFromBottom (190).reduced (4);
         r.removeFromBottom (12);
         macroArea = r.reduced (4);
-        auto mr = macroArea.withTrimmedTop (18);
-        const int w = mr.getWidth() / macros.size();
-        for (auto* m : macros)
-            m->setBounds (mr.removeFromLeft (w));
+        auto mr = macroArea.withTrimmedTop (28).reduced (8, 0);
+        const int rowHeight = mr.getHeight() / 2;
+        auto firstRow = mr.removeFromTop (rowHeight);
+        auto secondRow = mr;
+        const int cell = firstRow.getWidth() / 6;
+        for (int i = 0; i < 6; ++i)
+            macros[i]->setBounds (firstRow.removeFromLeft (cell).reduced (3, 2));
+        secondRow.removeFromLeft (cell / 2);
+        for (int i = 6; i < macros.size(); ++i)
+            macros[i]->setBounds (secondRow.removeFromLeft (cell).reduced (3, 2));
 
         auto c = ctlArea.withTrimmedTop (20).reduced (4, 0);
         auto line1 = c.removeFromTop (26);

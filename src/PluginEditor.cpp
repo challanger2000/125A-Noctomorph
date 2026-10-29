@@ -278,11 +278,14 @@ void V4JBAudioProcessorEditor::timerCallback()
 
     // Test-only real JUCE component snapshots, saved atomically.
     const auto outDir = juce::SystemStats::getEnvironmentVariable ("V4JB_CAPTURE_GUI_DIR", {});
-    if (outDir.isNotEmpty() && ciCaptureStep < 5)
+    if (outDir.isNotEmpty() && ciCaptureStep < 9)
     {
-        static const char* const names[] = { "01-play.png", "02-advanced-sound-01-05.png",
-                                            "03-advanced-sound-06-10.png",
-                                            "04-advanced-morph.png", "05-advanced-modulation.png" };
+        static const char* const names[] = {
+            "01-play.png", "02-source.png", "03-effects.png",
+            "04-modules-05-07.png", "05-modules-08-10.png",
+            "06-modules-11.png", "07-morph.png",
+            "08-modulation.png", "09-waves.png"
+        };
         const auto folder = juce::File (outDir);
         folder.createDirectory();
         const auto pngFile = folder.getChildFile (names[ciCaptureStep]);
@@ -302,9 +305,13 @@ void V4JBAudioProcessorEditor::timerCallback()
         }
         ++ciCaptureStep;
         if (ciCaptureStep == 1) tabs.setCurrentTabIndex (1);
-        else if (ciCaptureStep == 2) editPage.setBank (1);
-        else if (ciCaptureStep == 3) advancedTabs.setCurrentTabIndex (2);
-        else if (ciCaptureStep == 4) advancedTabs.setCurrentTabIndex (1);
+        else if (ciCaptureStep == 2) editPage.setTop (1);
+        else if (ciCaptureStep == 3) { editPage.setTop (0); editPage.setBank (1); }
+        else if (ciCaptureStep == 4) editPage.setBank (2);
+        else if (ciCaptureStep == 5) editPage.setBank (3);
+        else if (ciCaptureStep == 6) advancedTabs.setCurrentTabIndex (2);
+        else if (ciCaptureStep == 7) advancedTabs.setCurrentTabIndex (1);
+        else if (ciCaptureStep == 8) advancedTabs.setCurrentTabIndex (3);
     }
 }
 

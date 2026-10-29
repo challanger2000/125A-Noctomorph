@@ -105,6 +105,29 @@ struct PanelLnF : public juce::LookAndFeel_V4
         g.drawRoundedRectangle (r.reduced (0.5f), 3.f, 1.f);
     }
 
+    // Fine horizontal parameter tracks, shared across the ten advanced module
+    // editors. No JUCE LinearBar rectangles or misleading value blocks.
+    void drawLinearSlider (juce::Graphics& g, int x, int y, int w, int h,
+                           float pos, float minPos, float maxPos,
+                           juce::Slider::SliderStyle style, juce::Slider& slider) override
+    {
+        if (style != juce::Slider::LinearHorizontal)
+        {
+            juce::LookAndFeel_V4::drawLinearSlider (g, x, y, w, h, pos, minPos, maxPos, style, slider);
+            return;
+        }
+        const float cy = (float) y + (float) h * 0.5f;
+        const float left = (float) x + 4.f;
+        const float right = (float) (x + w) - 4.f;
+        const float at = juce::jlimit (left, right, pos);
+        g.setColour (kNight.brighter (0.17f));
+        g.drawLine (left, cy, right, cy, 4.f);
+        g.setColour (kTeal.withAlpha (slider.isEnabled() ? 0.90f : 0.25f));
+        g.drawLine (left, cy, at, cy, 3.f);
+        g.setColour (kFog);
+        g.fillEllipse (juce::Rectangle<float> (9.f, 9.f).withCentre ({ at, cy }));
+    }
+
     // Toggles look like buttons; their on state is steel blue.
     void drawToggleButton (juce::Graphics& g, juce::ToggleButton& b, bool over, bool) override
     {
@@ -164,7 +187,7 @@ struct HSlider : public juce::Component
         label.setText (name, juce::dontSendNotification);
         label.setFont (boldFont (10.f));
         addAndMakeVisible (label);
-        slider.setSliderStyle (juce::Slider::LinearBar);
+        slider.setSliderStyle (juce::Slider::LinearHorizontal);
         slider.setTextBoxStyle (juce::Slider::NoTextBox, false, 0, 0);
         slider.setColour (juce::Slider::trackColourId, kTeal.withAlpha (0.6f));
         slider.setColour (juce::Slider::backgroundColourId, kNight);
@@ -178,7 +201,7 @@ struct HSlider : public juce::Component
         label.setBounds (r.removeFromLeft (labelW));
         slider.setBounds (r.reduced (0, 3));
     }
-    int labelW = 62;
+    int labelW = 86;
     juce::Label label;
     juce::Slider slider;
     std::unique_ptr<APVTS::SliderAttachment> att;
