@@ -218,7 +218,7 @@ V4JBAudioProcessorEditor::V4JBAudioProcessorEditor (V4JBAudioProcessor& p)
 
     // Drag the corner to scale (40%..150%), aspect ratio locked. The scale is saved with the session.
     // Read it first: setResizeLimits clamps the still-empty editor and resized() overwrites uiScale.
-    const float s = juce::jlimit (0.4f, 1.5f, proc.uiScale);
+    const float s = juce::jlimit (0.4f, 1.5f, proc.uiScale.load());
     setResizable (true, true);
     setResizeLimits (baseW * 2 / 5, baseH * 2 / 5, baseW * 3 / 2, baseH * 3 / 2);
     getConstrainer()->setFixedAspectRatio ((double) baseW / (double) baseH);
@@ -250,13 +250,13 @@ void V4JBAudioProcessorEditor::handleNoteOff (juce::MidiKeyboardState*, int, int
 // 30 Hz: only the visible page pulls spectra and meters.
 void V4JBAudioProcessorEditor::timerCallback()
 {
-    if (proc.currentPresetCategory.isNotEmpty())
-        presetBtn.setButtonText (proc.currentPresetCategory + "  ·  " + proc.currentPresetName);
+    if (proc.getPresetCategory().isNotEmpty())
+        presetBtn.setButtonText (proc.getPresetCategory() + "  ·  " + proc.getPresetName());
     else
-        presetBtn.setButtonText (proc.currentPresetName);
-    presetBtn.setTooltip (proc.currentPresetCategory.isNotEmpty()
-                              ? proc.currentPresetCategory + " / " + proc.currentPresetName
-                              : proc.currentPresetName);
+        presetBtn.setButtonText (proc.getPresetName());
+    presetBtn.setTooltip (proc.getPresetCategory().isNotEmpty()
+                              ? proc.getPresetCategory() + " / " + proc.getPresetName()
+                              : proc.getPresetName());
     if (lastHeaderMode != tabs.getCurrentTabIndex())
     {
         lastHeaderMode = tabs.getCurrentTabIndex();
@@ -294,7 +294,7 @@ void V4JBAudioProcessorEditor::showPresetMenu()
         juce::PopupMenu sub;
         for (int i = 0; i < presetList.size(); ++i)
             if (presetList[i].category == cat)
-                sub.addItem (i + 1, presetList[i].name, true, presetList[i].name == proc.currentPresetName);
+                sub.addItem (i + 1, presetList[i].name, true, presetList[i].name == proc.getPresetName());
         menu.addSubMenu (cat, sub);
     }
     menu.addSeparator();
@@ -329,7 +329,7 @@ void V4JBAudioProcessorEditor::stepPreset (int delta)
 
     juce::Array<int> group;
     for (int i = 0; i < presetList.size(); ++i)
-        if (presetList[i].category == proc.currentPresetCategory)
+        if (presetList[i].category == proc.getPresetCategory())
             group.add (i);
     if (group.isEmpty())  // Random / unknown name: walk the whole list
         for (int i = 0; i < presetList.size(); ++i)
@@ -337,7 +337,7 @@ void V4JBAudioProcessorEditor::stepPreset (int delta)
 
     int pos = 0;
     for (int g = 0; g < group.size(); ++g)
-        if (presetList[group[g]].name == proc.currentPresetName)
+        if (presetList[group[g]].name == proc.getPresetName())
         {
             pos = g;
             break;
@@ -350,7 +350,7 @@ void V4JBAudioProcessorEditor::stepPreset (int delta)
 void V4JBAudioProcessorEditor::savePresetDialog()
 {
     auto* w = new juce::AlertWindow ("Save preset", "Saved to Documents/V4JB/Presets", juce::MessageBoxIconType::NoIcon);
-    w->addTextEditor ("name", proc.currentPresetName, "Name");
+    w->addTextEditor ("name", proc.getPresetName(), "Name");
     w->addTextEditor ("category", "User", "Category");
     w->addButton ("Save", 1, juce::KeyPress (juce::KeyPress::returnKey));
     w->addButton ("Cancel", 0, juce::KeyPress (juce::KeyPress::escapeKey));

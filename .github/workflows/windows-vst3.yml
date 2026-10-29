@@ -82,6 +82,45 @@ jobs:
           & $msbuild 'Builds/VisualStudio2022/V4JB.sln' /p:Configuration=Release /p:Platform=x64 /m
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+      - name: Run consolidated JUCE processor and GUI regressions
+        shell: pwsh
+        run: |
+          cmake -S tests -B build/audit-tests -A x64 -DJUCE_SOURCE="$pwd/JUCE" -DV4JB_ASSETS="$pwd/_upstream"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build build/audit-tests --config Release --parallel 2
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ctest --test-dir build/audit-tests -C Release --output-on-failure
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Checkout official Steinberg SDK 3.8.1 validator
+        uses: actions/checkout@v4
+        with:
+          repository: steinbergmedia/vst3sdk
+          ref: 3cdf9ca5d1f5b1b21e0a86832aa4abe55607bd96
+          path: vst3sdk
+          submodules: recursive
+
+      - name: Validate the actual Windows VST3 bundle
+        shell: pwsh
+        run: |
+          cmake -S vst3sdk -B build/validator -A x64 -DSMTG_ENABLE_VST3_PLUGIN_EXAMPLES=OFF -DSMTG_ENABLE_VST3_HOSTING_EXAMPLES=OFF -DSMTG_ENABLE_VSTGUI_SUPPORT=OFF -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE="$pwd/build/validator-bin"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          cmake --build build/validator --config Release --target validator --parallel 2
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & ./build/validator-bin/validator.exe ./Builds/VisualStudio2022/x64/Release/VST3/V4JB.vst3
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Retain audit evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Noctomorph-audit-evidence
+          path: |
+            build/audit-tests/Testing/Temporary/LastTest.log
+            build/audit-tests/control-inventory.tsv
+          if-no-files-found: warn
+          retention-days: 7
+
       - name: Package VST3 test artifact
         shell: pwsh
         run: |

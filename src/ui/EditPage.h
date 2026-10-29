@@ -163,6 +163,7 @@ struct SlotCard : public juce::Component
         for (int i = 0; i < 3; ++i)
         {
             auto& rt = routes[i];
+            rt.amount.setComponentID (ParamID::slot (slotIndex, amtKeys[i]));
             rt.amount.setSliderStyle (juce::Slider::LinearHorizontal);
             rt.amount.setTextBoxStyle (juce::Slider::NoTextBox, false, 0, 0);
             rt.amount.setColour (juce::Slider::trackColourId, kAmber.withAlpha (0.6f));

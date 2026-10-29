@@ -396,7 +396,10 @@ inline void processModule (const ModuleParams& m, ModuleState& st, const ModuleC
             static constexpr float kStepsPerBeat[4] = { 1.f, 2.f, 4.f, 8.f };
             const int pattern = std::min ((int) (main * 8.f), 7);
             const float spb = kStepsPerBeat[std::min ((int) (p[0] * 4.f), 3)];
-            const int step = (int) ((int64_t) std::floor (c.beats * spb) & 7);
+            // Reduce in floating point before converting: a finite host PPQ
+            // can exceed int64, and negative pre-roll must wrap forwards.
+            const double phase = std::fmod (c.beats, 8.0 / spb) * spb;
+            const int step = std::isfinite (phase) ? ((int) std::floor (phase) + 8) % 8 : 0;
             const int N = std::min (2 + (int) (p[2] * 14.f), n);
             const int lit = (int) std::lround (kPhrase[pattern][step] * (float) (N - 1));
             const float coef = 1.f - std::exp (-c.dt / logMap (p[3], 0.002f, 0.3f));

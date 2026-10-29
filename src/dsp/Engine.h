@@ -12,6 +12,7 @@
 #include "Modules.h"
 #include "Partials.h"
 #include "Spectral.h"
+#include "TransportSafety.h"
 
 #include <atomic>
 
@@ -142,14 +143,23 @@ public:
     }
 
     // Once per host block, before render(). macros = the 11 morph macros.
-    void setParams (const EngineParams& raw, const float* macros) { p = macro::apply (raw, macros); }
+    void setParams (const EngineParams& raw, const float* macros)
+    {
+        const auto next = macro::apply (raw, macros);
+        // Mono's held-note stack does not describe notes started in poly mode.
+        // Retire the old mode's voices before changing note-off semantics.
+        if ((p.poly <= 1) != (next.poly <= 1)) allNotesOff();
+        if (next.poly > 1 && next.poly < p.poly)
+            for (int i = std::clamp (next.poly, 1, kMaxVoices); i < kMaxVoices; ++i) release (voices[i]);
+        p = next;
+    }
     void setWaves (const WaveData* a, const WaveData* b) { wave[0] = a; wave[1] = b; }
 
     // bpm always; beatsNow only when the host transport is playing (else we free-run).
     void setTransport (double bpmIn, bool playing, double beatsNow)
     {
-        bpm = bpmIn > 0.0 ? bpmIn : 120.0;
-        if (playing)
+        bpm = safeHostBpm (bpmIn);
+        if (playing && std::isfinite (beatsNow))
             beats = beatsNow;
     }
 

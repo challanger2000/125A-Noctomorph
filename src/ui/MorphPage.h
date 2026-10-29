@@ -211,6 +211,7 @@ struct MacroColumn : public juce::Component
     MacroColumn (V4JBAudioProcessor& p, int m)
         : proc (p), index (m), free (p.apvts, ParamID::lock (m), "Free")
     {
+        offset.setComponentID (ParamID::macro (m));
         offset.setSliderStyle (juce::Slider::LinearVertical);
         offset.setTextBoxStyle (juce::Slider::NoTextBox, false, 0, 0);
         offset.setPopupDisplayEnabled (true, false, nullptr);
@@ -332,6 +333,8 @@ struct MorphPage : public juce::Component
 
     void refresh()
     {
+        if (pad.selected >= proc.morph.numNodes.load()) pad.select (-1);
+        if (pad.dragNode >= proc.morph.numNodes.load()) pad.dragNode = -1;
         pad.repaint();
         for (auto* m : macros)
             m->repaint();
