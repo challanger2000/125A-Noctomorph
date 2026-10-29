@@ -61,13 +61,13 @@ void V4JBAudioProcessorEditor::AboutBox::paint (juce::Graphics& g)
     auto r = cardBounds().reduced (16, 14);
     g.setColour (kFog);
     g.setFont (boldFont (20.f));
-    g.drawText ("V4JB", r.removeFromTop (26), juce::Justification::centred, false);
+    g.drawText ("125A NOCTOMORPH", r.removeFromTop (26), juce::Justification::centred, false);
     g.setFont (boldFont (12.f));
     g.drawText ("v" JucePlugin_VersionString, r.removeFromTop (18), juce::Justification::centred, false);
     g.setFont (boldFont (11.f));
     g.setColour (kFog.withAlpha (0.8f));
-    g.drawText ("Stupid Systems LLC", r.removeFromTop (16), juce::Justification::centred, false);
-    g.drawText ("MIT", r.removeFromTop (16), juce::Justification::centred, false);
+    g.drawText ("125A Systems", r.removeFromTop (16), juce::Justification::centred, false);
+    g.drawText ("Based on V4JB (MIT)", r.removeFromTop (16), juce::Justification::centred, false);
 }
 
 void V4JBAudioProcessorEditor::AboutBox::resized()
@@ -113,9 +113,9 @@ void V4JBAudioProcessorEditor::AboutBox::checkForUpdate()
     {
         juce::String text;
         bool hasUpdate = false;
-        juce::URL url ("https://api.github.com/repos/iamtew/V4JB/tags");
+        juce::URL url ("https://api.github.com/repos/challanger2000/125A-Noctomorph/tags");
         const auto opts = juce::URL::InputStreamOptions (juce::URL::ParameterHandling::inAddress)
-                              .withExtraHeaders ("User-Agent: V4JB\nAccept: application/vnd.github+json")
+                              .withExtraHeaders ("User-Agent: 125A-Noctomorph\nAccept: application/vnd.github+json")
                               .withConnectionTimeoutMs (8000);
         if (auto stream = url.createInputStream (opts))
         {
@@ -218,7 +218,7 @@ V4JBAudioProcessorEditor::V4JBAudioProcessorEditor (V4JBAudioProcessor& p)
 
     // Drag the corner to scale (40%..150%), aspect ratio locked. The scale is saved with the session.
     // Read it first: setResizeLimits clamps the still-empty editor and resized() overwrites uiScale.
-    const float s = juce::jlimit (0.4f, 1.5f, proc.uiScale);
+    const float s = juce::jlimit (0.4f, 1.5f, proc.uiScale.load());
     setResizable (true, true);
     setResizeLimits (baseW * 2 / 5, baseH * 2 / 5, baseW * 3 / 2, baseH * 3 / 2);
     getConstrainer()->setFixedAspectRatio ((double) baseW / (double) baseH);
@@ -250,13 +250,13 @@ void V4JBAudioProcessorEditor::handleNoteOff (juce::MidiKeyboardState*, int, int
 // 30 Hz: only the visible page pulls spectra and meters.
 void V4JBAudioProcessorEditor::timerCallback()
 {
-    if (proc.currentPresetCategory.isNotEmpty())
-        presetBtn.setButtonText (proc.currentPresetCategory + "  ·  " + proc.currentPresetName);
+    if (proc.getPresetCategory().isNotEmpty())
+        presetBtn.setButtonText (proc.getPresetCategory() + "  ·  " + proc.getPresetName());
     else
-        presetBtn.setButtonText (proc.currentPresetName);
-    presetBtn.setTooltip (proc.currentPresetCategory.isNotEmpty()
-                              ? proc.currentPresetCategory + " / " + proc.currentPresetName
-                              : proc.currentPresetName);
+        presetBtn.setButtonText (proc.getPresetName());
+    presetBtn.setTooltip (proc.getPresetCategory().isNotEmpty()
+                              ? proc.getPresetCategory() + " / " + proc.getPresetName()
+                              : proc.getPresetName());
     if (lastHeaderMode != tabs.getCurrentTabIndex())
     {
         lastHeaderMode = tabs.getCurrentTabIndex();
@@ -294,7 +294,7 @@ void V4JBAudioProcessorEditor::showPresetMenu()
         juce::PopupMenu sub;
         for (int i = 0; i < presetList.size(); ++i)
             if (presetList[i].category == cat)
-                sub.addItem (i + 1, presetList[i].name, true, presetList[i].name == proc.currentPresetName);
+                sub.addItem (i + 1, presetList[i].name, true, presetList[i].name == proc.getPresetName());
         menu.addSubMenu (cat, sub);
     }
     menu.addSeparator();
@@ -329,7 +329,7 @@ void V4JBAudioProcessorEditor::stepPreset (int delta)
 
     juce::Array<int> group;
     for (int i = 0; i < presetList.size(); ++i)
-        if (presetList[i].category == proc.currentPresetCategory)
+        if (presetList[i].category == proc.getPresetCategory())
             group.add (i);
     if (group.isEmpty())  // Random / unknown name: walk the whole list
         for (int i = 0; i < presetList.size(); ++i)
@@ -337,7 +337,7 @@ void V4JBAudioProcessorEditor::stepPreset (int delta)
 
     int pos = 0;
     for (int g = 0; g < group.size(); ++g)
-        if (presetList[group[g]].name == proc.currentPresetName)
+        if (presetList[group[g]].name == proc.getPresetName())
         {
             pos = g;
             break;
@@ -350,7 +350,7 @@ void V4JBAudioProcessorEditor::stepPreset (int delta)
 void V4JBAudioProcessorEditor::savePresetDialog()
 {
     auto* w = new juce::AlertWindow ("Save preset", "Saved to Documents/V4JB/Presets", juce::MessageBoxIconType::NoIcon);
-    w->addTextEditor ("name", proc.currentPresetName, "Name");
+    w->addTextEditor ("name", proc.getPresetName(), "Name");
     w->addTextEditor ("category", "User", "Category");
     w->addButton ("Save", 1, juce::KeyPress (juce::KeyPress::returnKey));
     w->addButton ("Cancel", 0, juce::KeyPress (juce::KeyPress::escapeKey));
@@ -358,8 +358,10 @@ void V4JBAudioProcessorEditor::savePresetDialog()
     // deleteWhenDismissed: the window is deleted after this callback runs.
     w->enterModalState (true, juce::ModalCallbackFunction::create ([safe, w] (int result)
     {
-        if (safe != nullptr && result == 1)
-            safe->proc.saveUserPreset (w->getTextEditorContents ("name"), w->getTextEditorContents ("category"));
+        if (safe != nullptr && result == 1
+            && ! safe->proc.saveUserPreset (w->getTextEditorContents ("name"), w->getTextEditorContents ("category")))
+            juce::AlertWindow::showMessageBoxAsync (juce::MessageBoxIconType::WarningIcon,
+                "Preset not saved", "The preset could not be written. Check its name, folder permissions and disk space.");
     }), true);
 }
 

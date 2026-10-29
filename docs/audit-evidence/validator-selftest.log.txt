@@ -1,0 +1,246 @@
+[1/89] Building CXX object CMakeFiles/base.dir/base/source/baseiids.cpp.o
+[2/89] Building CXX object CMakeFiles/base.dir/base/source/fdebug.cpp.o
+[3/89] Building CXX object CMakeFiles/base.dir/base/source/fdynlib.cpp.o
+[4/89] Building CXX object CMakeFiles/base.dir/base/source/fbuffer.cpp.o
+[5/89] Building CXX object CMakeFiles/base.dir/base/source/fobject.cpp.o
+[6/89] Building CXX object CMakeFiles/base.dir/base/source/fstreamer.cpp.o
+[7/89] Building CXX object CMakeFiles/base.dir/base/source/timer.cpp.o
+[8/89] Building CXX object CMakeFiles/base.dir/base/source/updatehandler.cpp.o
+[9/89] Building CXX object CMakeFiles/base.dir/base/thread/source/fcondition.cpp.o
+[10/89] Building CXX object CMakeFiles/base.dir/base/thread/source/flock.cpp.o
+[11/89] Building CXX object CMakeFiles/pluginterfaces.dir/pluginterfaces/base/conststringtable.cpp.o
+[12/89] Building CXX object CMakeFiles/pluginterfaces.dir/pluginterfaces/base/coreiids.cpp.o
+[13/89] Building CXX object CMakeFiles/pluginterfaces.dir/pluginterfaces/base/funknown.cpp.o
+[14/89] Building CXX object CMakeFiles/base.dir/base/source/fstring.cpp.o
+[15/89] Linking CXX static library lib/Release/libbase.a
+[16/89] Building CXX object CMakeFiles/sdk_common.dir/public.sdk/source/common/commoniids.cpp.o
+[17/89] Building CXX object CMakeFiles/pluginterfaces.dir/pluginterfaces/base/ustring.cpp.o
+[18/89] Linking CXX static library lib/Release/libpluginterfaces.a
+[19/89] Building CXX object CMakeFiles/sdk_common.dir/public.sdk/source/common/openurl.cpp.o
+[20/89] Building CXX object CMakeFiles/sdk_common.dir/public.sdk/source/common/systemclipboard_linux.cpp.o
+[21/89] Building CXX object CMakeFiles/sdk_common.dir/public.sdk/source/common/commonstringconvert.cpp.o
+[22/89] Building CXX object CMakeFiles/sdk_common.dir/public.sdk/source/common/systemclipboard_win32.cpp.o
+[23/89] Building CXX object CMakeFiles/sdk_common.dir/public.sdk/source/common/threadchecker_linux.cpp.o
+[24/89] Building CXX object CMakeFiles/sdk_common.dir/public.sdk/source/common/threadchecker_win32.cpp.o
+[25/89] Building CXX object CMakeFiles/sdk_common.dir/public.sdk/source/common/readfile.cpp.o
+[26/89] Building CXX object CMakeFiles/sdk_hosting.dir/public.sdk/source/vst/hosting/connectionproxy.cpp.o
+[27/89] Building CXX object CMakeFiles/sdk_hosting.dir/public.sdk/source/vst/hosting/eventlist.cpp.o
+[28/89] Building CXX object CMakeFiles/sdk_common.dir/public.sdk/source/vst/vstpresetfile.cpp.o
+[29/89] Linking CXX static library lib/Release/libsdk_common.a
+[30/89] Building CXX object CMakeFiles/sdk_hosting.dir/public.sdk/source/vst/hosting/hostclasses.cpp.o
+[31/89] Building CXX object CMakeFiles/sdk_hosting.dir/public.sdk/source/vst/hosting/module.cpp.o
+[32/89] Building CXX object CMakeFiles/sdk_hosting.dir/public.sdk/source/vst/hosting/parameterchanges.cpp.o
+[33/89] Building CXX object CMakeFiles/sdk_hosting.dir/public.sdk/source/vst/hosting/processdata.cpp.o
+[34/89] Building CXX object CMakeFiles/sdk_hosting.dir/public.sdk/source/vst/hosting/pluginterfacesupport.cpp.o
+[35/89] Building CXX object CMakeFiles/sdk_hosting.dir/public.sdk/source/vst/vstinitiids.cpp.o
+[36/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/common/memorystream.cpp.o
+[37/89] Building CXX object CMakeFiles/sdk_hosting.dir/public.sdk/source/vst/utility/stringconvert.cpp.o
+[38/89] Linking CXX static library lib/Release/libsdk_hosting.a
+[39/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/main/moduleinit.cpp.o
+[40/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/hosting/test/connectionproxytest.cpp.o
+[41/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/hosting/test/eventlisttest.cpp.o
+[42/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/hosting/test/hostclassestest.cpp.o
+[43/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/moduleinfo/moduleinfoparser.cpp.o
+[44/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/hosting/test/miditovsttest.cpp.o
+[45/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/hosting/test/parameterchangestest.cpp.o
+[46/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/hosting/test/pluginterfacesupporttest.cpp.o
+[47/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/hosting/plugprovider.cpp.o
+[48/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/hosting/test/processdatatest.cpp.o
+[49/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/bus/busactivation.cpp.o
+[50/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/bus/busconsistency.cpp.o
+[51/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/bus/businvalidindex.cpp.o
+[52/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/bus/checkaudiobusarrangement.cpp.o
+[53/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/bus/scanbusses.cpp.o
+[54/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/bus/sidechainarrangement.cpp.o
+[55/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/general/editorclasses.cpp.o
+[56/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/general/midilearn.cpp.o
+[57/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/general/midimapping.cpp.o
+[58/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/general/plugcompat.cpp.o
+[59/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/general/suspendresume.cpp.o
+[60/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/general/scanparameters.cpp.o
+[61/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/general/terminit.cpp.o
+[62/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/noteexpression/noteexpression.cpp.o
+[63/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/noteexpression/keyswitch.cpp.o
+[64/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/processing/process.cpp.o
+[65/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/processing/automation.cpp.o
+[66/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/processing/processcontextrequirements.cpp.o
+[67/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/processing/processformat.cpp.o
+[68/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/processing/processinputoverwriting.cpp.o
+[69/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/processing/processtail.cpp.o
+[70/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/processing/silenceflags.cpp.o
+[71/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/processing/processthreaded.cpp.o
+[72/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/processing/speakerarrangement.cpp.o
+[73/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/processing/silenceprocessing.cpp.o
+[74/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/processing/variableblocksize.cpp.o
+[75/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/state/bypasspersistence.cpp.o
+[76/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/state/invalidstatetransition.cpp.o
+[77/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/state/repeatidenticalstatetransition.cpp.o
+[78/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/state/validstatetransition.cpp.o
+[79/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/testbase.cpp.o
+[80/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/unit/checkunitstructure.cpp.o
+[81/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/unit/scanunits.cpp.o
+[82/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/vsttestsuite.cpp.o
+[83/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/testsuite/unit/scanprograms.cpp.o
+[84/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/source/main.cpp.o
+[85/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/source/usediids.cpp.o
+[86/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/utility/testing.cpp.o
+[87/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/__/__/__/source/vst/hosting/module_linux.cpp.o
+[88/89] Building CXX object public.sdk/samples/vst-hosting/validator/CMakeFiles/validator.dir/source/validator.cpp.o
+[89/89] Linking CXX executable bin/Release/validator
+Running validator selftest:
+
+[ConnectionProxy: Connect and disconnect]
+[Succeeded]
+
+[ConnectionProxy: Disconnect wrong object]
+[Succeeded]
+
+[ConnectionProxy: Send message on UI thread]
+[Succeeded]
+
+[ConnectionProxy: Send message on 2nd thread]
+[Succeeded]
+
+[EventList: Set and get single event]
+[Succeeded]
+
+[EventList: Count events]
+[Succeeded]
+
+[EventList: Overflow]
+[Succeeded]
+
+[EventList: Get unknown event]
+[Succeeded]
+
+[EventList: Resize]
+[Succeeded]
+
+[HostApplication: Create instance of IAttributeList]
+[Succeeded]
+
+[HostApplication: Create instance of IMessage]
+[Succeeded]
+
+[HostAttributeList: Int]
+[Succeeded]
+
+[HostAttributeList: Float]
+[Succeeded]
+
+[HostAttributeList: String]
+[Succeeded]
+
+[HostAttributeList: Binary]
+[Succeeded]
+
+[HostAttributeList: Multiple Set]
+[Succeeded]
+
+[MIDI2VST: midiToEvent noteOn]
+[Succeeded]
+
+[MIDI2VST: midiToEvent noteOff]
+[Succeeded]
+
+[MIDI2VST: midiToEvent polyPressure]
+[Succeeded]
+
+[MIDI2VST: midiToEvent unsupported]
+[Succeeded]
+
+[MIDI2VST: midiToParameter controller]
+[Succeeded]
+
+[MIDI2VST: midiToParameter pitchBend]
+[Succeeded]
+
+[MIDI2VST: midiToParameter channelPressure]
+[Succeeded]
+
+[MIDI2VST: midiToParameter unsupported]
+[Succeeded]
+
+[ParameterValueQueue: Set paramID]
+[Succeeded]
+
+[ParameterValueQueue: Set/get point]
+[Succeeded]
+
+[ParameterValueQueue: Set/get multiple points]
+[Succeeded]
+
+[ParameterValueQueue: Ordered points]
+[Succeeded]
+
+[ParameterValueQueue: Clear]
+[Succeeded]
+
+[ParameterChanges: Parameter count]
+[Succeeded]
+
+[ParameterChanges: Clear queue]
+[Succeeded]
+
+[ParameterChanges: Increase max parameters]
+[Succeeded]
+
+[ParameterChanges: Get parameter data]
+[Succeeded]
+
+[ParameterChangeTransfer: Add/get change]
+[Succeeded]
+
+[ParameterChangeTransfer: Remove changes]
+[Succeeded]
+
+[ParameterChangeTransfer: Transfer changes to]
+[Succeeded]
+
+[ParameterChangeTransfer: Transfer changes from]
+[Succeeded]
+
+[PlugInterfaceSupport: Initial interfaces]
+[Succeeded]
+
+[PlugInterfaceSupport: Add interface]
+[Succeeded]
+
+[PlugInterfaceSupport: Remove interface]
+[Succeeded]
+
+[HostProcessData: No bus]
+[Succeeded]
+
+[HostProcessData: 1 out bus no channels]
+[Succeeded]
+
+[HostProcessData: 1 out bus 2 channels]
+[Succeeded]
+
+[HostProcessData: 1 in & out bus 2 channels]
+[Succeeded]
+
+[HostProcessData: 2 in & out bus dif channels]
+[Succeeded]
+
+[HostProcessData: Set all channel buffers 32]
+[Succeeded]
+
+[HostProcessData: Set all channel buffers 64]
+[Succeeded]
+
+[HostProcessData: Set individual channel buffers 32]
+[Succeeded]
+
+[HostProcessData: Set individual channel buffers 32 combined]
+[Succeeded]
+
+[HostProcessData: Set individual channel buffers 64]
+[Succeeded]
+
+[HostProcessData: Set individual channel buffers 64 combined]
+[Succeeded]
+
+Executed 51 Tests.
+0 failed test(s).

@@ -1,0 +1,106 @@
+Test project /workspace/125A-Noctomorph/build/audit
+    Start 1: engine_check
+1/8 Test #1: engine_check .....................   Passed    7.23 sec
+    Start 2: version_check
+2/8 Test #2: version_check ....................   Passed    0.01 sec
+    Start 3: processor_blocks
+3/8 Test #3: processor_blocks .................***Failed   16.73 sec
+JUCE v9.0.4
+FAIL 35: false && "mono/stereo PCM mismatch"
+FAIL 35: false && "mono/stereo PCM mismatch"
+FAIL 36: a.getMagnitude(0,n-512,512)>1e-5f
+FAIL 35: false && "mono/stereo PCM mismatch"
+FAIL 36: a.getMagnitude(0,n-512,512)>1e-5f
+FAIL 35: false && "mono/stereo PCM mismatch"
+FAIL 35: false && "mono/stereo PCM mismatch"
+FAIL 36: a.getMagnitude(0,n-512,512)>1e-5f
+FAIL 35: false && "mono/stereo PCM mismatch"
+FAIL 36: a.getMagnitude(0,n-512,512)>1e-5f
+FAIL 35: false && "mono/stereo PCM mismatch"
+FAIL 35: false && "mono/stereo PCM mismatch"
+FAIL 36: a.getMagnitude(0,n-512,512)>1e-5f
+FAIL 35: false && "mono/stereo PCM mismatch"
+FAIL 36: a.getMagnitude(0,n-512,512)>1e-5f
+blocks: FAIL (15 failed checks)
+
+    Start 4: processor_keys
+4/8 Test #4: processor_keys ...................***Failed    1.73 sec
+JUCE v9.0.4
+FAIL 49: !p.engine->voiceHeld(i)
+FAIL 49: !p.engine->voiceHeld(i)
+FAIL 49: !p.engine->voiceHeld(i)
+FAIL 49: !p.engine->voiceHeld(i)
+FAIL 49: !p.engine->voiceHeld(i)
+FAIL 49: !p.engine->voiceHeld(i)
+FAIL 49: !p.engine->voiceHeld(i)
+FAIL 49: !p.engine->voiceHeld(i)
+FAIL 50: b.getMagnitude(0,512)<1e-5f
+keys: FAIL (9 failed checks)
+
+    Start 5: processor_wet
+5/8 Test #5: processor_wet ....................***Failed    1.78 sec
+JUCE v9.0.4
+delay mix=0 direct=0.163117
+delay mix=0.5 direct=0.163117
+delay mix=1 direct=0.163117
+FAIL 64: std::abs(l[0])<1e-7f && std::abs(r[0])<1e-7f
+reverb mix=0 direct=0.326235
+reverb mix=0.5 direct=0.244676
+reverb mix=1 direct=0.163117
+FAIL 64: std::abs(l[0])<1e-7f && std::abs(r[0])<1e-7f
+wet: FAIL (2 failed checks)
+
+    Start 6: processor_tempo
+6/8 Test #6: processor_tempo ..................***Failed    1.73 sec
+JUCE v9.0.4
+FAIL 76: std::isfinite(p.engine->beatClock())
+tempo: FAIL (1 failed checks)
+
+    Start 7: processor_state
+7/8 Test #7: processor_state ..................***Failed    0.67 sec
+JUCE v9.0.4
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 85: std::abs(a.getParameters()[i]->getValue()-b.getParameters()[i]->getValue())<1e-6f
+FAIL 86: std::abs(a.morph.corner[0][0].load()-b.morph.corner[0][0].load())<1e-7f
+FAIL 90: restored && restored->gain==wd->gain
+state: FAIL (22 failed checks)
+
+    Start 8: processor_gui
+8/8 Test #8: processor_gui ....................***Failed    1.58 sec
+JUCE v9.0.4
+FAIL 104: ed->morphPage.pad.selected==-1
+FAIL 104: ed->morphPage.pad.selected==-1
+FAIL 104: ed->morphPage.pad.selected==-1
+gui: FAIL (3 failed checks)
+
+
+25% tests passed, 6 tests failed out of 8
+
+Total Test time (real) =  31.45 sec
+
+The following tests FAILED:
+	  3 - processor_blocks (Failed)
+	  4 - processor_keys (Failed)
+	  5 - processor_wet (Failed)
+	  6 - processor_tempo (Failed)
+	  7 - processor_state (Failed)
+	  8 - processor_gui (Failed)
+Errors while running CTest
