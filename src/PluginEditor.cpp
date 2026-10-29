@@ -61,13 +61,13 @@ void V4JBAudioProcessorEditor::AboutBox::paint (juce::Graphics& g)
     auto r = cardBounds().reduced (16, 14);
     g.setColour (kFog);
     g.setFont (boldFont (20.f));
-    g.drawText ("V4JB", r.removeFromTop (26), juce::Justification::centred, false);
+    g.drawText ("125A NOCTOMORPH", r.removeFromTop (26), juce::Justification::centred, false);
     g.setFont (boldFont (12.f));
     g.drawText ("v" JucePlugin_VersionString, r.removeFromTop (18), juce::Justification::centred, false);
     g.setFont (boldFont (11.f));
     g.setColour (kFog.withAlpha (0.8f));
-    g.drawText ("Stupid Systems LLC", r.removeFromTop (16), juce::Justification::centred, false);
-    g.drawText ("MIT", r.removeFromTop (16), juce::Justification::centred, false);
+    g.drawText ("125A Systems", r.removeFromTop (16), juce::Justification::centred, false);
+    g.drawText ("Based on V4JB (MIT)", r.removeFromTop (16), juce::Justification::centred, false);
 }
 
 void V4JBAudioProcessorEditor::AboutBox::resized()
@@ -113,9 +113,9 @@ void V4JBAudioProcessorEditor::AboutBox::checkForUpdate()
     {
         juce::String text;
         bool hasUpdate = false;
-        juce::URL url ("https://api.github.com/repos/iamtew/V4JB/tags");
+        juce::URL url ("https://api.github.com/repos/challanger2000/125A-Noctomorph/tags");
         const auto opts = juce::URL::InputStreamOptions (juce::URL::ParameterHandling::inAddress)
-                              .withExtraHeaders ("User-Agent: V4JB\nAccept: application/vnd.github+json")
+                              .withExtraHeaders ("User-Agent: 125A-Noctomorph\nAccept: application/vnd.github+json")
                               .withConnectionTimeoutMs (8000);
         if (auto stream = url.createInputStream (opts))
         {

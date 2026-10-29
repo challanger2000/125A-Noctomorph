@@ -253,6 +253,17 @@ public:
             release (v);
     }
 
+    // CC120 must silence held and releasing voices immediately; CC123 above
+    // intentionally keeps envelope release tails. No allocation or lock.
+    void allSoundOff() noexcept
+    {
+        numHeld = 0;
+        noteStarted = false;
+        lastSemis = -1.f;
+        for (auto& v : voices)
+            v.resetAll();
+    }
+
     // Audio thread: true once after a note started from silence (restarts X-Axis morph).
     bool takeNoteStarted()
     {

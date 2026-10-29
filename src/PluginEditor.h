@@ -71,7 +71,7 @@ private:
         juce::ToggleButton checkBtn { "Check for update" };
         juce::HyperlinkButton releasesBtn {
             "Open releases",
-            juce::URL ("https://github.com/iamtew/V4JB/releases/latest")
+            juce::URL ("https://github.com/challanger2000/125A-Noctomorph/releases")
         };
         juce::ToggleButton closeBtn { "Close" };
         std::atomic<bool> fetching { false };
